@@ -239,6 +239,11 @@
             }
         };
 
+        const DEFAULT_WITHDRAWAL_PERIODS = [
+            { startYear: 11, endYear: 20, annualAmount: 60000, label: 'Early Retirement (Age 60-69)' },
+            { startYear: 21, endYear: 40, annualAmount: 80000, label: 'Full Retirement (Age 70+)' }
+        ];
+
         // Stress test scenarios
         const STRESS_SCENARIOS = {
             financial_crisis: {
@@ -279,7 +284,6 @@
             });
             
             // Tax assumptions
-            const [taxBracket, setTaxBracket] = useState(22); // Current tax bracket
             const [retirementTaxBracket, setRetirementTaxBracket] = useState(12); // Expected retirement bracket
             const [socialSecurityIncome, setSocialSecurityIncome] = useState(0);
             const [standardDeduction, setStandardDeduction] = useState(14600); // 2024 single filer
@@ -292,20 +296,12 @@
             });
             
             // Withdrawal configuration - now starts after accumulation phase
-            const [withdrawalPeriods, setWithdrawalPeriods] = useState([
-                { startYear: 11, endYear: 20, annualAmount: 60000, label: 'Early Retirement (Age 60-69)' },
-                { startYear: 21, endYear: 40, annualAmount: 80000, label: 'Full Retirement (Age 70+)' }
-            ]);
+            const [withdrawalPeriods, setWithdrawalPeriods] = useState(() => DEFAULT_WITHDRAWAL_PERIODS.map(period => ({ ...period })));
             
             // Visual preferences
-            const [showWhatIf, setShowWhatIf] = useState(false);
             const [visualMode, setVisualMode] = useState('paths'); // 'paths', 'buckets', 'waterfall'
             
             // Progressive engagement tracking
-            const [engagementLevel, setEngagementLevel] = useState(1); // 1-4 stages
-            const [hasUsedTool, setHasUsedTool] = useState(false);
-            const [showEmailCapture, setShowEmailCapture] = useState(false);
-            const [userEmail, setUserEmail] = useState('');
             const [emailSubmitted, setEmailSubmitted] = useState(false);
             
             // Advanced settings
@@ -313,11 +309,11 @@
             const [simulations, setSimulations] = useState(CONFIG.DEFAULT_SIMULATIONS);
             const [rebalanceFrequency, setRebalanceFrequency] = useState('quarterly');
             const [showPercentiles, setShowPercentiles] = useState(true);
-            const [correlationMatrix, setCorrelationMatrix] = useState({
+            const correlationMatrix = useMemo(() => ({
                 growthIncome: 0.6,
                 growthDiversification: 0.8,
                 incomeDiversification: 0.7
-            });
+            }), []);
             const [includeTaxes, setIncludeTaxes] = useState(false);
             const [taxRate, setTaxRate] = useState(25);
             const [stressScenario, setStressScenario] = useState(null);
@@ -325,17 +321,10 @@
             // Results
             const [results, setResults] = useState(null);
             const [isCalculating, setIsCalculating] = useState(false);
-            const [comparisonResults, setComparisonResults] = useState(null);
             
             // Chart refs
             const pathsChartRef = useRef(null);
             const pathsChartInstance = useRef(null);
-            const volatilityChartRef = useRef(null);
-            const volatilityChartInstance = useRef(null);
-            const outcomeChartRef = useRef(null);
-            const outcomeChartInstance = useRef(null);
-            const comparisonChartRef = useRef(null);
-            const comparisonChartInstance = useRef(null);
 
             // Load saved configuration on mount
             useEffect(() => {
@@ -343,14 +332,59 @@
                 if (saved) {
                     try {
                         const config = JSON.parse(saved);
-                        setPortfolio(config.portfolio || CONFIG.DEFAULT_PORTFOLIO);
-                        setCurrentIncome(config.currentIncome || 100000);
+                        setPortfolio(config.portfolio ?? CONFIG.DEFAULT_PORTFOLIO);
+                        setCurrentIncome(config.currentIncome ?? 100000);
                         setSavingsRate(config.savingsRate ?? 15);
-                        setSavingsYears(config.savingsYears || 10);
-                        setStrategyMix(config.strategyMix || { growth: 40, income: 20, diversification: 40 });
-                        setWithdrawalPeriods(config.withdrawalPeriods || withdrawalPeriods);
-                        setInflationRate(config.inflationRate || 2.5);
-                        setSimulations(config.simulations || CONFIG.DEFAULT_SIMULATIONS);
+                        setSavingsYears(config.savingsYears ?? 10);
+
+                        if (config.strategyMix) {
+                            setStrategyMix({
+                                growth: config.strategyMix.growth ?? 40,
+                                income: config.strategyMix.income ?? 20,
+                                diversification: config.strategyMix.diversification ?? 40
+                            });
+                        }
+
+                        if (config.accountTypes) {
+                            setAccountTypes({
+                                taxable: config.accountTypes.taxable ?? 40,
+                                taxDeferred: config.accountTypes.taxDeferred ?? 40,
+                                roth: config.accountTypes.roth ?? 20
+                            });
+                        }
+
+                        if (Array.isArray(config.withdrawalPeriods)) {
+                            setWithdrawalPeriods(config.withdrawalPeriods.map(period => ({
+                                startYear: period.startYear ?? 1,
+                                endYear: period.endYear ?? (period.startYear ?? 1),
+                                annualAmount: period.annualAmount ?? 0,
+                                label: period.label ?? ''
+                            })));
+                        }
+
+                        if (typeof config.retirementTaxBracket === 'number') {
+                            setRetirementTaxBracket(config.retirementTaxBracket);
+                        }
+                        if (typeof config.socialSecurityIncome === 'number') {
+                            setSocialSecurityIncome(config.socialSecurityIncome);
+                        }
+                        if (typeof config.standardDeduction === 'number') {
+                            setStandardDeduction(config.standardDeduction);
+                        }
+                        if (typeof config.includeTaxes === 'boolean') {
+                            setIncludeTaxes(config.includeTaxes);
+                        }
+                        if (typeof config.taxRate === 'number') {
+                            setTaxRate(config.taxRate);
+                        }
+                        if (typeof config.showPercentiles === 'boolean') {
+                            setShowPercentiles(config.showPercentiles);
+                        }
+                        if (config.stressScenario) {
+                            setStressScenario(config.stressScenario);
+                        }
+                        setInflationRate(config.inflationRate ?? 2.5);
+                        setSimulations(config.simulations ?? CONFIG.DEFAULT_SIMULATIONS);
                     } catch (e) {
                         console.error('Failed to load saved config:', e);
                     }
@@ -365,12 +399,20 @@
                     savingsRate,
                     savingsYears,
                     strategyMix,
+                    accountTypes,
                     withdrawalPeriods,
+                    retirementTaxBracket,
+                    socialSecurityIncome,
+                    standardDeduction,
+                    includeTaxes,
+                    taxRate,
+                    showPercentiles,
+                    stressScenario,
                     inflationRate,
                     simulations
                 };
                 localStorage.setItem('portfolioConfig', JSON.stringify(config));
-            }, [portfolio, currentIncome, savingsRate, savingsYears, strategyMix, withdrawalPeriods, inflationRate, simulations]);
+            }, [portfolio, currentIncome, savingsRate, savingsYears, strategyMix, accountTypes, withdrawalPeriods, retirementTaxBracket, socialSecurityIncome, standardDeduction, includeTaxes, taxRate, showPercentiles, stressScenario, inflationRate, simulations]);
 
             // Calculate simulation years based on withdrawal periods
             const getSimulationYears = useCallback(() => {
@@ -501,7 +543,6 @@
                 
                 const allPaths = [];
                 const finalValues = [];
-                const yearlyVolatilities = [];
                 let successCount = 0;
                 let depletionYears = [];
                 
@@ -611,7 +652,7 @@
                     totalWithdrawn,
                     peakValue: Math.max(...allPaths.map(p => Math.max(...p.path)))
                 };
-            }, [portfolio, simulations, getSimulationYears, generateMarketReturns, getAnnualCashFlow, getEffectiveParameters]);
+            }, [portfolio, simulations, savingsYears, getSimulationYears, generateMarketReturns, getAnnualCashFlow, getEffectiveParameters]);
 
             // Main simulation runner
             const runSimulation = useCallback(async () => {
@@ -630,15 +671,6 @@
 
                     const mainResults = runSimulationForMix(strategyMix);
                     setResults(mainResults);
-
-                    if (strategyMix.growth !== 100 && strategyMix.income !== 100 && strategyMix.diversification !== 100) {
-                        const comparisons = {};
-                        comparisons.growth = runSimulationForMix({ growth: 100, income: 0, diversification: 0 });
-                        comparisons.conservative = runSimulationForMix({ growth: 20, income: 40, diversification: 40 });
-                        setComparisonResults(comparisons);
-                    } else {
-                        setComparisonResults(null);
-                    }
                 } finally {
                     setIsCalculating(false);
                 }
@@ -787,17 +819,17 @@
             // Withdrawal period management
             const addWithdrawalPeriod = useCallback(() => {
                 const lastPeriod = withdrawalPeriods[withdrawalPeriods.length - 1];
-                const newStart = lastPeriod ? lastPeriod.endYear + 1 : 1;
+                const newStart = lastPeriod ? lastPeriod.endYear + 1 : savingsYears + 1;
                 setWithdrawalPeriods([
                     ...withdrawalPeriods,
                     { 
                         startYear: newStart, 
                         endYear: newStart + 9, 
-                        annualAmount: 40000, 
+                        annualAmount: 60000, 
                         label: `Period ${withdrawalPeriods.length + 1}` 
                     }
                 ]);
-            }, [withdrawalPeriods]);
+            }, [withdrawalPeriods, savingsYears]);
 
             const removeWithdrawalPeriod = useCallback((index) => {
                 if (withdrawalPeriods.length > 1) {
@@ -826,14 +858,6 @@
                         )}
                     </span>
                 </div>
-            );
-
-            const PlainLanguageLabel = ({ technical, plain, tooltip }) => (
-                <label className="block text-sm font-medium text-gray-700">
-                    <span className="sm:hidden">{plain}</span>
-                    <span className="hidden sm:inline">{technical}</span>
-                    {tooltip && <InfoTooltip text={tooltip.text} example={tooltip.example} />}
-                </label>
             );
 
             const DisclaimerModal = () => (
@@ -904,22 +928,24 @@
                                                         Want to stay updated on market insights and retirement planning?
                                                     </p>
                                                     <div className="flex flex-col sm:flex-row gap-3">
-                                                        <a
-                                                            href="https://buttondown.com/ethicic"
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                            className="inline-block px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm text-center"
-                                                        >
-                                                            Subscribe to Newsletter
-                                                        </a>
-                                                        <a
-                                                            href="https://forms.lessannoyingcrm.com/view/4050759343360583472689106586874"
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                            className="inline-block px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 text-sm text-center"
-                                                        >
-                                                            Get Professional Help
-                                                        </a>
+                                                    <a
+                                                        href="https://buttondown.com/ethicic"
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        onClick={() => setEmailSubmitted(true)}
+                                                        className="inline-block px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm text-center"
+                                                    >
+                                                        Subscribe to Newsletter
+                                                    </a>
+                                                    <a
+                                                        href="https://forms.lessannoyingcrm.com/view/4050759343360583472689106586874"
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        onClick={() => setEmailSubmitted(true)}
+                                                        className="inline-block px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 text-sm text-center"
+                                                    >
+                                                        Get Professional Help
+                                                    </a>
                                                     </div>
                                                 </div>
                                             )}
@@ -1242,19 +1268,7 @@
                                         ))}
                                         
                                         <button
-                                            onClick={() => {
-                                                const lastPeriod = withdrawalPeriods[withdrawalPeriods.length - 1];
-                                                const newStart = lastPeriod ? lastPeriod.endYear + 1 : savingsYears + 1;
-                                                setWithdrawalPeriods([
-                                                    ...withdrawalPeriods,
-                                                    { 
-                                                        startYear: newStart, 
-                                                        endYear: newStart + 9, 
-                                                        annualAmount: 60000, 
-                                                        label: `Period ${withdrawalPeriods.length + 1}` 
-                                                    }
-                                                ]);
-                                            }}
+                                            onClick={addWithdrawalPeriod}
                                             className="w-full py-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-blue-400 hover:text-blue-600 text-sm"
                                         >
                                             + Add Period
@@ -1351,6 +1365,57 @@
                                                         placeholder="Tax Rate %"
                                                     />
                                                 )}
+                                            </div>
+
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                <div>
+                                                    <label className="block text-sm font-medium text-gray-700">
+                                                        Retirement Tax Bracket (%)
+                                                    </label>
+                                                    <input
+                                                        type="number"
+                                                        min="0"
+                                                        max="50"
+                                                        value={retirementTaxBracket}
+                                                        onChange={(e) => setRetirementTaxBracket(Math.max(0, Number(e.target.value)))}
+                                                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2 border text-sm"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-sm font-medium text-gray-700">
+                                                        Social Security Income ($)
+                                                    </label>
+                                                    <input
+                                                        type="number"
+                                                        min="0"
+                                                        step="1000"
+                                                        value={socialSecurityIncome}
+                                                        onChange={(e) => setSocialSecurityIncome(Math.max(0, Number(e.target.value)))}
+                                                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2 border text-sm"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-sm font-medium text-gray-700">
+                                                        Standard Deduction ($)
+                                                    </label>
+                                                    <input
+                                                        type="number"
+                                                        min="0"
+                                                        step="100"
+                                                        value={standardDeduction}
+                                                        onChange={(e) => setStandardDeduction(Math.max(0, Number(e.target.value)))}
+                                                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2 border text-sm"
+                                                    />
+                                                </div>
+                                                <label className="flex items-center gap-2 text-sm font-medium text-gray-700 sm:pt-6">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={showPercentiles}
+                                                        onChange={(e) => setShowPercentiles(e.target.checked)}
+                                                        className="rounded border-gray-300"
+                                                    />
+                                                    <span>Show percentile bands on charts</span>
+                                                </label>
                                             </div>
                                         </div>
                                     </div>
