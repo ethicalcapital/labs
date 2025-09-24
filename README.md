@@ -25,4 +25,7 @@ Cloudflare Pages configuration (build command `npm run build`, output directory
 
 Cloudflare Pages does not need a deploy command for this repository. Leave the
 Deploy command field empty—Pages will take the contents of `dist/` produced by
-the build step and publish them automatically.
+the build step and publish them automatically. The `wrangler.toml` file exists
+only to set the `pages_build_output_dir`; Pages ignores `[build]` blocks, so the
+actual build command should be set in the dashboard (for example `npm run
+build`).
