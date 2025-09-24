@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+    "build": "rm -rf dist && mkdir -p dist && cp -R public/. dist",
+    "lint": "eslint \"**/*.jsx\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
