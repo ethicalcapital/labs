@@ -44,7 +44,7 @@ Cloudflare Pages expects the build command `npm run build` and publishes the con
   - Call Buttondown’s subscriber API when `BUTTONDOWN_API_KEY` is present.
   - Upsert the contact in LACRM when `LACRM_API_TOKEN` and `LACRM_USER_CODE` are provided (optional `LACRM_PIPELINE_ID` / `LACRM_STEP_ID` attach pipeline stages).
   - Persist anonymized metrics to KV regardless of downstream availability.
-  Configure secrets through Doppler → `wrangler secret bulk` so deployments stay reproducible.
+  Configure secrets through Doppler-sourced GitHub Actions so deployments stay reproducible.
 
 ## Contributing
 

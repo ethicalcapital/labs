@@ -1,0 +1,49 @@
+name: Deploy Labs Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN_WORKERS_PROD }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Doppler CLI
+        run: curl -Ls https://cli.doppler.com/install.sh | sh
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build site
+        run: npm run build
+
+      - name: Build hooks workspace
+        run: cd hooks && npm run build --workspaces
+
+      - name: Sync secrets to Cloudflare
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          doppler secrets download --no-file --format env --project labs --config production \
+            | npx wrangler secret bulk --config wrangler.toml --env production
+
+      - name: Deploy to Cloudflare Pages
+        run: npx wrangler pages deploy dist --project-name labs --commit-dirty=true
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
