@@ -3,143 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio Strategy Simulator - Ethical Capital</title>
+    <title>Portfolio Strategy Simulator · Ethical Capital Labs</title>
+    <meta name="description" content="Interactive Monte Carlo withdrawal simulator from Ethical Capital Labs." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Raleway:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/labs.css" />
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        .tooltip {
-            position: relative;
-            display: inline-block;
-        }
-        .tooltip .tooltiptext {
-            visibility: hidden;
-            width: 340px;
-            background-color: #1f2937;
-            color: #fff;
-            text-align: left;
-            border-radius: 6px;
-            padding: 10px 14px;
-            position: absolute;
-            z-index: 1;
-            bottom: 125%;
-            left: 50%;
-            margin-left: -170px;
-            opacity: 0;
-            transition: opacity 0.3s;
-            font-size: 13px;
-            line-height: 1.5;
-        }
-        .tooltip:hover .tooltiptext {
-            visibility: visible;
-            opacity: 1;
-        }
-        @media (max-width: 640px) {
-            .tooltip .tooltiptext {
-                width: 280px;
-                margin-left: -140px;
-                font-size: 12px;
-            }
-        }
-        .mode-toggle {
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-            cursor: pointer;
-            user-select: none;
-        }
-        .mode-toggle input {
-            display: none;
-        }
-        .slider {
-            width: 60px;
-            height: 28px;
-            background: #e5e7eb;
-            border-radius: 34px;
-            transition: 0.4s;
-            position: relative;
-        }
-        .slider:before {
-            content: "";
-            position: absolute;
-            height: 20px;
-            width: 20px;
-            left: 4px;
-            bottom: 4px;
-            background: white;
-            border-radius: 50%;
-            transition: 0.4s;
-        }
-        input:checked + .slider {
-            background: #3b82f6;
-        }
-        input:checked + .slider:before {
-            transform: translateX(32px);
-        }
-        .strategy-slider {
-            -webkit-appearance: none;
-            appearance: none;
-            height: 8px;
-            border-radius: 4px;
-            background: linear-gradient(to right, #10b981 0%, #3b82f6 50%, #8b5cf6 100%);
-            outline: none;
-        }
-        .strategy-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: white;
-            cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            border: 2px solid #3b82f6;
-        }
-        .withdrawal-period {
-            padding: 12px;
-            background: #f9fafb;
-            border-radius: 8px;
-            margin-bottom: 12px;
-        }
-        .preset-chip {
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .preset-chip:hover {
-            transform: scale(1.05);
-        }
-        .preset-chip.selected {
-            background-color: #3b82f6;
-            color: white;
-        }
-        .disclaimer-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            padding: 20px;
-        }
-        .disclaimer-content {
-            background: white;
-            border-radius: 12px;
-            max-width: 600px;
-            max-height: 80vh;
-            overflow-y: auto;
-            padding: 24px;
-        }
-    </style>
 </head>
 <body>
-    <div id="root"></div>
+    <header class="labs-header">
+      <nav class="labs-nav" aria-label="Primary">
+        <a class="labs-nav__logo" href="/">
+          <img
+            src="/assets/brand/logos/ecic-logo.svg"
+            alt="Invest Vegan LLC DBA Ethical Capital"
+            width="44"
+            height="44"
+          />
+          <span>Labs</span>
+        </a>
+        <div class="labs-nav__links">
+          <a class="labs-nav__link" href="/simulator/">Portfolio Simulator</a>
+          <a class="labs-nav__link" href="/divestment/">Divestment Explorer</a>
+          <a
+            class="labs-nav__link"
+            href="https://github.com/ethicalcapital/labs"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            GitHub
+          </a>
+          <a
+            class="labs-nav__cta"
+            href="https://ethicic.com"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Visit Ethical Capital
+          </a>
+        </div>
+      </nav>
+    </header>
 
-        <script src="./app.js" defer></script>
+    <main class="labs-main">
+      <section class="labs-section" aria-labelledby="simulator-hero">
+        <div class="labs-panel labs-panel--intro">
+          <p class="labs-eyebrow labs-eyebrow--light">Portfolio strategy simulator</p>
+          <h2 id="simulator-hero">Understand how withdrawals shape outcomes</h2>
+          <p>
+            This experiment runs thousands of Monte Carlo paths using configurable
+            savings phases, tax-aware withdrawals, and market stress overlays. It
+            is designed to surface trade-offs—sequence risk, allocation drift,
+            and longevity—without prescribing a specific course of action.
+          </p>
+          <div class="labs-button-row">
+            <a class="labs-button labs-button--solid" href="#simulator">Jump to simulator</a>
+            <a
+              class="labs-button labs-button--ghost"
+              href="https://github.com/ethicalcapital/labs/issues/new?labels=simulator"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              Suggest improvements
+            </a>
+          </div>
+        </div>
 
+        <div class="labs-panel" id="simulator">
+          <div class="bg-white rounded-3xl">
+            <div id="root"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="labs-footer">
+      <div class="labs-footer__inner">
+        <p><strong>Invest Vegan LLC DBA Ethical Capital</strong> · Utah Registered Investment Adviser</p>
+        <p>
+          <a href="https://ethicic.com/content/legal/disclosures.html">Disclosures</a>
+          ·
+          <a href="https://ethicic.com/content/legal/privacy-policy.html">Privacy Policy</a>
+          ·
+          <a href="https://ethicic.com/content/legal/terms-of-use.html">Terms of Use</a>
+        </p>
+        <p>90 N 400 E, Provo, UT 84606 · +1 347 625 9000 · hello@ethicic.com</p>
+        <p><em>This website is for informational purposes only and does not constitute investment advice. Past performance does not guarantee future results.</em></p>
+      </div>
+    </footer>
+
+    <script src="./app.js" defer></script>
 </body>
 </html>

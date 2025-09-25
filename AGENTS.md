@@ -44,9 +44,10 @@ Labs follows the same brand system defined for the primary site in
   panel styles, and buttons instead of ad-hoc Tailwind classes
 - Preserve the top navigation layout (logo, key experiment links, GitHub, “Visit
   Ethical Capital”) so movement between labs and the main site feels seamless
-- Include the canonical footer disclaimer block with links to Disclosures,
-  Privacy Policy, and Terms of Use. Copy the markup in `public/index.html` to
-  avoid divergence.
+- Include the canonical purple footer with disclaimer language plus links to
+  Disclosures, Privacy Policy, and Terms of Use. Copy the markup in
+  `public/index.html` to avoid divergence and never add standalone disclaimer
+  sections elsewhere on a page.
 
 ### Experimental Approach
 

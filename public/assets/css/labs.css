@@ -64,8 +64,8 @@ p {
 }
 
 .labs-header {
-  background: var(--surface-white);
-  border-bottom: 1px solid var(--border-gray);
+  background: var(--ecic-purple);
+  border-bottom: none;
 }
 
 .labs-nav {
@@ -86,7 +86,7 @@ p {
   font-family: var(--font-heading);
   font-size: 1.1rem;
   font-weight: 600;
-  color: var(--text-dark);
+  color: var(--footer-text);
 }
 
 .labs-nav__logo img {
@@ -101,22 +101,24 @@ p {
   gap: 0.75rem;
 }
 
+
 .labs-nav__link {
   font-weight: 500;
   font-size: 0.95rem;
   padding: 0.4rem 0.85rem;
   border-radius: 999px;
   transition: background 0.2s ease, color 0.2s ease;
+  color: rgba(243, 244, 246, 0.85);
 }
 
 .labs-nav__link:hover {
-  background: rgba(88, 28, 135, 0.12);
-  color: var(--ecic-purple);
+  background: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
   text-decoration: none;
 }
 
 .labs-nav__cta {
-  background: var(--ecic-purple);
+  background: var(--ecic-teal);
   color: #fff;
   border-radius: 999px;
   padding: 0.45rem 1.1rem;
@@ -127,7 +129,7 @@ p {
 }
 
 .labs-nav__cta:hover {
-  background: var(--ecic-purple-light);
+  background: var(--ecic-teal-light);
   text-decoration: none;
 }
 
