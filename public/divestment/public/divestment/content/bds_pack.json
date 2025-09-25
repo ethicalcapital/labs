@@ -148,6 +148,32 @@
       }
     ]
   },
+  "venue_notes": {
+    "one_on_one": [
+      "Open with shared goals; invite concerns before proposing solutions.",
+      "Offer the brief and one or two sources relevant to their role."
+    ],
+    "small_group": [
+      "Clarify decision rights and next steps.",
+      "Use the Identity Guide to align constraints and responsibilities."
+    ],
+    "committee_hearing": [
+      "Keep to concrete asks; cite Policy Alignment and criteria.",
+      "Respect time limits; reference the full brief for details."
+    ],
+    "full_board_meeting": [
+      "Summarize the Recommended Approach and reporting cadence.",
+      "Be crisp on ‘why now’ and what changes operationally."
+    ],
+    "public_testimony": [
+      "Time‑limited: focus on 2–3 key points and one specific ask.",
+      "Bring printed one‑pagers; avoid acronyms; cite one authoritative source."
+    ],
+    "written_memo": [
+      "Include the Model Resolution if applicable.",
+      "Attach the Policy Alignment and relevant source links."
+    ]
+  },
   "counters": [
     {
       "claim": "Divestment will significantly hurt performance and beneficiaries.",
