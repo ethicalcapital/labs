@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Ethical Capital Labs</title>
+    <title>Divestment Explorer · Ethical Capital Labs</title>
     <meta
       name="description"
-      content="Interactive financial education experiments from Ethical Capital."
+      content="Open-source divestment research sandbox from Ethical Capital Labs."
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -34,24 +34,24 @@
   </head>
   <body class="min-h-screen">
     <header class="px-6 py-6 sm:px-10">
-      <div class="mx-auto flex max-w-4xl flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div class="mx-auto flex max-w-4xl flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p class="text-xs uppercase tracking-[0.35em] text-slate-400">Ethical Capital</p>
-          <h1 class="mt-1 text-2xl font-semibold text-white">Labs</h1>
+          <p class="text-xs uppercase tracking-[0.35em] text-slate-400">Ethical Capital Labs</p>
+          <h1 class="mt-1 text-2xl font-semibold text-white">Divestment Explorer</h1>
         </div>
         <div class="flex flex-wrap gap-3">
           <a
-            href="/divestment/"
+            href="/"
             class="rounded-full border border-slate-500/70 px-5 py-2 text-sm font-medium text-slate-200 transition hover:border-slate-300 hover:text-white"
           >
-            Divestment Explorer
+            Back to Labs
           </a>
           <a
-            href="https://ethicic.com"
+            href="https://github.com/ethicalcapital/labs/tree/main/public/divestment"
             class="rounded-full border border-slate-500/70 px-5 py-2 text-sm font-medium text-slate-200 transition hover:border-slate-300 hover:text-white"
             rel="noopener noreferrer"
           >
-            Visit Ethical Capital
+            View Source on GitHub
           </a>
         </div>
       </div>
@@ -61,52 +61,30 @@
       <section class="mx-auto max-w-4xl space-y-8">
         <div class="panel rounded-3xl p-8 sm:p-10">
           <h2 class="text-xl font-semibold text-white sm:text-2xl">
-            Ethical Capital Labs is an open-source sandbox.
+            Open data for values-led divestment screening
           </h2>
           <p class="mt-4 text-sm text-slate-300">
-            Everything here is experimental, shared for transparency, and offered
-            without regard to any specific portfolio or person. Nothing on this
-            site is investment advice. Simulations rely on simplified
-            assumptions, may be wrong, and are not a promise of future results.
+            This workspace collects public data, documentation, and prototype
+            tooling that support ethical divestment decisions. Everything here is
+            exploratory. Expect rough edges, incomplete coverage, and evolving
+            methodology.
           </p>
         </div>
 
         <div class="panel rounded-3xl p-8 sm:p-10">
           <h3 class="text-sm font-semibold uppercase tracking-[0.3em] text-slate-400">
-            Explore
+            Get involved
           </h3>
           <div class="mt-6 grid gap-4 sm:grid-cols-2">
             <a
-              href="/simulator/"
-              class="rounded-xl border border-slate-500/70 px-4 py-5 text-left transition hover:border-slate-300 hover:text-white"
-            >
-              <span class="text-base font-semibold text-white">Portfolio Strategy Simulator</span>
-              <p class="mt-2 text-xs text-slate-300">
-                Run the latest Monte Carlo experiment in your browser. Please
-                log issues or feature requests on GitHub so we can improve it
-                together.
-              </p>
-            </a>
-            <a
-              href="/divestment/"
-              class="rounded-xl border border-slate-500/70 px-4 py-5 text-left transition hover:border-slate-300 hover:text-white"
-            >
-              <span class="text-base font-semibold text-white">Divestment Research Lab</span>
-              <p class="mt-2 text-xs text-slate-300">
-                Explore datasets and tooling for values-aligned divestment
-                screening. Contributions welcome—open issues or discussions to
-                shape the roadmap.
-              </p>
-            </a>
-            <a
-              href="https://github.com/ethicalcapital/labs"
+              href="https://github.com/ethicalcapital/labs/tree/main/public/divestment"
               class="rounded-xl border border-slate-500/70 px-4 py-5 text-left transition hover:border-slate-300 hover:text-white"
               rel="noopener noreferrer"
             >
-              <span class="text-base font-semibold text-white">View the GitHub repository</span>
+              <span class="text-base font-semibold text-white">Browse datasets &amp; scripts</span>
               <p class="mt-2 text-xs text-slate-300">
-                Read the code, open an issue, or start a discussion. Every
-                experiment evolves in the open.
+                Review source files, data notes, and processing scripts. Fork the
+                repo or open a PR if you have improvements.
               </p>
             </a>
             <a
@@ -114,10 +92,10 @@
               class="rounded-xl border border-slate-500/70 px-4 py-5 text-left transition hover:border-slate-300 hover:text-white"
               rel="noopener noreferrer"
             >
-              <span class="text-base font-semibold text-white">Report a bug or request</span>
+              <span class="text-base font-semibold text-white">Log a dataset issue</span>
               <p class="mt-2 text-xs text-slate-300">
-                Found something weird? Please file an issue so others benefit
-                from the fix.
+                Spot inaccuracies or missing companies? File an issue so we can
+                correct the record and share updates openly.
               </p>
             </a>
             <a
@@ -125,10 +103,20 @@
               class="rounded-xl border border-slate-500/70 px-4 py-5 text-left transition hover:border-slate-300 hover:text-white"
               rel="noopener noreferrer"
             >
-              <span class="text-base font-semibold text-white">Start a discussion</span>
+              <span class="text-base font-semibold text-white">Join the discussion</span>
               <p class="mt-2 text-xs text-slate-300">
-                Share questions, ideas, or critiques. Open conversation keeps
-                these experiments honest.
+                Use GitHub Discussions for methodology debates, data requests, or
+                to suggest new visualizations.
+              </p>
+            </a>
+            <a
+              href="mailto:hello@ethicic.com"
+              class="rounded-xl border border-slate-500/70 px-4 py-5 text-left transition hover:border-slate-300 hover:text-white"
+            >
+              <span class="text-base font-semibold text-white">Share private feedback</span>
+              <p class="mt-2 text-xs text-slate-300">
+                Need to share sensitive corrections? Email the team and we will
+                coordinate a responsible update.
               </p>
             </a>
           </div>
@@ -139,12 +127,11 @@
             Disclaimers
           </h3>
           <p class="mt-4 text-xs text-slate-400">
-            Ethical Capital Labs is a place for open-source experimentation.
-            Tools and write-ups are educational only, do not consider your
-            personal situation, and are not investment recommendations. Models
-            may break, assumptions can change, and external data can be wrong.
-            Always do your own due diligence and consult a qualified
-            professional before acting on anything you see here.
+            The divestment explorer is experimental research. Data sources may be
+            incomplete or outdated; classifications reflect best-effort
+            interpretations and are not investment recommendations. Always verify
+            data through primary sources and consult qualified professionals
+            before making allocation decisions.
           </p>
         </div>
       </section>
