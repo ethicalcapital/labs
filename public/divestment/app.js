@@ -171,13 +171,22 @@
     thumbRegulatory.value = config.regulatory;
   }
 
+  function toggleThumbInputs(disabled) {
+    thumbMission.disabled = disabled;
+    thumbCompetition.disabled = disabled;
+    thumbRegulatory.disabled = disabled;
+    thumbCustom.classList.toggle('opacity-60', disabled);
+  }
+
   function applyThumbPreset(preset) {
     if (preset === 'custom' || !PRESET_CONFIGS[preset]) {
       thumbCustom.classList.remove('hidden');
+      toggleThumbInputs(false);
       return;
     }
     const config = PRESET_CONFIGS[preset];
     thumbCustom.classList.add('hidden');
+    toggleThumbInputs(true);
     setThumbInputs(config);
   }
 
@@ -185,6 +194,7 @@
     if (thumbPreset.value !== 'custom') {
       thumbPreset.value = 'custom';
       thumbCustom.classList.remove('hidden');
+      toggleThumbInputs(false);
     }
   }
 
