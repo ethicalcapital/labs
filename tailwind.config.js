@@ -1,4 +1,6 @@
 /** @type {import('tailwindcss').Config} */
+const daisyui = require("daisyui");
+
 module.exports = {
   content: [
     "./PortfolioSimulator.jsx",
@@ -24,7 +26,10 @@ module.exports = {
   corePlugins: {
     preflight: false,
   },
-  plugins: [require("@tailwindcss/typography"), require("daisyui")],
+  plugins: [
+    require("@tailwindcss/typography"),
+    daisyui && daisyui.default ? daisyui.default : daisyui,
+  ],
   daisyui: {
     themes: [
       {
@@ -46,6 +51,7 @@ module.exports = {
         },
       },
     ],
+    styled: true,
     base: false,
     utils: true,
     logs: false,
