@@ -25,6 +25,8 @@
 
   const state = { data: null, last: null };
 
+  const missionValue = () => (thumbMission.value === '0' ? 'purity' : 'pragmatism');
+
   const VENUE_LABELS = {
     one_on_one: '1:1 conversation',
     small_group: 'Small group meeting',
@@ -51,7 +53,8 @@
     foundation: 'Foundation',
     insurance: 'Insurance General Account',
     central_bank: 'Central Bank / Official Institution',
-    government: 'Government Investor'
+    government: 'Government Investor',
+    individual: 'Individual'
   };
 
   const KNOWLEDGE_LABELS = {
@@ -135,7 +138,7 @@
       target: target.value,
       entityType: invIdentity.value,
       knowledge: knowledge.value,
-      thumb: { mission: thumbMission.value, competition: thumbCompetition.value, regulatory: thumbRegulatory.value },
+      thumb: { mission: missionValue(), competition: thumbCompetition.value, regulatory: thumbRegulatory.value },
       objective: objective.value,
       use_case: fbUse.value,
       outcome: fbOutcome.value,
@@ -205,19 +208,21 @@
     };
 
     const thumb = {
-      mission: thumbMission.value,
+      mission: missionValue(),
       competition: thumbCompetition.value,
       regulatory: thumbRegulatory.value,
     };
 
     const knowledgeLevel = context.knowledge;
+    const guideIntroPlain = 'Use this identity map to match responsibilities before proposing action.';
+    const guideIntroTechnical = 'Identity context determines constraints, tracking-error limits, and reporting expectations.';
     const headings = knowledgeLevel === 'plain'
       ? {
           opening: 'Opening',
           key: 'Key Points to Share',
           counters: 'Likely Pushback & Responses',
           guide: 'Investor Identity Map',
-          guideIntro: 'Use this identity map to match decision-maker constraints before proposing next steps.',
+          guideIntro: guideIntroPlain,
           approach: 'Implementation Snapshot',
           policy: 'Policy Alignment',
           screening: 'Screening Intelligence'
@@ -227,7 +232,7 @@
           key: 'Key Points',
           counters: 'Counterarguments & Responses',
           guide: 'Investor Identity Guide',
-          guideIntro: 'Identity should shape the response. A two-person plan executes differently than NBIM.',
+          guideIntro: guideIntroTechnical,
           approach: 'Recommended Approach',
           policy: 'Policy Alignment',
           screening: data.screening_knowledge?.title || 'Screening as Cumulative Knowledge'
@@ -383,6 +388,8 @@
         citations: Array.isArray(c.citations) ? c.citations.map(ci => ({ label: ci.label, url: ci.url })) : []
       })),
       guideIntro: headings.guideIntro,
+      guideIntroPlain,
+      guideIntroTechnical,
       guideBullets,
       approach: {
         ask: approach.ask || '',
@@ -466,7 +473,7 @@
 
     lines.push(`## ${mode === 'technical' ? 'Investor Identity Guide' : 'Investor Identity Map'}`);
     lines.push('');
-    lines.push(result.guideIntro);
+    lines.push(mode === 'technical' ? result.guideIntroTechnical : result.guideIntroPlain);
     lines.push('');
     for (const bullet of result.guideBullets) {
       lines.push(`- ${bullet}`);
@@ -488,7 +495,7 @@
     if (approach.framing) lines.push(`- Framing: ${approach.framing}`);
     lines.push('');
 
-    if ((mode === 'technical' && result.policyPrinciples.length) || result.policyPrinciples.length && mode === 'technical') {
+    if (mode === 'technical' && result.policyPrinciples.length) {
       lines.push('## Policy Alignment');
       lines.push('');
       for (const principle of result.policyPrinciples) {
@@ -509,7 +516,7 @@
       lines.push('');
     }
 
-    if (mode === 'technical' && result.showScreening && result.screeningPoints.length) {
+    if (mode === 'technical' && result.screeningPoints.length) {
       lines.push(`## ${result.screeningTitle}`);
       lines.push('');
       for (const point of result.screeningPoints) {
@@ -586,9 +593,9 @@
   resetBtn.addEventListener('click', () => {
     venue.value = 'one_on_one';
     target.value = 'family_friends';
-    invIdentity.value = 'public_pension';
+    invIdentity.value = 'individual';
     knowledge.value = 'plain';
-    thumbMission.value = 'pragmatism';
+    thumbMission.value = '1';
     thumbCompetition.value = 'low';
     thumbRegulatory.value = 'medium';
     localName.value = '';
@@ -596,6 +603,12 @@
     brief.innerHTML = '<p class="text-slate-400">Fill the setup at left, then click Build Brief.</p>';
     sourcesList.innerHTML = '';
     state.last = null;
+  });
+
+  target.addEventListener('change', () => {
+    if (target.value === 'family_friends') {
+      invIdentity.value = 'individual';
+    }
   });
 
   copyAll.addEventListener('click', () => {
@@ -623,6 +636,7 @@ window.__BDS_FALLBACK__ = {
   version: 'fallback-2025-09-25-1',
   openers: { generic: 'We can align investments with basic human rights using professional, benchmark-aware implementation. Large institutions already use narrowly scoped exclusions while maintaining diversification and risk controls.' },
   identity_openers: {
+    individual: { generic: 'Individuals can align personal or household savings with values using low-cost screened funds while keeping diversification and emergency reserves intact.' },
     swf: { generic: 'A sovereign fund can implement conduct-based exclusions via a formal ethics process, public rationales, and factor-neutral optimization with explicit tracking-error budgets.' },
     public_pension: { generic: 'Public plans can use consultant/manager mandates, set a tracking-error guardrail, and phase implementation while keeping beneficiaries’ risk/return in focus.' },
     corporate_pension: { generic: 'Corporate plans can update the IPS, adopt a screened index or constraints with minimal overhead, and maintain de-risking alignment.' },
@@ -633,6 +647,12 @@ window.__BDS_FALLBACK__ = {
     government: { generic: 'Government investors (city/county/state) can apply issuer screens/approved lists for bonds, observe procurement/governance limits, and report with best‑efforts language.' }
   },
   identity_guides: {
+    individual: {
+      ask: 'Align personal or household savings with stated values and explain the exclusions in plain language.',
+      implementation: 'Use low-cost screened ETFs or managed accounts; document which companies are excluded and why.',
+      reporting: 'Keep a simple holdings list and revisit annually or after major portfolio changes.',
+      risk: 'Maintain emergency funds, diversification, and low fees while applying exclusions.'
+    },
     public_pension: {
       ask: 'Consultant memo and manager mandates for conduct-based exclusions; define guardrails.',
       implementation: 'Passive screened index or benchmark‑aware constraints; phased divestment to minimize costs; maintain diversification.',

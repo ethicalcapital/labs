@@ -4,6 +4,11 @@
     "generic": "We can align investments with basic human rights using professional, benchmark-aware implementation. Large institutions already use narrowly scoped exclusions while maintaining diversification and risk controls."
   },
   "identity_openers": {
+    "individual": {
+      "one_on_one": "For friends or family, emphasize aligning personal savings with shared values and keep the steps concrete and jargon-free.",
+      "generic": "Individual investors can align personal or household savings with their values using low-cost screened funds while keeping diversification and emergency reserves intact."
+    },
+
     "swf": {
       "generic": "A sovereign fund can implement conduct-based exclusions via a formal ethics process, public rationales, and factor-neutral optimization with explicit tracking-error budgets."
     },

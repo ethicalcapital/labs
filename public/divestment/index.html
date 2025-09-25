@@ -73,6 +73,7 @@
             <label class="block">
               <span class="mb-1 block text-sm text-slate-300">Entity Type</span>
               <select id="invIdentity" class="w-full rounded-md border border-slate-600/60 bg-slate-900/50 px-3 py-2 text-sm">
+                <option value="individual">Individual</option>
                 <option value="swf">Sovereign Wealth Fund</option>
                 <option value="public_pension">Public Pension Plan</option>
                 <option value="corporate_pension">Corporate Pension Plan</option>
@@ -92,18 +93,27 @@
               </select>
             </label>
 
+            <label class="block">
+              <span class="mb-1 block text-sm text-slate-300">Knowledge Level</span>
+              <select id="knowledge" class="w-full rounded-md border border-slate-600/60 bg-slate-900/50 px-3 py-2 text-sm">
+                <option value="plain">Plain English</option>
+                <option value="technical">Technical / Nerd</option>
+              </select>
+            </label>
+
             <fieldset class="rounded-md border border-slate-700/40 p-3">
-              <legend class="px-1 text-xs uppercase tracking-[0.25em] text-slate-400">Thumbprint</legend>
-              <div class="space-y-3">
+              <legend class="px-1 text-xs uppercase tracking-[0.25em] text-slate-400">What matters to them?</legend>
+              <div class="space-y-4">
+                <div>
+                  <span class="mb-1 block text-xs text-slate-400">Mission/Ethics emphasis</span>
+                  <div class="flex items-center gap-3">
+                    <span class="text-xs text-slate-400">Purity</span>
+                    <input id="thumb_mission" type="range" min="0" max="1" step="1" value="1" class="flex-1" />
+                    <span class="text-xs text-slate-400">Conduct</span>
+                  </div>
+                </div>
                 <label class="block">
-                  <span class="mb-1 block text-xs text-slate-400">Mission/Ethics</span>
-                  <select id="thumb_mission" class="w-full rounded-md border border-slate-600/60 bg-slate-900/50 px-3 py-2 text-sm">
-                    <option value="purity">Values-driven (Purity)</option>
-                    <option value="pragmatism">Risk‑pragmatism (Conduct)</option>
-                  </select>
-                </label>
-                <label class="block">
-                  <span class="mb-1 block text-xs text-slate-400">Competition Pressure</span>
+                  <span class="mb-1 block text-xs text-slate-400">Pressure from competition</span>
                   <select id="thumb_competition" class="w-full rounded-md border border-slate-600/60 bg-slate-900/50 px-3 py-2 text-sm">
                     <option value="low">Low</option>
                     <option value="medium">Medium</option>
@@ -111,7 +121,7 @@
                   </select>
                 </label>
                 <label class="block">
-                  <span class="mb-1 block text-xs text-slate-400">Regulatory Constraints</span>
+                  <span class="mb-1 block text-xs text-slate-400">Regulatory constraints</span>
                   <select id="thumb_regulatory" class="w-full rounded-md border border-slate-600/60 bg-slate-900/50 px-3 py-2 text-sm">
                     <option value="low">Low</option>
                     <option value="medium">Medium</option>
@@ -197,7 +207,7 @@
             <h2 class="text-lg font-semibold text-white">2) Brief</h2>
             <div class="no-print flex flex-wrap gap-2">
               <button id="copyAll" class="rounded-md border border-slate-600/60 px-3 py-2 text-sm text-slate-200 hover:border-slate-400">Copy All</button>
-              <button id="downloadPlain" class="rounded-md bg-emerald-500 px-3 py-2 text-sm font-semibold text-white hover:bg-emerald-400">Download Markdown (Plain)</button>
+              <button id="downloadPlain" class="rounded-md bg-emerald-500 px-3 py-2 text-sm font-semibold text-white hover:bg-emerald-400">Download Markdown (English)</button>
               <button id="downloadTechnical" class="rounded-md bg-sky-500 px-3 py-2 text-sm font-semibold text-white hover:bg-sky-400">Download Markdown (Nerd)</button>
             </div>
           </div>
