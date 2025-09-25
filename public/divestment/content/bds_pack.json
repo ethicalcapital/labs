@@ -122,6 +122,12 @@
       "title": "Legal & Speech Landscape",
       "description": "Courts, statutes, and messaging to defuse antisemitism and legality pushback.",
       "path": "content/legal_speech_landscape.md"
+    },
+    {
+      "id": "about_ec",
+      "title": "About Ethical Capital Labs",
+      "description": "Clarifies publisher responsibility, fiduciary posture, and follow-up channels for Dryvestment outputs.",
+      "path": "content/about_ethical_capital.md"
     }
   ],
   "key_points": [

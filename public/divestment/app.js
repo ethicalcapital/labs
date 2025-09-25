@@ -343,6 +343,12 @@
     return div.innerHTML;
   }
 
+  function markdownCell(text) {
+    return String(text ?? "")
+      .replace(/\|/g, "\\|")
+      .replace(/\n/g, " ");
+  }
+
   function renderSources(sources, furtherReading) {
     sourcesList.innerHTML = "";
     const items = [];
@@ -540,18 +546,12 @@
     };
 
     const knowledgeLevel = context.knowledge;
-    const guideIntroPlain =
-      "Use this identity map to match responsibilities before proposing action.";
-    const guideIntroTechnical =
-      "Identity context determines constraints, tracking-error limits, and reporting expectations.";
     const headings =
       knowledgeLevel === "plain"
         ? {
             opening: "Opening",
             key: "Key Points to Share",
             counters: "Likely Pushback & Responses",
-            guide: "Investor Identity Map",
-            guideIntro: guideIntroPlain,
             approach: "Implementation Snapshot",
             policy: "Policy Alignment",
             screening: "Screening Builds Intelligence",
@@ -560,8 +560,6 @@
             opening: "Opening",
             key: "Key Points",
             counters: "Counterarguments & Responses",
-            guide: "Investor Identity Guide",
-            guideIntro: guideIntroTechnical,
             approach: "Recommended Approach",
             policy: "Policy Alignment",
             screening:
@@ -744,13 +742,6 @@
         : "";
     const showGovernmentSnippet = Boolean(governmentSnippet);
 
-    const entityLabel = ENTITY_LABELS[context.entity] || context.entity;
-    const guideBullets = [
-      `Inputs: Capital, People, Processes, Information — scaled to ${entityLabel}.`,
-      "Enablers: Governance (decision rights, criteria), Culture (transparency, discipline), Technology (optimization, reporting).",
-      `Thumbprint: Mission/Ethics ${MISSION_LABELS[thumb.mission] || thumb.mission}, Competition ${PRESSURE_LABELS[thumb.competition] || thumb.competition}, Regulatory ${PRESSURE_LABELS[thumb.regulatory] || thumb.regulatory}.`,
-    ];
-
     const formatMultiline = (value) => sanitize(value).replace(/\n/g, "<br>");
 
     let html = "";
@@ -782,26 +773,30 @@
     html += "</ol>";
 
     html += `<h3>${sanitize(headings.counters)}</h3>`;
-    for (const c of counters) {
-      html += `<p><span class="text-subtle">Claim:</span> <em>${sanitize(c.claim)}</em><br><span class="text-subtle">Response:</span> ${sanitize(c.response)}`;
-      if (c.citations && c.citations.length) {
-        const cs = c.citations
-          .map(
-            (ci) =>
-              `<a class="brief-link" href="${ci.url}" target="_blank" rel="noopener">${sanitize(ci.label)}</a>`,
-          )
-          .join(" · ");
-        html += `<div class="mt-1 text-xs text-subtle">Sources: ${cs}</div>`;
+    if (counters.length) {
+      html +=
+        '<div class="brief-table-wrapper"><table class="brief-table"><thead><tr><th>Claim</th><th>Response</th><th>Sources</th></tr></thead><tbody>';
+      for (const c of counters) {
+        const claimCell = sanitize(c.claim);
+        const responseCell = sanitize(c.response);
+        let sourcesCell = "—";
+        if (c.citations && c.citations.length) {
+          const citationLinks = [];
+          for (const ci of c.citations) {
+            const label = sanitize(ci.label);
+            citationLinks.push(
+              `<a class="brief-link" href="${ci.url}" target="_blank" rel="noopener">${label}</a>`,
+            );
+          }
+          sourcesCell = citationLinks.join("<br>");
+        }
+        html += `<tr><td>${claimCell}</td><td>${responseCell}</td><td>${sourcesCell}</td></tr>`;
       }
-      html += `</p>`;
+      html += "</tbody></table></div>";
+    } else {
+      html +=
+        '<p class="text-muted">No specific objections logged for this audience.</p>';
     }
-
-    html += `<h3>${sanitize(headings.guide)}</h3>`;
-    html += `<p class="text-muted">${sanitize(headings.guideIntro)}</p>`;
-    html +=
-      "<ul>" +
-      guideBullets.map((b) => `<li>${sanitize(b)}</li>`).join("") +
-      "</ul>";
 
     if (showPolicy) {
       html += `<h3>${sanitize(headings.policy)}</h3>`;
@@ -934,10 +929,6 @@
           ? c.citations.map((ci) => ({ label: ci.label, url: ci.url }))
           : [],
       })),
-      guideIntro: headings.guideIntro,
-      guideIntroPlain,
-      guideIntroTechnical,
-      guideBullets,
       approach: {
         ask: approach.ask || "",
         implementation: approach.implementation || "",
@@ -1044,31 +1035,26 @@
       `## ${mode === "technical" ? "Counterarguments & Responses" : "Likely Pushback & Responses"}`,
     );
     lines.push("");
-    for (const c of result.counters) {
-      lines.push(`- **Claim:** ${c.claim}`);
-      lines.push(`  - **Response:** ${c.response}`);
-      if (c.citations && c.citations.length) {
-        lines.push(
-          `  - Sources: ${c.citations.map((ci) => `${ci.label} (${ci.url})`).join("; ")}`,
-        );
+    if (result.counters && result.counters.length) {
+      lines.push("| Claim | Response | Sources |");
+      lines.push("| --- | --- | --- |");
+      for (const c of result.counters) {
+        const claimCell = markdownCell(c.claim);
+        const responseCell = markdownCell(c.response);
+        let sourcesCell = "—";
+        if (c.citations && c.citations.length) {
+          const citationList = c.citations
+            .map((ci) => `${ci.label} (${ci.url})`)
+            .join("<br>");
+          sourcesCell = markdownCell(citationList);
+        }
+        lines.push(`| ${claimCell} | ${responseCell} | ${sourcesCell} |`);
       }
+      lines.push("");
+    } else {
+      lines.push("_No specific objections recorded._");
+      lines.push("");
     }
-    lines.push("");
-
-    lines.push(
-      `## ${mode === "technical" ? "Investor Identity Guide" : "Investor Identity Map"}`,
-    );
-    lines.push("");
-    lines.push(
-      mode === "technical"
-        ? result.guideIntroTechnical
-        : result.guideIntroPlain,
-    );
-    lines.push("");
-    for (const bullet of result.guideBullets) {
-      lines.push(`- ${bullet}`);
-    }
-    lines.push("");
 
     lines.push(
       `## ${mode === "technical" ? "Recommended Approach" : "Implementation Snapshot"}`,
@@ -1708,6 +1694,34 @@ Without these elements, studies should be recognized as advocacy documents rathe
 - Attach to counters for antisemitism/legality objections.
 - Reference guardrails in Next Steps for boards and treasurers.
 - Pair with fiduciary/performance sheets for a complete trust package.
+      `.trim(),
+    },
+    {
+      id: "about_ec",
+      title: "About Ethical Capital Labs",
+      description:
+        "Clarifies publisher responsibility, fiduciary posture, and follow-up channels for Dryvestment outputs.",
+      path: "content/about_ethical_capital.md",
+      markdown: `
+# About Ethical Capital Labs
+
+## About the Author
+
+- Created and narrated by Sloane Ortel, Managing Director at Ethical Capital.
+- Sloane is an active portfolio manager and the primary author of our research on divestment, fiduciary practice, and screening discipline.
+- She accepts intellectual responsibility for the framing and evidence contained in Dryvestment briefs.
+
+## About Ethical Capital
+
+- Invest Vegan LLC DBA Ethical Capital is a fiduciary investment adviser registered in Utah.
+- We specialize in high-active-share, conduct-based portfolios and publish our screening process at https://ethicic.com/content/process/screening-policy.
+- Contact: hello@ethicic.com · +1 (347) 625 9000 · Newsletter: https://buttondown.com/ethicic · Disclosures: https://ethicic.com/content/legal/.
+
+## About Dryvestment
+
+- Dryvestment is an Ethical Capital Labs experiment that helps activists translate values-aligned demands into fiduciary-ready language.
+- It produces educational briefs only—no individual investment advice—and cites public evidence for every claim.
+- Outputs are versioned and updated as our research evolves; feedback and corrections are welcome.
       `.trim(),
     },
   ],

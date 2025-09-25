@@ -111,6 +111,21 @@
 
           <form id="builder" class="builder-form">
             <label class="builder-field">
+              <span class="builder-field__label">Entity type</span>
+              <select id="invIdentity" class="builder-input select select-bordered w-full">
+                <option value="individual">Individual</option>
+                <option value="swf">Sovereign Wealth Fund</option>
+                <option value="public_pension">Public Pension Plan</option>
+                <option value="corporate_pension">Corporate Pension Plan</option>
+                <option value="endowment">Endowment</option>
+                <option value="foundation">Foundation</option>
+                <option value="insurance">Insurance General Account</option>
+                <option value="central_bank">Central Bank / Official Institution</option>
+                <option value="government">Government (City/County/State bond portfolios)</option>
+              </select>
+            </label>
+
+            <label class="builder-field">
               <span class="builder-field__label">Venue</span>
               <select id="venue" class="builder-input select select-bordered w-full">
                 <option value="one_on_one">1:1 Conversation</option>
@@ -131,21 +146,6 @@
                 <option value="treasurer">Treasurer / Finance Director</option>
                 <option value="trustee">Board / Trustee</option>
                 <option value="council_member">Council / Committee Member</option>
-              </select>
-            </label>
-
-            <label class="builder-field">
-              <span class="builder-field__label">Entity type</span>
-              <select id="invIdentity" class="builder-input select select-bordered w-full">
-                <option value="individual">Individual</option>
-                <option value="swf">Sovereign Wealth Fund</option>
-                <option value="public_pension">Public Pension Plan</option>
-                <option value="corporate_pension">Corporate Pension Plan</option>
-                <option value="endowment">Endowment</option>
-                <option value="foundation">Foundation</option>
-                <option value="insurance">Insurance General Account</option>
-                <option value="central_bank">Central Bank / Official Institution</option>
-                <option value="government">Government (City/County/State bond portfolios)</option>
               </select>
             </label>
 
@@ -224,6 +224,18 @@
                 <option value="testimony">Public Testimony</option>
               </select>
             </label>
+
+            <fieldset
+              id="onePagerFieldset"
+              class="builder-fieldset builder-span-all hidden"
+            >
+              <legend>Optional one-pagers</legend>
+              <p class="builder-hint">
+                Attach ready-to-share one-pagers to the packet. They will be
+                appended to downloads and listed below the brief.
+              </p>
+              <div id="onePagerOptions" class="builder-pill-grid"></div>
+            </fieldset>
 
             <div class="builder-actions builder-span-all">
               <button

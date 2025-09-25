@@ -282,6 +282,40 @@ body {
   font-weight: 600;
 }
 
+.brief-table-wrapper {
+  overflow-x: auto;
+  margin-bottom: 1.5rem;
+}
+
+.brief-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+.brief-table th,
+.brief-table td {
+  border: 1px solid var(--border-gray);
+  padding: 0.6rem 0.75rem;
+  vertical-align: top;
+}
+
+.brief-table th {
+  background: rgba(88, 28, 135, 0.08);
+  color: var(--text-dark);
+  font-weight: 600;
+  text-align: left;
+}
+
+.brief-table td {
+  color: var(--text-medium);
+}
+
+.brief-table td a {
+  color: var(--ecic-purple);
+  font-weight: 600;
+}
+
 .one-pager-card {
   border: 1px solid var(--border-gray);
   border-radius: 16px;
