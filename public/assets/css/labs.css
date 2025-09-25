@@ -339,6 +339,10 @@ p {
   gap: 1rem;
 }
 
+.labs-card__content > .status-badge {
+  justify-self: flex-start;
+}
+
 .labs-card__title {
   font-family: var(--font-heading);
   font-size: 1.25rem;
@@ -396,6 +400,13 @@ p {
   z-index: 1;
 }
 
+.home-hero__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
 .home-hero__content {
   display: grid;
   gap: 1.5rem;
@@ -424,6 +435,30 @@ p {
   margin: 0;
   font-size: 0.92rem;
   color: rgba(17, 24, 39, 0.72);
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.32rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-weight: 700;
+  border: 1px solid transparent;
+}
+
+.status-badge--beta {
+  background: rgba(88, 28, 135, 0.16);
+  border-color: rgba(88, 28, 135, 0.32);
+  color: var(--ecic-purple);
+}
+
+.status-badge--alpha {
+  background: rgba(20, 184, 166, 0.18);
+  border-color: rgba(20, 184, 166, 0.32);
+  color: var(--ecic-teal);
 }
 
 .home-hero .labs-button--solid {
