@@ -1,7 +1,7 @@
 Divestment Brief Builder — Identity‑First
 
 Purpose
-- Build a concise, printable brief that translates activist goals to decision‑makers using an investor identity model. Client‑side only, educational.
+- Build a concise, printable brief that translates activist goals to decision‑makers using an investor identity model — with language tuned for constructive, role‑aware dialogue. Client‑side only, educational.
 
 Use
 - Open this folder as /public/divestment in your site.
@@ -22,4 +22,3 @@ Identity & Thumbprint
 Notes
 - Educational only; not investment advice. No data collection.
 - Deterministic selection of points to keep outputs stable.
-
