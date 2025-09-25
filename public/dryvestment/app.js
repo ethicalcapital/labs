@@ -94,8 +94,12 @@
   const state = { data: null, last: null, onePagerCache: {} };
   let onePagerInitialized = false;
 
-  const missionValue = () =>
-    thumbMission.value === "0" ? "purity" : "pragmatism";
+  const missionValue = () => {
+    const value = thumbMission?.value ?? "1";
+    if (value === "0") return "purity";
+    if (value === "1") return "balanced";
+    return "pragmatism";
+  };
 
   const VENUE_LABELS = {
     one_on_one: "1:1 conversation",
@@ -134,6 +138,7 @@
 
   const MISSION_LABELS = {
     purity: "Values-driven (Purity)",
+    balanced: "Balanced mandate",
     pragmatism: "Risk-pragmatism (Conduct)",
   };
 
@@ -176,7 +181,7 @@
   };
 
   const DEFAULT_THUMB = {
-    mission: "pragmatism",
+    mission: "balanced",
     competition: "low",
     regulatory: "medium",
   };
@@ -194,11 +199,11 @@
 
   async function loadData() {
     if (state.data) return state.data;
-    // Try relative path first (works when builder is served at /divestment/)
+    // Try relative path first (works when builder is served at /dryvestment/)
     const tryPaths = [
       "./content/bds_pack.json",
-      "/divestment/content/bds_pack.json",
-      "/public/divestment/content/bds_pack.json",
+      "/dryvestment/content/bds_pack.json",
+      "/public/dryvestment/content/bds_pack.json",
     ];
     for (const p of tryPaths) {
       try {
@@ -301,8 +306,8 @@
     const clean = String(relativePath).replace(/^\.?\//, "");
     const options = new Set();
     options.add(`./${clean}`);
-    options.add(`/divestment/${clean}`);
-    options.add(`/public/divestment/${clean}`);
+    options.add(`/dryvestment/${clean}`);
+    options.add(`/public/dryvestment/${clean}`);
     return Array.from(options);
   }
 
@@ -572,7 +577,8 @@
   }
 
   function setThumbInputs(config) {
-    thumbMission.value = config.mission === "purity" ? "0" : "1";
+    const missionMap = { purity: "0", balanced: "1", pragmatism: "2" };
+    thumbMission.value = missionMap[config.mission] ?? "1";
     thumbCompetition.value = config.competition;
     thumbRegulatory.value = config.regulatory;
   }
@@ -664,7 +670,7 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "divestment-feedback.json";
+      a.download = "dryvestment-feedback.json";
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -687,11 +693,16 @@
       res.screen_secondary = conductDesc;
       res.framing =
         "Lead with moral clarity while maintaining professional risk controls and transparency.";
-    } else {
+    } else if (thumb.mission === "pragmatism") {
       res.screen_primary = conductDesc;
       res.screen_secondary = productDesc;
       res.framing =
         "Lead with risk management and benchmark alignment while recognizing categorical harms where mission and regulation allow.";
+    } else {
+      res.screen_primary = productDesc;
+      res.screen_secondary = conductDesc;
+      res.framing =
+        "Balance values and fiduciary duties—acknowledge categorical harms while demonstrating disciplined implementation.";
     }
 
     // Competition pressure implies transparency/innovation emphasis
@@ -1468,7 +1479,7 @@
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "divestment-brief.md";
+    a.download = "dryvestment-brief.md";
     document.body.appendChild(a);
     a.click();
     a.remove();

@@ -5,8 +5,8 @@ import { fileURLToPath } from 'node:url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, '..');
-const CONTENT_PATH = path.join(ROOT, 'public', 'divestment', 'content', 'bds_pack.json');
-const OUTPUT_DIR = path.join(ROOT, 'diagnostics', 'divestment');
+const CONTENT_PATH = path.join(ROOT, 'public', 'dryvestment', 'content', 'bds_pack.json');
+const OUTPUT_DIR = path.join(ROOT, 'diagnostics', 'dryvestment');
 
 const data = JSON.parse(fs.readFileSync(CONTENT_PATH, 'utf8'));
 
@@ -77,6 +77,7 @@ const KNOWLEDGE_LABELS = {
 
 const MISSION_LABELS = {
   purity: 'Values-driven (Purity)',
+  balanced: 'Balanced mandate',
   pragmatism: 'Risk-pragmatism (Conduct)',
 };
 
@@ -99,10 +100,14 @@ function deriveApproach(baseGuide, thumb) {
     res.screen_primary = productDesc;
     res.screen_secondary = conductDesc;
     res.framing = 'Lead with moral clarity while maintaining professional risk controls and transparency.';
-  } else {
+  } else if (thumb.mission === 'pragmatism') {
     res.screen_primary = conductDesc;
     res.screen_secondary = productDesc;
     res.framing = 'Lead with risk management and benchmark alignment while recognizing categorical harms where mission and regulation allow.';
+  } else {
+    res.screen_primary = productDesc;
+    res.screen_secondary = conductDesc;
+    res.framing = 'Balance values and fiduciary duties—acknowledge categorical harms while demonstrating disciplined implementation.';
   }
   if (thumb.competition === 'high') {
     res.reporting = (res.reporting || '') + '\n• Enhanced transparency and stakeholder reporting cadence';
@@ -513,7 +518,7 @@ function allowedTargets(entity) {
 
 function presetToThumb(preset) {
   if (!preset || preset === 'custom') {
-    return { mission: 'pragmatism', competition: 'medium', regulatory: 'medium', preset: 'custom' };
+    return { mission: 'balanced', competition: 'medium', regulatory: 'medium', preset: 'custom' };
   }
   const config = PRESET_CONFIGS[preset];
   if (!config) return presetToThumb('custom');

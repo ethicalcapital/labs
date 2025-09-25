@@ -15,7 +15,7 @@ Overview
 Workflow
 --------
 
-1. Open `/divestment/` (legacy `/public/divestment/` redirects).
+1. Open `/dryvestment/` (legacy `/divestment/` redirects).
 2. Select the briefing context: venue, decision maker, investor identity, and knowledge level.
 3. Tune the thumbprint sliders (mission, competition, regulatory) or pick a preset.
 4. Add local names, objectives, and optional fields, then click `Build Brief`.
@@ -43,7 +43,7 @@ Content Architecture
 
 - `content/bds_pack.json` houses the narrative components (openers, guides, counters, resolutions, next steps, sources).
 - `app.js` loads the content pack, applies deterministic selection logic, and assembles the brief.
-- `divestment.css` layers Dryvestment-specific styling on top of shared Labs tokens in `public/assets/css/labs.css`.
+- `dryvestment.css` layers Dryvestment-specific styling on top of shared Labs tokens in `public/assets/css/labs.css`.
 
 Design Principles
 -----------------

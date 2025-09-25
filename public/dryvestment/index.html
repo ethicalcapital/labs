@@ -23,7 +23,7 @@
     />
     <link rel="stylesheet" href="/assets/css/labs.css" />
     <link rel="stylesheet" href="/assets/css/tailwind.css" />
-    <link rel="stylesheet" href="./divestment.css" />
+    <link rel="stylesheet" href="./dryvestment.css" />
   </head>
   <body>
     <div id="disclaimerOverlay" class="disclaimer-overlay" aria-hidden="true">
@@ -66,7 +66,7 @@
         </a>
         <div class="labs-nav__links">
           <a class="labs-nav__link" href="/simulator/">Portfolio Simulator</a>
-          <a class="labs-nav__link" href="/divestment/">Dryvestment</a>
+          <a class="labs-nav__link" href="/dryvestment/">Dryvestment</a>
           <a
             class="labs-nav__link"
             href="https://github.com/ethicalcapital/labs"
@@ -88,39 +88,74 @@
     </header>
 
     <main class="labs-main">
-      <section class="labs-section" aria-labelledby="dryvestment-hero">
-        <div class="labs-panel labs-panel--intro">
-          <p class="labs-eyebrow labs-eyebrow--light">
-            Dryvestment brief builder
-          </p>
-          <h2 id="dryvestment-hero">
-            Dryvestment: Where values and valuations meet
-          </h2>
+      <section class="labs-section">
+        <div class="labs-panel consent-panel no-print" id="consent-panel">
+          <h2>Consent &amp; concerns</h2>
           <p>
-            Dryvestment translates activist conviction into institutional
-            language and recasts moral imperatives as material risk. This
-            experimental toolkit helps activists frame their case in language a
-            specific decision maker will respect. Configure venue, investor
-            identity, and thumbprint to surface aligned asks while emphasizing
-            that screening compounds knowledge about fragile business models.
-            Educational prototype only&mdash;never investment advice.
+            Share anonymous usage details to help improve the tool. Please avoid personal or identifying
+            information—focus on the context and what you need next.
           </p>
-          <div class="labs-button-row">
-            <a class="labs-button labs-button--solid" href="#builder-panel"
-              >Start building</a
-            >
-            <a
-              class="labs-button labs-button--ghost"
-              href="https://github.com/ethicalcapital/labs/discussions/new?category=ideas"
-              target="_blank"
-              rel="noopener noreferrer"
-              >Share feedback</a
-            >
+          <label class="feedback-consent">
+            <input id="fb_consent" type="checkbox" class="checkbox checkbox-primary" />
+            <span>
+              I consent to send anonymized usage details about how I’m using Dryvestment so the team can make
+              it better.
+            </span>
+          </label>
+          <div class="builder-feedback-grid">
+            <label class="builder-field">
+              <span class="builder-field__label">Use case</span>
+              <select
+                id="fb_usecase"
+                class="builder-input select select-bordered w-full"
+              >
+                <option value="one_on_one">1:1 Conversation</option>
+                <option value="small_group">Small Group Meeting</option>
+                <option value="committee_hearing">Committee Hearing</option>
+                <option value="full_board_meeting">Full Board/Council Meeting</option>
+                <option value="public_testimony">Public Testimony / Town Hall</option>
+                <option value="written_memo">Written Memo / Email</option>
+                <option value="social">Social / Friends &amp; Family</option>
+                <option value="other">Other</option>
+              </select>
+            </label>
+            <label class="builder-field">
+              <span class="builder-field__label">Outcome (optional)</span>
+              <select
+                id="fb_outcome"
+                class="builder-input select select-bordered w-full"
+              >
+                <option value="na">N/A</option>
+                <option value="constructive">Constructive</option>
+                <option value="neutral">Neutral</option>
+                <option value="pushback">Pushback</option>
+              </select>
+            </label>
+            <label class="builder-field builder-span-all">
+              <span class="builder-field__label">Notes (no personal info)</span>
+              <textarea
+                id="fb_notes"
+                rows="3"
+                placeholder="What worked? What should be improved?"
+                class="builder-input textarea textarea-bordered w-full"
+              ></textarea>
+            </label>
+          </div>
+          <div class="builder-actions">
+            <button id="fb_send" type="button" class="builder-button btn btn-primary text-white">
+              Send feedback
+            </button>
+            <span id="fb_status" class="builder-feedback-status"></span>
           </div>
         </div>
 
         <div class="builder-layout">
           <div class="labs-panel builder-panel" id="builder-panel">
+            <header class="builder-header">
+              <p class="labs-eyebrow">Dryvestment brief builder</p>
+              <h1>Configure context before you generate a brief</h1>
+              <p>Set the audience, venue, and identity inputs so the brief can translate activist goals into language your decision maker respects.</p>
+            </header>
             <form id="builder" class="builder-form">
               <fieldset
                 class="builder-field builder-choice-field builder-span-all"
@@ -141,43 +176,16 @@
                   >
                     <i class="fa-solid fa-dove"></i><span>BDS</span>
                   </button>
-                  <button
-                    type="button"
-                    class="choice-btn choice-btn--muted"
-                    data-choice="weapons"
-                    aria-pressed="false"
-                    aria-disabled="true"
-                    disabled
-                  >
-                    <i class="fa-solid fa-shield-halved"></i
-                    ><span>Weapons (coming soon)</span>
-                  </button>
-                  <button
-                    type="button"
-                    class="choice-btn choice-btn--muted"
-                    data-choice="fossil_fuels"
-                    aria-pressed="false"
-                    aria-disabled="true"
-                    disabled
-                  >
-                    <i class="fa-solid fa-fire"></i
-                    ><span>Fossil fuels (coming soon)</span>
-                  </button>
-                  <div
-                    class="choice-btn choice-btn--input choice-btn--muted"
-                  >
-                    <i class="fa-solid fa-circle-plus"></i>
-                    <label for="issueSuggestion">
-                      <span>Other issue (tell us what to add)</span>
-                      <input
-                        type="text"
-                        id="issueSuggestion"
-                        placeholder="e.g., Climate, Surveillance tech"
-                        class="builder-input input input-bordered"
-                      />
-                    </label>
-                  </div>
                 </div>
+                <label class="issue-suggestion" for="issueSuggestion">
+                  <span>Tell us what to add</span>
+                  <input
+                    type="text"
+                    id="issueSuggestion"
+                    placeholder="e.g., Climate, Surveillance tech"
+                    class="builder-input input input-bordered"
+                  />
+                </label>
               </fieldset>
               <div class="builder-field builder-choice-field">
                 <span class="builder-field__label">Entity type</span>
@@ -432,13 +440,16 @@
                           id="thumb_mission"
                           type="range"
                           min="0"
-                          max="1"
+                          max="2"
                           step="1"
                           value="1"
                           class="builder-slider range range-primary"
                         />
                         <span>Pragmatism</span>
                       </div>
+                      <p class="builder-field__hint">
+                        Middle position keeps mission and performance in balance.
+                      </p>
                     </div>
                     <label class="builder-field">
                       <span class="builder-field__label"
@@ -529,138 +540,8 @@
               </div>
             </form>
 
-            <div class="builder-subsection builder-span-all">
-              <h3>Consent & Concerns</h3>
-              <p>
-                Share anonymous usage details to help improve the tool. Please
-                do not include names or sensitive information.
-              </p>
-              <label class="feedback-consent">
-                <input id="fb_consent" type="checkbox" class="checkbox checkbox-primary" />
-                <span>
-                  I consent to send anonymized usage details about how I’m using Dryvestment so the
-                  team can make it better.
-                </span>
-              </label>
-
-              <fieldset class="builder-field builder-choice-field">
-                <legend>Issue focus</legend>
-                <div
-                  class="builder-choice-group"
-                  data-choice-group="issue-feedback"
-                  role="group"
-                  aria-label="Issue focus"
-                >
-                  <input type="hidden" id="issueFeedback" value="bds" />
-                  <button
-                    type="button"
-                    class="choice-btn is-active"
-                    data-choice="bds"
-                    aria-pressed="true"
-                  >
-                    <i class="fa-solid fa-dove"></i><span>BDS</span>
-                  </button>
-                  <button
-                    type="button"
-                    class="choice-btn choice-btn--muted"
-                    data-choice="weapons"
-                    aria-pressed="false"
-                    aria-disabled="true"
-                    disabled
-                  >
-                    <i class="fa-solid fa-shield-halved"></i
-                    ><span>Weapons (coming soon)</span>
-                  </button>
-                  <button
-                    type="button"
-                    class="choice-btn choice-btn--muted"
-                    data-choice="fossil_fuels"
-                    aria-pressed="false"
-                    aria-disabled="true"
-                    disabled
-                  >
-                    <i class="fa-solid fa-fire"></i
-                    ><span>Fossil fuels (coming soon)</span>
-                  </button>
-                  <div
-                    class="choice-btn choice-btn--input choice-btn--muted"
-                  >
-                    <i class="fa-solid fa-circle-plus"></i>
-                    <label for="issueSuggestionFeedback">
-                      <span>Other issue (tell us what to add)</span>
-                      <input
-                        type="text"
-                        id="issueSuggestionFeedback"
-                        placeholder="e.g., Climate, Surveillance tech"
-                        class="builder-input input input-bordered"
-                      />
-                    </label>
-                  </div>
-                </div>
-              </fieldset>
-
-              <div class="builder-feedback-grid">
-                <label class="builder-field">
-                  <span class="builder-field__label">Use case</span>
-                  <select
-                    id="fb_usecase"
-                    class="builder-input select select-bordered w-full"
-                  >
-                    <option value="one_on_one">1:1 Conversation</option>
-                    <option value="small_group">Small Group Meeting</option>
-                    <option value="committee_hearing">Committee Hearing</option>
-                    <option value="full_board_meeting">
-                      Full Board/Council Meeting
-                    </option>
-                    <option value="public_testimony">
-                      Public Testimony / Town Hall
-                    </option>
-                    <option value="written_memo">Written Memo / Email</option>
-                    <option value="social">Social / Friends & Family</option>
-                    <option value="other">Other</option>
-                  </select>
-                </label>
-                <label class="builder-field">
-                  <span class="builder-field__label">Outcome (optional)</span>
-                  <select
-                    id="fb_outcome"
-                    class="builder-input select select-bordered w-full"
-                  >
-                    <option value="na">N/A</option>
-                    <option value="constructive">Constructive</option>
-                    <option value="neutral">Neutral</option>
-                    <option value="pushback">Pushback</option>
-                  </select>
-                </label>
-                <label class="builder-field builder-span-all">
-                  <span class="builder-field__label"
-                    >Notes (no personal info)</span
-                  >
-                  <textarea
-                    id="fb_notes"
-                    rows="3"
-                    placeholder="What worked? What should be improved?"
-                    class="builder-input textarea textarea-bordered w-full"
-                  ></textarea>
-                </label>
-              </div>
-              <div class="builder-actions">
-                <button
-                  id="fb_send"
-                  type="button"
-                  class="builder-button btn btn-primary text-white"
-                >
-                  Send feedback
-                </button>
-                <span id="fb_status" class="builder-feedback-status"></span>
-              </div>
-            </div>
           </div>
-          <aside
-            class="labs-panel builder-support no-print"
-            aria-labelledby="builder-support-title"
-          >
-            <h3 id="builder-support-title">Need anything?</h3>
+          <div class="labs-panel builder-support-callout no-print">
             <div class="labs-callout" role="note">
               <p class="labs-callout__title">Educational Use Only</p>
               <p class="labs-callout__body">
@@ -673,6 +554,13 @@
                 pursuing any action.
               </p>
             </div>
+          </div>
+
+          <aside
+            class="labs-panel builder-support no-print"
+            aria-labelledby="builder-support-title"
+          >
+            <h3 id="builder-support-title">Need anything?</h3>
             <p class="builder-support__intro">
               Share context, bugs, or feature requests with the team in real time.
             </p>

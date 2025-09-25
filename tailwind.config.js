@@ -5,7 +5,7 @@ module.exports = {
   content: [
     "./PortfolioSimulator.jsx",
     "./public/**/*.html",
-    "./divestment/**/*.html",
+    "./public/dryvestment/**/*.html",
   ],
   theme: {
     extend: {

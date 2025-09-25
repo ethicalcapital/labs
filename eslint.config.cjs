@@ -12,7 +12,7 @@ module.exports = [
       "dist/**",
       "public/assets/**",
       "public/simulator/app.js",
-      "public/divestment/**",
+      "public/dryvestment/**",
       "diagnostics/**",
       "hooks/**/dist/**"
     ],

@@ -6,13 +6,13 @@ advisory.
 
 ## Active experiments
 
-- **Dryvestment** (`/divestment/`): *Dryvestment: Where values and valuations meet.* Builds printable, identity-first briefs that translate activist conviction into institutional language and recast moral imperatives as material risk.
+- **Dryvestment** (`/dryvestment/`): *Dryvestment: Where values and valuations meet.* Builds printable, identity-first briefs that translate activist conviction into institutional language and recast moral imperatives as material risk.
 - **Portfolio Time Travel** (`/simulator/`): Monte Carlo withdrawal simulator with accumulation/decumulation phases, tax-aware toggles, and deterministic scenario presets for reproducible exploration. Shoutout to [druce/swr](https://github.com/druce/swr) for inspiring the safe-withdrawal-rate framing.
 
 ## Repository layout
 
 - `public/` – static assets for Cloudflare Pages (landing page, experiments, shared CSS/JS)
-- `public/divestment/` – Dryvestment UI, content pack, and docs
+- `public/dryvestment/` – Dryvestment UI, content pack, and docs
 - `public/simulator/` – portfolio simulator UI and compiled script
 - `PortfolioSimulator.jsx` – source for the simulator; transpiled during build
 - `functions/` / `hooks/` / `public/assets/js/` – Cloudflare Pages Functions, KV helpers, and shared browser scripts
@@ -52,6 +52,6 @@ Cloudflare Pages expects the build command `npm run build` and publishes the con
 
 1. Keep content deterministic and document any new data capture. Do not introduce server dependencies or
    analytics without compliance review.
-2. Update accompanying docs (`public/divestment/README.md`, `public/divestment/PRD.md`, etc.) when experiments change copy or behavior.
+2. Update accompanying docs (`public/dryvestment/README.md`, `public/dryvestment/PRD.md`, etc.) when experiments change copy or behavior.
 3. Match Ethical Capital’s disclaimers and navigation so Labs feels seamless with the main site.
 4. Open a GitHub discussion for new experiment proposals or substantial architectural changes.
