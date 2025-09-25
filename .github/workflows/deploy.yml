@@ -24,11 +24,7 @@ jobs:
           node-version: '20'
 
       - name: Install Doppler CLI
-        run: |-
-          export DOPPLER_CLI_INSTALL_PATH="/usr/local/bin"
-          export DOPPLER_ALLOWCA_CERT="1"
-          export DOPPLER_ALLOW_SSL_ERRORS="1"
-          curl -Ls https://cli.doppler.com/install.sh | sh
+        run: sudo curl -Ls https://cli.doppler.com/install.sh | sudo DOPPLER_INSTALL_AIO=0 sh
 
       - name: Install dependencies
         run: npm ci
