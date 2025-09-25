@@ -457,6 +457,14 @@ p {
   line-height: 1.6;
 }
 
+.labs-footer__disclaimer {
+  color: rgba(243, 244, 246, 0.92);
+  font-size: 0.88rem;
+  max-width: 60ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .labs-footer__inner a {
   color: var(--footer-text);
 }
