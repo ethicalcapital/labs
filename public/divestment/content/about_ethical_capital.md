@@ -1,4 +1,4 @@
-# About Ethical Capital Labs
+# About Ethical Capital & Dryvestment
 
 ## About the Author
 
@@ -14,6 +14,6 @@
 
 ## About Dryvestment
 
-- Dryvestment is an Ethical Capital Labs experiment that helps activists translate values-aligned demands into fiduciary-ready language.
+- Dryvestment is Ethical Capital's Labs experiment that helps activists translate values-aligned demands into fiduciary-ready language.
 - It produces educational briefs only—no individual investment advice—and cites public evidence for every claim.
 - Outputs are versioned and updated as our research evolves; feedback and corrections are welcome.

@@ -349,11 +349,37 @@
       .replace(/\n/g, " ");
   }
 
-  function renderSources(sources, furtherReading) {
+  function renderSources(dynamicSources, fallbackSources, furtherReading) {
     sourcesList.innerHTML = "";
+
+    const seen = new Set();
     const items = [];
-    (sources || []).forEach((s) => items.push(s));
-    (furtherReading || []).forEach((s) => items.push(s));
+
+    const addSource = (source) => {
+      if (!source || !source.url) return;
+      const key = source.url.toLowerCase();
+      if (seen.has(key)) return;
+      seen.add(key);
+      items.push({ label: source.label || source.url, url: source.url });
+    };
+
+    (dynamicSources || []).forEach(addSource);
+
+    if (!items.length) {
+      (fallbackSources || []).forEach(addSource);
+    } else {
+      (fallbackSources || []).forEach(addSource);
+    }
+
+    (furtherReading || []).forEach(addSource);
+
+    if (!items.length) {
+      const li = document.createElement("li");
+      li.textContent = "No sources were captured for this configuration.";
+      sourcesList.appendChild(li);
+      return;
+    }
+
     for (const s of items) {
       const li = document.createElement("li");
       li.innerHTML = `${sanitize(s.label)} — <a class="brief-link" href="${s.url}" target="_blank" rel="noopener noreferrer">${s.url}</a>`;
@@ -618,6 +644,26 @@
       Math.min(7, combinedCounters.length),
     );
 
+    const dynamicSourceMap = new Map();
+    const addCitationList = (citations) => {
+      if (!Array.isArray(citations)) return;
+      for (const citation of citations) {
+        if (!citation || !citation.url) continue;
+        const key = citation.url.toLowerCase();
+        if (dynamicSourceMap.has(key)) continue;
+        dynamicSourceMap.set(key, {
+          label: citation.label || citation.url,
+          url: citation.url,
+        });
+      }
+    };
+
+    points.forEach((p) => addCitationList(p.citations));
+    counters.forEach((c) => addCitationList(c.citations));
+    screeningPoints.forEach((p) => addCitationList(p.citations));
+
+    const dynamicSources = Array.from(dynamicSourceMap.values());
+
     const baseGuide = data.identity_guides?.[context.entity] || {};
     const approach = deriveApproach(
       {
@@ -718,6 +764,24 @@
       sourceAudience = "fiduciary";
     }
     const sourceSet = data.source_sets?.[sourceAudience] || data.sources || [];
+
+    const fallbackSources = Array.isArray(sourceSet) ? sourceSet : [];
+    const sourcesForState = [];
+    const seenSourceUrls = new Set();
+    const addSourceForState = (src) => {
+      if (!src || !src.url) return;
+      const key = src.url.toLowerCase();
+      if (seenSourceUrls.has(key)) return;
+      seenSourceUrls.add(key);
+      sourcesForState.push({ label: src.label || src.url, url: src.url });
+    };
+
+    if (dynamicSources.length) {
+      dynamicSources.forEach(addSourceForState);
+      fallbackSources.forEach(addSourceForState);
+    } else {
+      fallbackSources.forEach(addSourceForState);
+    }
 
     const selectedOnePagerIds = getSelectedOnePagerIds();
     const attachments = [];
@@ -960,7 +1024,7 @@
       steps: steps.slice(),
       knowledgeLevel,
       headings,
-      sources: sourceSet,
+      sources: sourcesForState,
       furtherReading: Array.isArray(data.further_reading)
         ? data.further_reading
         : [],
@@ -973,7 +1037,7 @@
       })),
     };
 
-    renderSources(sourceSet, data.further_reading || []);
+    renderSources(sourcesForState, [], data.further_reading || []);
   }
 
   function buildMarkdown(mode) {
@@ -1211,7 +1275,7 @@
     lines.push("---");
     lines.push("");
     lines.push(
-      "_Prepared by Ethical Capital Labs. Educational toolkit only — not investment advice._",
+      "_Prepared by Invest Vegan LLC DBA Ethical Capital. Educational toolkit only — not investment advice._",
     );
     lines.push("");
 
@@ -1698,12 +1762,12 @@ Without these elements, studies should be recognized as advocacy documents rathe
     },
     {
       id: "about_ec",
-      title: "About Ethical Capital Labs",
+      title: "About Ethical Capital & Dryvestment",
       description:
         "Clarifies publisher responsibility, fiduciary posture, and follow-up channels for Dryvestment outputs.",
       path: "content/about_ethical_capital.md",
       markdown: `
-# About Ethical Capital Labs
+# About Ethical Capital & Dryvestment
 
 ## About the Author
 
@@ -1719,7 +1783,7 @@ Without these elements, studies should be recognized as advocacy documents rathe
 
 ## About Dryvestment
 
-- Dryvestment is an Ethical Capital Labs experiment that helps activists translate values-aligned demands into fiduciary-ready language.
+- Dryvestment is Ethical Capital's Labs experiment that helps activists translate values-aligned demands into fiduciary-ready language.
 - It produces educational briefs only—no individual investment advice—and cites public evidence for every claim.
 - Outputs are versioned and updated as our research evolves; feedback and corrections are welcome.
       `.trim(),

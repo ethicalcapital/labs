@@ -497,7 +497,7 @@ function buildMarkdown(result, mode) {
 
   lines.push('---');
   lines.push('');
-  lines.push('_Prepared by Ethical Capital Labs. Educational toolkit only — not investment advice._');
+  lines.push('_Prepared by Invest Vegan LLC DBA Ethical Capital. Educational toolkit only — not investment advice._');
   lines.push('');
 
   return lines.join('\n');
