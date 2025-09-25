@@ -121,437 +121,446 @@
 
         <div class="builder-layout">
           <div class="labs-panel builder-panel" id="builder-panel">
-          <div class="builder-panel__top">
-            <div class="builder-panel__header">
-              <h2 class="builder-panel__title">
-                1) Configure the briefing context
-              </h2>
-              <p class="builder-panel__description">
-                Select the setting, decision maker, and identity signals. Each
-                combination tunes language choices and documents which investor
-                constraints you are addressing.
-              </p>
-            </div>
-          </div>
-
-          <form id="builder" class="builder-form">
-            <div class="builder-field builder-choice-field">
-              <span class="builder-field__label">Entity type</span>
-              <div
-                class="builder-choice-group"
-                data-choice-group="entity"
-                role="group"
-                aria-label="Entity type"
-              >
-                <input type="hidden" id="invIdentity" value="individual" />
-                <button
-                  type="button"
-                  class="choice-btn is-active"
-                  data-choice="individual"
-                  aria-pressed="true"
-                >
-                  <i class="fa-solid fa-user"></i><span>Individual</span>
-                </button>
-                <button
-                  type="button"
-                  class="choice-btn"
-                  data-choice="public_pension"
-                  aria-pressed="false"
-                >
-                  <i class="fa-solid fa-people-group"></i
-                  ><span>Public pension</span>
-                </button>
-                <button
-                  type="button"
-                  class="choice-btn"
-                  data-choice="endowment"
-                  aria-pressed="false"
-                >
-                  <i class="fa-solid fa-graduation-cap"></i
-                  ><span>Endowment</span>
-                </button>
-                <button
-                  type="button"
-                  class="choice-btn"
-                  data-choice="foundation"
-                  aria-pressed="false"
-                >
-                  <i class="fa-solid fa-hand-holding-heart"></i
-                  ><span>Foundation</span>
-                </button>
-                <button
-                  type="button"
-                  class="choice-btn"
-                  data-choice="government"
-                  aria-pressed="false"
-                >
-                  <i class="fa-solid fa-city"></i><span>Government</span>
-                </button>
-                <button
-                  type="button"
-                  class="choice-btn"
-                  data-choice="swf"
-                  aria-pressed="false"
-                >
-                  <i class="fa-solid fa-globe"></i
-                  ><span>Sovereign wealth fund</span>
-                </button>
-                <button
-                  type="button"
-                  class="choice-btn"
-                  data-choice="corporate_pension"
-                  aria-pressed="false"
-                >
-                  <i class="fa-solid fa-briefcase"></i
-                  ><span>Corporate pension</span>
-                </button>
-                <button
-                  type="button"
-                  class="choice-btn"
-                  data-choice="insurance"
-                  aria-pressed="false"
-                >
-                  <i class="fa-solid fa-shield-heart"></i><span>Insurance</span>
-                </button>
-                <button
-                  type="button"
-                  class="choice-btn"
-                  data-choice="central_bank"
-                  aria-pressed="false"
-                >
-                  <i class="fa-solid fa-landmark"></i><span>Central bank</span>
-                </button>
+            <div class="builder-panel__top">
+              <div class="builder-panel__header">
+                <h2 class="builder-panel__title">
+                  1) Configure the briefing context
+                </h2>
+                <p class="builder-panel__description">
+                  Select the setting, decision maker, and identity signals. Each
+                  combination tunes language choices and documents which
+                  investor constraints you are addressing.
+                </p>
               </div>
             </div>
 
-            <div class="builder-field builder-choice-field">
-              <span class="builder-field__label">Venue</span>
-              <div
-                class="builder-choice-group"
-                data-choice-group="venue"
-                role="group"
-                aria-label="Venue"
-              >
-                <input type="hidden" id="venue" value="one_on_one" />
-                <button
-                  type="button"
-                  class="choice-btn is-active"
-                  data-choice="one_on_one"
-                  aria-pressed="true"
+            <form id="builder" class="builder-form">
+              <div class="builder-field builder-choice-field">
+                <span class="builder-field__label">Entity type</span>
+                <div
+                  class="builder-choice-group"
+                  data-choice-group="entity"
+                  role="group"
+                  aria-label="Entity type"
                 >
-                  <i class="fa-solid fa-comments"></i
-                  ><span>1:1 conversation</span>
-                </button>
-                <button
-                  type="button"
-                  class="choice-btn"
-                  data-choice="small_group"
-                  aria-pressed="false"
-                >
-                  <i class="fa-solid fa-users"></i
-                  ><span>Small group meeting</span>
-                </button>
-                <button
-                  type="button"
-                  class="choice-btn"
-                  data-choice="committee_hearing"
-                  aria-pressed="false"
-                >
-                  <i class="fa-solid fa-person-chalkboard"></i
-                  ><span>Committee hearing</span>
-                </button>
-                <button
-                  type="button"
-                  class="choice-btn"
-                  data-choice="full_board_meeting"
-                  aria-pressed="false"
-                >
-                  <i class="fa-solid fa-chalkboard"></i
-                  ><span>Full board/council</span>
-                </button>
-                <button
-                  type="button"
-                  class="choice-btn"
-                  data-choice="public_testimony"
-                  aria-pressed="false"
-                >
-                  <i class="fa-solid fa-microphone"></i
-                  ><span>Public testimony</span>
-                </button>
-                <button
-                  type="button"
-                  class="choice-btn"
-                  data-choice="written_memo"
-                  aria-pressed="false"
-                >
-                  <i class="fa-solid fa-envelope"></i><span>Written memo</span>
-                </button>
-              </div>
-            </div>
-
-            <div class="builder-field builder-choice-field">
-              <span class="builder-field__label">Target decision maker</span>
-              <div
-                class="builder-choice-group"
-                data-choice-group="target"
-                role="group"
-                aria-label="Target decision maker"
-              >
-                <input type="hidden" id="target" value="family_friends" />
-                <button
-                  type="button"
-                  class="choice-btn is-active"
-                  data-choice="family_friends"
-                  aria-pressed="true"
-                >
-                  <i class="fa-solid fa-house-user"></i
-                  ><span>Family / friends</span>
-                </button>
-                <button
-                  type="button"
-                  class="choice-btn"
-                  data-choice="cio"
-                  aria-pressed="false"
-                >
-                  <i class="fa-solid fa-user-tie"></i
-                  ><span>CIO / investment officer</span>
-                </button>
-                <button
-                  type="button"
-                  class="choice-btn"
-                  data-choice="consultant"
-                  aria-pressed="false"
-                >
-                  <i class="fa-solid fa-user-gear"></i
-                  ><span>Investment consultant</span>
-                </button>
-                <button
-                  type="button"
-                  class="choice-btn"
-                  data-choice="treasurer"
-                  aria-pressed="false"
-                >
-                  <i class="fa-solid fa-calculator"></i
-                  ><span>Treasurer / finance</span>
-                </button>
-                <button
-                  type="button"
-                  class="choice-btn"
-                  data-choice="trustee"
-                  aria-pressed="false"
-                >
-                  <i class="fa-solid fa-scale-balanced"></i
-                  ><span>Trustee / board</span>
-                </button>
-                <button
-                  type="button"
-                  class="choice-btn"
-                  data-choice="council_member"
-                  aria-pressed="false"
-                >
-                  <i class="fa-solid fa-building-columns"></i
-                  ><span>Council / committee</span>
-                </button>
-              </div>
-            </div>
-
-            <label class="builder-field">
-              <span class="builder-field__label">Output detail</span>
-              <select id="knowledge" class="builder-input select select-bordered w-full">
-                <option value="plain">Plain English</option>
-                <option value="technical">Technical / Nerd</option>
-              </select>
-              <span class="builder-field__hint"
-                >Plain English keeps it conversational; Technical adds policy detail
-                and extra citations.</span
-              >
-            </label>
-
-            <fieldset class="builder-fieldset builder-span-all">
-              <legend>What matters to them?</legend>
-              <div class="builder-thumb-grid">
-                <input type="hidden" id="thumb_preset" value="custom" />
-                <div id="thumb_custom" class="builder-thumb-grid">
-                  <div>
-                    <span class="builder-field__label"
-                      >Mission / ethics emphasis</span
-                    >
-                    <div class="builder-slider-row">
-                      <span>Purity</span>
-                      <input
-                        id="thumb_mission"
-                        type="range"
-                        min="0"
-                        max="1"
-                        step="1"
-                        value="1"
-                        class="builder-slider range range-primary"
-                      />
-                      <span>Pragmatism</span>
-                    </div>
-                  </div>
-                  <label class="builder-field">
-                    <span class="builder-field__label"
-                      >Pressure from competition</span
-                    >
-                    <select
-                      id="thumb_competition"
-                      class="builder-input select select-bordered w-full"
-                    >
-                      <option value="low">Low</option>
-                      <option value="medium">Medium</option>
-                      <option value="high">High</option>
-                    </select>
-                  </label>
-                  <label class="builder-field">
-                    <span class="builder-field__label"
-                      >Regulatory constraints</span
-                    >
-                    <select
-                      id="thumb_regulatory"
-                      class="builder-input select select-bordered w-full"
-                    >
-                      <option value="low">Low</option>
-                      <option value="medium">Medium</option>
-                      <option value="high">High</option>
-                    </select>
-                  </label>
+                  <input type="hidden" id="invIdentity" value="individual" />
+                  <button
+                    type="button"
+                    class="choice-btn is-active"
+                    data-choice="individual"
+                    aria-pressed="true"
+                  >
+                    <i class="fa-solid fa-user"></i><span>Individual</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="choice-btn"
+                    data-choice="public_pension"
+                    aria-pressed="false"
+                  >
+                    <i class="fa-solid fa-people-group"></i
+                    ><span>Public pension</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="choice-btn"
+                    data-choice="endowment"
+                    aria-pressed="false"
+                  >
+                    <i class="fa-solid fa-graduation-cap"></i
+                    ><span>Endowment</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="choice-btn"
+                    data-choice="foundation"
+                    aria-pressed="false"
+                  >
+                    <i class="fa-solid fa-hand-holding-heart"></i
+                    ><span>Foundation</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="choice-btn"
+                    data-choice="government"
+                    aria-pressed="false"
+                  >
+                    <i class="fa-solid fa-city"></i><span>Government</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="choice-btn"
+                    data-choice="swf"
+                    aria-pressed="false"
+                  >
+                    <i class="fa-solid fa-globe"></i
+                    ><span>Sovereign wealth fund</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="choice-btn"
+                    data-choice="corporate_pension"
+                    aria-pressed="false"
+                  >
+                    <i class="fa-solid fa-briefcase"></i
+                    ><span>Corporate pension</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="choice-btn"
+                    data-choice="insurance"
+                    aria-pressed="false"
+                  >
+                    <i class="fa-solid fa-shield-heart"></i
+                    ><span>Insurance</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="choice-btn"
+                    data-choice="central_bank"
+                    aria-pressed="false"
+                  >
+                    <i class="fa-solid fa-landmark"></i
+                    ><span>Central bank</span>
+                  </button>
                 </div>
               </div>
-            </fieldset>
 
-            <label class="builder-field">
-              <span class="builder-field__label"
-                >Local name (appears in template)</span
-              >
-              <input
-                id="localName"
-                type="text"
-                placeholder="e.g., City of Riverton"
-                class="builder-input input input-bordered w-full"
-              />
-            </label>
+              <div class="builder-field builder-choice-field">
+                <span class="builder-field__label">Venue</span>
+                <div
+                  class="builder-choice-group"
+                  data-choice-group="venue"
+                  role="group"
+                  aria-label="Venue"
+                >
+                  <input type="hidden" id="venue" value="one_on_one" />
+                  <button
+                    type="button"
+                    class="choice-btn is-active"
+                    data-choice="one_on_one"
+                    aria-pressed="true"
+                  >
+                    <i class="fa-solid fa-comments"></i
+                    ><span>1:1 conversation</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="choice-btn"
+                    data-choice="small_group"
+                    aria-pressed="false"
+                  >
+                    <i class="fa-solid fa-users"></i
+                    ><span>Small group meeting</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="choice-btn"
+                    data-choice="committee_hearing"
+                    aria-pressed="false"
+                  >
+                    <i class="fa-solid fa-person-chalkboard"></i
+                    ><span>Committee hearing</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="choice-btn"
+                    data-choice="full_board_meeting"
+                    aria-pressed="false"
+                  >
+                    <i class="fa-solid fa-chalkboard"></i
+                    ><span>Full board/council</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="choice-btn"
+                    data-choice="public_testimony"
+                    aria-pressed="false"
+                  >
+                    <i class="fa-solid fa-microphone"></i
+                    ><span>Public testimony</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="choice-btn"
+                    data-choice="written_memo"
+                    aria-pressed="false"
+                  >
+                    <i class="fa-solid fa-envelope"></i
+                    ><span>Written memo</span>
+                  </button>
+                </div>
+              </div>
 
-            <label class="builder-field">
-              <span class="builder-field__label">Objective</span>
-              <select
-                id="objective"
-                class="builder-input select select-bordered w-full"
-              >
-                <option value="resolution_support">
-                  Support Divestment Resolution
-                </option>
-                <option value="fact_sheet">Neutral Fact Sheet</option>
-                <option value="testimony">Public Testimony</option>
-              </select>
-            </label>
+              <div class="builder-field builder-choice-field">
+                <span class="builder-field__label">Target decision maker</span>
+                <div
+                  class="builder-choice-group"
+                  data-choice-group="target"
+                  role="group"
+                  aria-label="Target decision maker"
+                >
+                  <input type="hidden" id="target" value="family_friends" />
+                  <button
+                    type="button"
+                    class="choice-btn is-active"
+                    data-choice="family_friends"
+                    aria-pressed="true"
+                  >
+                    <i class="fa-solid fa-house-user"></i
+                    ><span>Family / friends</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="choice-btn"
+                    data-choice="cio"
+                    aria-pressed="false"
+                  >
+                    <i class="fa-solid fa-user-tie"></i
+                    ><span>CIO / investment officer</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="choice-btn"
+                    data-choice="consultant"
+                    aria-pressed="false"
+                  >
+                    <i class="fa-solid fa-user-gear"></i
+                    ><span>Investment consultant</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="choice-btn"
+                    data-choice="treasurer"
+                    aria-pressed="false"
+                  >
+                    <i class="fa-solid fa-calculator"></i
+                    ><span>Treasurer / finance</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="choice-btn"
+                    data-choice="trustee"
+                    aria-pressed="false"
+                  >
+                    <i class="fa-solid fa-scale-balanced"></i
+                    ><span>Trustee / board</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="choice-btn"
+                    data-choice="council_member"
+                    aria-pressed="false"
+                  >
+                    <i class="fa-solid fa-building-columns"></i
+                    ><span>Council / committee</span>
+                  </button>
+                </div>
+              </div>
 
-            <fieldset
-              id="onePagerFieldset"
-              class="builder-fieldset builder-span-all hidden"
-            >
-              <legend>Optional one-pagers</legend>
-              <p class="builder-hint">
-                Attach ready-to-share one-pagers to the packet. They will be
-                appended to downloads and listed below the brief.
-              </p>
-              <div id="onePagerOptions" class="builder-pill-grid"></div>
-            </fieldset>
-
-            <div class="builder-actions builder-span-all">
-              <button
-                id="buildBtn"
-                type="button"
-                class="builder-button btn btn-primary text-white"
-              >
-                Build brief
-              </button>
-              <button
-                id="resetBtn"
-                type="button"
-                class="builder-button btn btn-outline"
-              >
-                Reset
-              </button>
-              <span class="builder-hint">
-                Tip: Press <span class="kbd">B</span> to rebuild.
-              </span>
-            </div>
-          </form>
-
-          <div class="builder-subsection builder-span-all">
-            <h3>Feedback (optional)</h3>
-            <p>
-              Share anonymous usage details to help improve the tool. Please do
-              not include names or sensitive information.
-            </p>
-            <div class="builder-feedback-grid">
               <label class="builder-field">
-                <span class="builder-field__label">Use case</span>
+                <span class="builder-field__label">Output detail</span>
                 <select
-                  id="fb_usecase"
+                  id="knowledge"
                   class="builder-input select select-bordered w-full"
                 >
-                  <option value="one_on_one">1:1 Conversation</option>
-                  <option value="small_group">Small Group Meeting</option>
-                  <option value="committee_hearing">Committee Hearing</option>
-                  <option value="full_board_meeting">
-                    Full Board/Council Meeting
-                  </option>
-                  <option value="public_testimony">
-                    Public Testimony / Town Hall
-                  </option>
-                  <option value="written_memo">Written Memo / Email</option>
-                  <option value="social">Social / Friends & Family</option>
-                  <option value="other">Other</option>
+                  <option value="plain">Plain English</option>
+                  <option value="technical">Technical / Nerd</option>
                 </select>
-              </label>
-              <label class="builder-field">
-                <span class="builder-field__label">Outcome (optional)</span>
-                <select
-                  id="fb_outcome"
-                  class="builder-input select select-bordered w-full"
+                <span class="builder-field__hint"
+                  >Plain English keeps it conversational; Technical adds policy
+                  detail and extra citations.</span
                 >
-                  <option value="na">N/A</option>
-                  <option value="constructive">Constructive</option>
-                  <option value="neutral">Neutral</option>
-                  <option value="pushback">Pushback</option>
-                </select>
               </label>
-              <label class="builder-field builder-span-all">
+
+              <fieldset class="builder-fieldset builder-span-all">
+                <legend>What matters to them?</legend>
+                <div class="builder-thumb-grid">
+                  <input type="hidden" id="thumb_preset" value="custom" />
+                  <div id="thumb_custom" class="builder-thumb-grid">
+                    <div>
+                      <span class="builder-field__label"
+                        >Mission / ethics emphasis</span
+                      >
+                      <div class="builder-slider-row">
+                        <span>Purity</span>
+                        <input
+                          id="thumb_mission"
+                          type="range"
+                          min="0"
+                          max="1"
+                          step="1"
+                          value="1"
+                          class="builder-slider range range-primary"
+                        />
+                        <span>Pragmatism</span>
+                      </div>
+                    </div>
+                    <label class="builder-field">
+                      <span class="builder-field__label"
+                        >Pressure from competition</span
+                      >
+                      <select
+                        id="thumb_competition"
+                        class="builder-input select select-bordered w-full"
+                      >
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                      </select>
+                    </label>
+                    <label class="builder-field">
+                      <span class="builder-field__label"
+                        >Regulatory constraints</span
+                      >
+                      <select
+                        id="thumb_regulatory"
+                        class="builder-input select select-bordered w-full"
+                      >
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                      </select>
+                    </label>
+                  </div>
+                </div>
+              </fieldset>
+
+              <label class="builder-field">
                 <span class="builder-field__label"
-                  >Notes (no personal info)</span
+                  >Local name (appears in template)</span
                 >
-                <textarea
-                  id="fb_notes"
-                  rows="3"
-                  placeholder="What worked? What should be improved?"
-                  class="builder-input textarea textarea-bordered w-full"
-                ></textarea>
-              </label>
-              <label class="flex items-center gap-2 text-sm text-muted">
                 <input
-                  id="fb_consent"
-                  type="checkbox"
-                  class="checkbox checkbox-primary"
+                  id="localName"
+                  type="text"
+                  placeholder="e.g., City of Riverton"
+                  class="builder-input input input-bordered w-full"
                 />
-                I consent to send anonymized usage details to improve this tool.
               </label>
-            </div>
-            <div class="builder-actions">
-              <button
-                id="fb_send"
-                type="button"
-                class="builder-button btn btn-primary text-white"
+
+              <label class="builder-field">
+                <span class="builder-field__label">Objective</span>
+                <select
+                  id="objective"
+                  class="builder-input select select-bordered w-full"
+                >
+                  <option value="resolution_support">
+                    Support Divestment Resolution
+                  </option>
+                  <option value="fact_sheet">Neutral Fact Sheet</option>
+                  <option value="testimony">Public Testimony</option>
+                </select>
+              </label>
+
+              <fieldset
+                id="onePagerFieldset"
+                class="builder-fieldset builder-span-all hidden"
               >
-                Send feedback
-              </button>
-              <span id="fb_status" class="builder-feedback-status"></span>
+                <legend>Optional one-pagers</legend>
+                <p class="builder-hint">
+                  Attach ready-to-share one-pagers to the packet. They will be
+                  appended to downloads and listed below the brief.
+                </p>
+                <div id="onePagerOptions" class="builder-pill-grid"></div>
+              </fieldset>
+
+              <div class="builder-actions builder-span-all">
+                <button
+                  id="buildBtn"
+                  type="button"
+                  class="builder-button btn btn-primary text-white"
+                >
+                  Build brief
+                </button>
+                <button
+                  id="resetBtn"
+                  type="button"
+                  class="builder-button btn btn-outline"
+                >
+                  Reset
+                </button>
+                <span class="builder-hint">
+                  Tip: Press <span class="kbd">B</span> to rebuild.
+                </span>
+              </div>
+            </form>
+
+            <div class="builder-subsection builder-span-all">
+              <h3>Feedback (optional)</h3>
+              <p>
+                Share anonymous usage details to help improve the tool. Please
+                do not include names or sensitive information.
+              </p>
+              <div class="builder-feedback-grid">
+                <label class="builder-field">
+                  <span class="builder-field__label">Use case</span>
+                  <select
+                    id="fb_usecase"
+                    class="builder-input select select-bordered w-full"
+                  >
+                    <option value="one_on_one">1:1 Conversation</option>
+                    <option value="small_group">Small Group Meeting</option>
+                    <option value="committee_hearing">Committee Hearing</option>
+                    <option value="full_board_meeting">
+                      Full Board/Council Meeting
+                    </option>
+                    <option value="public_testimony">
+                      Public Testimony / Town Hall
+                    </option>
+                    <option value="written_memo">Written Memo / Email</option>
+                    <option value="social">Social / Friends & Family</option>
+                    <option value="other">Other</option>
+                  </select>
+                </label>
+                <label class="builder-field">
+                  <span class="builder-field__label">Outcome (optional)</span>
+                  <select
+                    id="fb_outcome"
+                    class="builder-input select select-bordered w-full"
+                  >
+                    <option value="na">N/A</option>
+                    <option value="constructive">Constructive</option>
+                    <option value="neutral">Neutral</option>
+                    <option value="pushback">Pushback</option>
+                  </select>
+                </label>
+                <label class="builder-field builder-span-all">
+                  <span class="builder-field__label"
+                    >Notes (no personal info)</span
+                  >
+                  <textarea
+                    id="fb_notes"
+                    rows="3"
+                    placeholder="What worked? What should be improved?"
+                    class="builder-input textarea textarea-bordered w-full"
+                  ></textarea>
+                </label>
+                <label class="flex items-center gap-2 text-sm text-muted">
+                  <input
+                    id="fb_consent"
+                    type="checkbox"
+                    class="checkbox checkbox-primary"
+                  />
+                  I consent to send anonymized usage details to improve this
+                  tool.
+                </label>
+              </div>
+              <div class="builder-actions">
+                <button
+                  id="fb_send"
+                  type="button"
+                  class="builder-button btn btn-primary text-white"
+                >
+                  Send feedback
+                </button>
+                <span id="fb_status" class="builder-feedback-status"></span>
+              </div>
             </div>
           </div>
-
-        </div>
-          <aside class="labs-panel builder-support no-print" aria-labelledby="builder-support-title">
+          <aside
+            class="labs-panel builder-support no-print"
+            aria-labelledby="builder-support-title"
+          >
             <h3 id="builder-support-title">Need anything?</h3>
             <p class="builder-support__intro">
               Share context, bugs, or feature requests with the team in real

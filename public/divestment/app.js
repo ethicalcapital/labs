@@ -165,6 +165,17 @@
     custom: "Custom",
   };
 
+  const ENTITY_PRESET_MAP = {
+    public_pension: "public_pension",
+    endowment: "university_endowment",
+    foundation: "mission_nonprofit",
+    government: "mission_nonprofit",
+    swf: "public_pension",
+    corporate_pension: "public_pension",
+    insurance: "public_pension",
+    central_bank: "public_pension",
+  };
+
   async function loadData() {
     if (state.data) return state.data;
     // Try relative path first (works when builder is served at /divestment/)
@@ -526,6 +537,17 @@
         }
       }
     }
+  }
+
+  function applyEntityPreset(entityVal, { forceCustom = false } = {}) {
+    if (!thumbPreset) return;
+    const preset = !forceCustom
+      ? ENTITY_PRESET_MAP[entityVal] || "custom"
+      : "custom";
+    if (thumbPreset.value !== preset) {
+      thumbPreset.value = preset;
+    }
+    applyThumbPreset(preset);
   }
 
   function setThumbInputs(config) {
@@ -1424,8 +1446,9 @@
   targetChoice = createChoiceController("target", "target");
 
   if (entityChoice) {
-    entityChoice.onChange = () => {
+    entityChoice.onChange = (value) => {
       applyEntityConstraints();
+      applyEntityPreset(value);
     };
   }
 
@@ -1433,14 +1456,19 @@
     targetChoice.onChange = (value) => {
       if (value === "family_friends") {
         entityChoice?.set("individual");
+        applyEntityPreset("individual", { forceCustom: true });
       } else if (entityChoice && entityChoice.value === "individual") {
         entityChoice.set("public_pension");
+        applyEntityPreset("public_pension");
       }
       applyEntityConstraints();
     };
   }
 
   applyEntityConstraints();
+  if (entityChoice) {
+    applyEntityPreset(entityChoice.value);
+  }
 
   buildBtn.addEventListener("click", () => {
     if (!ensureDisclaimerAccepted()) return;
@@ -1464,7 +1492,9 @@
     state.last = null;
     resetOnePagers();
     applyEntityConstraints();
-    applyThumbPreset(thumbPreset.value);
+    applyEntityPreset(entityChoice ? entityChoice.value : "individual", {
+      forceCustom: !entityChoice || entityChoice.value === "individual",
+    });
   });
 
   copyTextBtn.addEventListener("click", () => {
