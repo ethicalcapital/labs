@@ -1426,7 +1426,7 @@
                                             <div>
                                                 <label className="block text-sm font-medium text-gray-700">
                                                     Annual Household Income
-                                                    <InfoTooltip text="Used to estimate ongoing savings during accumulation." />
+                                                    <InfoTooltip text="Defaults to the 2023 U.S. median household income ($80,610). Source: U.S. Census Bureau, Income in the United States: 2023 (P60-282)." />
                                                 </label>
                                                 <div className="mt-2 relative">
                                                     <span className="absolute left-3 top-2 text-gray-500">$</span>
@@ -1437,7 +1437,7 @@
                                                         className="pl-8 block w-full border-gray-300 rounded-md shadow-sm p-2 border"
                                                         min={0}
                                                     />
-                                                    <p className="mt-1 text-xs text-gray-500">Default assumes {formatCurrency(100000)} in annual income.</p>
+                                                    <p className="mt-1 text-xs text-gray-500">Default uses the latest reported U.S. median household income of {formatCurrency(80610)}.</p>
                                                 </div>
                                             </div>
                                             <div>
