@@ -36,9 +36,20 @@ jobs:
 
       - name: Sync secrets to Cloudflare
         run: |
-          doppler run --project "${DOPPLER_PROJECT:-labs}" --config "${DOPPLER_CONFIG:-production}" -- \
-            bash -c 'doppler secrets download --no-file --format env | npx wrangler pages secret bulk labs'
+          set -euo pipefail
+          secrets_json=$(doppler secrets download --no-file --format json --project "${DOPPLER_PROJECT:-labs}" --config "${DOPPLER_CONFIG:-production}")
+          echo "Syncing secrets to Cloudflare Pages"
+          echo "$secrets_json" | jq -r 'to_entries[] | @base64' | while read -r row; do
+            key=$(echo "$row" | base64 --decode | jq -r '.key')
+            value=$(echo "$row" | base64 --decode | jq -r '.value')
+            # Skip Doppler-provided runtime metadata we don't want as Pages secrets
+            if [[ "$key" == NODE_VERSION ]]; then
+              continue
+            fi
+            printf '%s\n' "$value" | npx wrangler pages secret put "$key" --project-name labs >/dev/null
+          done
 
       - name: Deploy to Cloudflare Pages
-        run: doppler run --project "${DOPPLER_PROJECT:-labs}" --config "${DOPPLER_CONFIG:-production}" -- \
-          npx wrangler pages deploy dist --project-name labs --commit-dirty=true
+        run: |
+          doppler run --project "${DOPPLER_PROJECT:-labs}" --config "${DOPPLER_CONFIG:-production}" -- \
+            npx wrangler pages deploy dist --project-name labs --commit-dirty=true
