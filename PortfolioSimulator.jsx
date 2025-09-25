@@ -136,7 +136,7 @@
             return 'custom';
         };
 
-        const formatCurrency = (value) => value.toLocaleString('en-US');
+        const formatCurrency = (value) => `$${Number(value || 0).toLocaleString('en-US')}`;
 
         const DEFAULT_WITHDRAWAL_PERIODS = [
             { startYear: 11, endYear: 20, annualAmount: 60000, label: 'Early Retirement (Age 60-69)' },
@@ -312,6 +312,7 @@
                     }
                     return { ...nextValues };
                 });
+            }, [accountPreset]);
 
             useEffect(() => {
                 if (isNerdMode) {
@@ -837,21 +838,55 @@
                                     <p className="mt-2 text-sm sm:text-base text-gray-600">
                                         Model how combining strategies affects risk and predictability
                                     </p>
-                                {/* Account Types for Tax Planning */}
-                                <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
-                                    <h2 className="text-lg sm:text-xl font-semibold mb-4">
-                                        Account Types
-                                        <InfoTooltip text="Different account types have different tax treatments. Choose a preset or switch to custom to fine-tune." />
-                                    </h2>
+                                {!isNerdMode && !showAccountDetails && (
+                                    <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
+                                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                                            <div>
+                                                <h2 className="text-lg sm:text-xl font-semibold">Account mix</h2>
+                                                <p className="text-xs text-gray-500">Currently using the {(ACCOUNT_TYPE_PRESETS[accountPreset] ? ACCOUNT_TYPE_PRESETS[accountPreset].label : 'Custom')} preset. Adjust the balance between taxable, tax-deferred, and Roth accounts if needed.</p>
+                                            </div>
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowAccountDetails(true)}
+                                                className="labs-button labs-button--outline text-sm"
+                                            >
+                                                Adjust account types
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
 
-                                    <div className="space-y-4">
+                                {/* Account Types for Tax Planning */}
+                                {(isNerdMode || showAccountDetails) && (
+                                    <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
+                                        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
+                                            <h2 className="text-lg sm:text-xl font-semibold">Account Types</h2>
+                                            {!isNerdMode && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setShowAccountDetails(false)}
+                                                    className="labs-button labs-button--outline text-sm"
+                                                >
+                                                    Done adjusting
+                                                </button>
+                                            )}
+                                        </div>
+                                        <p className="text-xs text-gray-500 mb-4">Different account types have different tax treatments. Choose a preset or switch to custom to fine-tune the mix.</p>
+
+                                        <div className="space-y-4">
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-1">
                                                 Start with a preset
                                             </label>
                                             <select
                                                 value={accountPreset}
-                                                onChange={(e) => setAccountPreset(e.target.value)}
+                                                onChange={(e) => {
+                                                    const nextPreset = e.target.value;
+                                                    setAccountPreset(nextPreset);
+                                                    if (nextPreset === 'custom') {
+                                                        setShowAccountDetails(true);
+                                                    }
+                                                }}
                                                 className="block w-full border-gray-300 rounded-md shadow-sm p-2 border text-sm"
                                             >
                                                 {Object.entries(ACCOUNT_TYPE_PRESETS).map(([key, preset]) => (
@@ -890,6 +925,7 @@
                                                                 ...accountTypes,
                                                                 taxable: Number(e.target.value)
                                                             });
+                                                            setShowAccountDetails(true);
                                                         }}
                                                         className="w-full"
                                                         style={{
@@ -915,6 +951,7 @@
                                                                 ...accountTypes,
                                                                 taxDeferred: Number(e.target.value)
                                                             });
+                                                            setShowAccountDetails(true);
                                                         }}
                                                         className="w-full"
                                                         style={{
@@ -940,6 +977,7 @@
                                                                 ...accountTypes,
                                                                 roth: Number(e.target.value)
                                                             });
+                                                            setShowAccountDetails(true);
                                                         }}
                                                         className="w-full"
                                                         style={{
@@ -956,16 +994,17 @@
                                                 )}
                                             </div>
                                         )}
-                                    </div>
-
-                                    {!isNerdMode && (
-                                        <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-                                            <p className="text-xs text-blue-700">
-                                                <strong>Tax-Smart Withdrawal Order:</strong> We'll optimize withdrawals to minimize lifetime taxes using the TDD strategy - filling your standard deduction first, then taxable accounts, preserving Roth for last.
-                                            </p>
                                         </div>
-                                    )}
-                                </div>
+
+                                        {!isNerdMode && (
+                                            <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+                                                <p className="text-xs text-blue-700">
+                                                    <strong>Tax-Smart Withdrawal Order:</strong> We'll optimize withdrawals to minimize lifetime taxes using the TDD strategy - filling your standard deduction first, then taxable accounts, preserving Roth for last.
+                                                </p>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
                                 <div className="flex items-center space-x-3">
                                     <span className={`font-medium text-sm ${!isNerdMode ? 'text-blue-600' : 'text-gray-500'}`}>
                                         Simple
@@ -992,11 +1031,11 @@
                                 <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
                                     <h2 className="text-lg sm:text-xl font-semibold mb-4">Portfolio Setup</h2>
                                     
-                                    <div className="space-y-4">
+                                    <div className="space-y-5">
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700">
                                                 Current Portfolio Value
-                                                <InfoTooltip text="Your total investment portfolio today" />
+                                                <InfoTooltip text="Total investable assets you want to model today" />
                                             </label>
                                             <div className="mt-3 flex flex-wrap gap-2">
                                                 {QUICK_PORTFOLIO_VALUES.map((value) => (
@@ -1010,7 +1049,7 @@
                                                                 : 'bg-white text-gray-700 border-gray-300 hover:border-blue-400'
                                                         }`}
                                                     >
-                                                        ${formatCurrency(value)}
+                                                        {formatCurrency(value)}
                                                     </button>
                                                 ))}
                                             </div>
@@ -1024,7 +1063,67 @@
                                                     min={CONFIG.MIN_PORTFOLIO}
                                                     max={CONFIG.MAX_PORTFOLIO}
                                                 />
-                                                <p className="mt-1 text-xs text-gray-500">Enter a custom amount if the quick options do not match your situation.</p>
+                                                <p className="mt-1 text-xs text-gray-500">Quick select an amount or enter a custom portfolio value.</p>
+                                            </div>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700">
+                                                    Annual Household Income
+                                                    <InfoTooltip text="Used to estimate ongoing savings during the accumulation phase." />
+                                                </label>
+                                                <div className="mt-2 relative">
+                                                    <span className="absolute left-3 top-2 text-gray-500">$</span>
+                                                    <input
+                                                        type="number"
+                                                        value={currentIncome}
+                                                        onChange={(e) => setCurrentIncome(Math.max(0, Number(e.target.value)))}
+                                                        className="pl-8 block w-full border-gray-300 rounded-md shadow-sm p-2 border"
+                                                        min={0}
+                                                    />
+                                                    <p className="mt-1 text-xs text-gray-500">Default assumes {formatCurrency(100000)} in annual income.</p>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700">
+                                                    Savings Rate (% of income)
+                                                </label>
+                                                <input
+                                                    type="range"
+                                                    min="-20"
+                                                    max="50"
+                                                    step="1"
+                                                    value={savingsRate}
+                                                    onChange={(e) => setSavingsRate(Number(e.target.value))}
+                                                    className="w-full"
+                                                />
+                                                <div className="flex justify-between text-xs text-gray-500 mt-1">
+                                                    <span>{savingsRate}%</span>
+                                                    <span>Annual savings ≈ {formatCurrency(Math.max(savingsRate, 0) * currentIncome / 100)}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700">
+                                                    Years Until Withdrawals Begin
+                                                    <InfoTooltip text="After this many years the simulator shifts from saving to drawing down." />
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    value={savingsYears}
+                                                    onChange={(e) => setSavingsYears(Math.max(0, Number(e.target.value)))}
+                                                    className="mt-2 w-full border-gray-300 rounded-md shadow-sm p-2 border"
+                                                    min={0}
+                                                    max={60}
+                                                />
+                                            </div>
+                                            <div className="bg-gray-50 rounded-lg p-3 text-xs text-gray-600">
+                                                <p>
+                                                    In simple mode we assume a retirement withdrawal plan after year {savingsYears + 1}. Switch to Advanced mode to craft custom withdrawal periods, tax handling, and stress scenarios.
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
