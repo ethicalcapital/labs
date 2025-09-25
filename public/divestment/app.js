@@ -7,14 +7,16 @@
   const thumbMission = el('thumb_mission');
   const thumbCompetition = el('thumb_competition');
   const thumbRegulatory = el('thumb_regulatory');
+  const thumbPreset = el('thumb_preset');
+  const thumbCustom = el('thumb_custom');
   const localName = el('localName');
   const objective = el('objective');
   const brief = el('brief');
   const buildBtn = el('buildBtn');
   const resetBtn = el('resetBtn');
-  const copyAll = el('copyAll');
-  const downloadPlain = el('downloadPlain');
-  const downloadTechnical = el('downloadTechnical');
+  const copyTextBtn = el('copyText');
+  const downloadBriefBtn = el('downloadBrief');
+  const printBtn = el('printBtn');
   const sourcesList = el('sources');
   const fbUse = el('fb_usecase');
   const fbOutcome = el('fb_outcome');
@@ -45,6 +47,15 @@
     council_member: 'Council / Committee Member'
   };
 
+  const TARGET_OPTIONS_ALL = [
+    { value: 'family_friends', label: TARGET_LABELS.family_friends },
+    { value: 'cio', label: TARGET_LABELS.cio },
+    { value: 'consultant', label: TARGET_LABELS.consultant },
+    { value: 'treasurer', label: TARGET_LABELS.treasurer },
+    { value: 'trustee', label: TARGET_LABELS.trustee },
+    { value: 'council_member', label: TARGET_LABELS.council_member }
+  ];
+
   const ENTITY_LABELS = {
     swf: 'Sovereign Wealth Fund',
     public_pension: 'Public Pension Plan',
@@ -71,6 +82,19 @@
     low: 'Low',
     medium: 'Medium',
     high: 'High'
+  };
+
+  const PRESET_CONFIGS = {
+    mission_nonprofit: { mission: 'purity', competition: 'low', regulatory: 'medium' },
+    public_pension: { mission: 'pragmatism', competition: 'high', regulatory: 'high' },
+    university_endowment: { mission: 'purity', competition: 'high', regulatory: 'low' }
+  };
+
+  const PRESET_LABELS = {
+    mission_nonprofit: 'Mission-driven nonprofit',
+    public_pension: 'Public pension',
+    university_endowment: 'University endowment',
+    custom: 'Custom'
   };
 
   async function loadData() {
@@ -114,6 +138,56 @@
     }
   }
 
+  function setTargetOptions(allowedValues) {
+    const current = target.value;
+    target.innerHTML = '';
+    allowedValues.forEach((value) => {
+      const optionData = TARGET_OPTIONS_ALL.find((opt) => opt.value === value);
+      if (!optionData) return;
+      const option = document.createElement('option');
+      option.value = optionData.value;
+      option.textContent = optionData.label;
+      target.appendChild(option);
+    });
+    if (!allowedValues.includes(current)) {
+      target.value = allowedValues[0];
+    } else {
+      target.value = current;
+    }
+    target.disabled = allowedValues.length === 1;
+  }
+
+  function applyEntityConstraints() {
+    if (invIdentity.value === 'individual') {
+      setTargetOptions(['family_friends']);
+    } else {
+      setTargetOptions(TARGET_OPTIONS_ALL.filter((opt) => opt.value !== 'family_friends').map((opt) => opt.value));
+    }
+  }
+
+  function setThumbInputs(config) {
+    thumbMission.value = config.mission === 'purity' ? '0' : '1';
+    thumbCompetition.value = config.competition;
+    thumbRegulatory.value = config.regulatory;
+  }
+
+  function applyThumbPreset(preset) {
+    if (preset === 'custom' || !PRESET_CONFIGS[preset]) {
+      thumbCustom.classList.remove('hidden');
+      return;
+    }
+    const config = PRESET_CONFIGS[preset];
+    thumbCustom.classList.add('hidden');
+    setThumbInputs(config);
+  }
+
+  function ensureCustomPreset() {
+    if (thumbPreset.value !== 'custom') {
+      thumbPreset.value = 'custom';
+      thumbCustom.classList.remove('hidden');
+    }
+  }
+
   function pick(arr, n) {
     if (!Array.isArray(arr) || arr.length === 0) return [];
     if (n >= arr.length) return arr.slice();
@@ -138,7 +212,8 @@
       target: target.value,
       entityType: invIdentity.value,
       knowledge: knowledge.value,
-      thumb: { mission: missionValue(), competition: thumbCompetition.value, regulatory: thumbRegulatory.value },
+      thumb: { mission: missionValue(), competition: thumbCompetition.value, regulatory: thumbRegulatory.value, preset: thumbPreset.value },
+      thumbPreset: thumbPreset.value,
       objective: objective.value,
       use_case: fbUse.value,
       outcome: fbOutcome.value,
@@ -225,7 +300,7 @@
           guideIntro: guideIntroPlain,
           approach: 'Implementation Snapshot',
           policy: 'Policy Alignment',
-          screening: 'Screening Intelligence'
+          screening: 'Screening Builds Intelligence'
         }
       : {
           opening: 'Opening',
@@ -268,7 +343,7 @@
     const screeningData = data.screening_knowledge || {};
     const screeningPoints = Array.isArray(screeningData.points) ? screeningData.points : [];
     const screeningTitle = screeningData.title || 'Screening as Cumulative Knowledge';
-    const showScreening = knowledgeLevel === 'technical' && screeningPoints.length > 0;
+    const showScreening = screeningPoints.length > 0;
 
     const governmentSnippet = context.entity === 'government' ? (data.government_policy_snippet || '') : '';
     const showGovernmentSnippet = Boolean(governmentSnippet);
@@ -340,16 +415,22 @@
 
     if (showScreening) {
       html += `<h3>${sanitize(headings.screening)}</h3>`;
-      html += '<ul>';
-      for (const point of screeningPoints) {
-        html += `<li><strong>${sanitize(point.title)}</strong>: ${sanitize(point.body)}`;
-        if (point.citations && point.citations.length) {
-          const c = point.citations.map(ci => `<a class="text-sky-300 hover:underline" href="${ci.url}" target="_blank" rel="noopener">${sanitize(ci.label)}</a>`).join(' · ');
-          html += `<div class="mt-1 text-xs text-slate-400">Sources: ${c}</div>`;
-        }
-        html += '</li>';
+      if (knowledgeLevel === 'plain') {
+        html += '<p class="text-slate-300">Screening builds cumulative knowledge about fragile business models, regulatory exposure, and reputational risk. Share the insight, not just the exclusion list.</p>';
       }
-      html += '</ul>';
+      const screeningList = knowledgeLevel === 'technical' ? screeningPoints : screeningPoints.slice(0, 2);
+      if (screeningList.length) {
+        html += '<ul>';
+        for (const point of screeningList) {
+          html += `<li><strong>${sanitize(point.title)}</strong>: ${sanitize(point.body)}`;
+          if (knowledgeLevel === 'technical' && point.citations && point.citations.length) {
+            const c = point.citations.map(ci => `<a class="text-sky-300 hover:underline" href="${ci.url}" target="_blank" rel="noopener">${sanitize(ci.label)}</a>`).join(' · ');
+            html += `<div class="mt-1 text-xs text-slate-400">Sources: ${c}</div>`;
+          }
+          html += '</li>';
+        }
+        html += '</ul>';
+      }
     }
 
     if (showCIO && data.cio_note) {
@@ -440,6 +521,9 @@
     lines.push(`- Entity Type: ${ENTITY_LABELS[context.entity] || context.entity}`);
     lines.push(`- Knowledge Level: ${knowledgeLabel}`);
     lines.push(`- Thumbprint: Mission/Ethics ${MISSION_LABELS[result.thumb.mission] || result.thumb.mission}; Competition ${PRESSURE_LABELS[result.thumb.competition] || result.thumb.competition}; Regulatory ${PRESSURE_LABELS[result.thumb.regulatory] || result.thumb.regulatory}`);
+    if (result.thumb.preset && result.thumb.preset !== 'custom') {
+      lines.push(`- Profile Preset: ${PRESET_LABELS[result.thumb.preset] || result.thumb.preset}`);
+    }
     if (context.localName) {
       lines.push(`- Local Name: ${context.localName}`);
     }
@@ -516,12 +600,18 @@
       lines.push('');
     }
 
-    if (mode === 'technical' && result.screeningPoints.length) {
-      lines.push(`## ${result.screeningTitle}`);
+    if (result.screeningPoints.length) {
+      const heading = mode === 'technical' ? result.screeningTitle : 'Screening Builds Intelligence';
+      lines.push(`## ${heading}`);
       lines.push('');
-      for (const point of result.screeningPoints) {
+      if (mode !== 'technical') {
+        lines.push('Screening compounds knowledge about fragile business models, regulatory exposure, and reputational risk.');
+        lines.push('');
+      }
+      const screeningList = mode === 'technical' ? result.screeningPoints : result.screeningPoints.slice(0, 2);
+      for (const point of screeningList) {
         lines.push(`- **${point.title}.** ${point.body}`);
-        if (point.citations && point.citations.length) {
+        if (mode === 'technical' && point.citations && point.citations.length) {
           lines.push(`  - Sources: ${point.citations.map(ci => `${ci.label} (${ci.url})`).join('; ')}`);
         }
       }
@@ -589,12 +679,43 @@
     URL.revokeObjectURL(url);
   }
 
+  function downloadCombinedMarkdown() {
+    const plain = buildMarkdown('plain');
+    const technical = buildMarkdown('technical');
+    if (!plain || !technical) return;
+    const combined = (plain + '
+
+' + technical).trim();
+    const blob = new Blob([combined], { type: 'text/markdown' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'divestment-brief.md';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  thumbPreset.addEventListener('change', () => applyThumbPreset(thumbPreset.value));
+  thumbMission.addEventListener('input', ensureCustomPreset);
+  thumbMission.addEventListener('change', ensureCustomPreset);
+  thumbCompetition.addEventListener('change', ensureCustomPreset);
+  thumbRegulatory.addEventListener('change', ensureCustomPreset);
+
+  invIdentity.addEventListener('change', () => applyEntityConstraints());
+
+  applyEntityConstraints();
+  applyThumbPreset(thumbPreset.value);
+
   buildBtn.addEventListener('click', buildBrief);
   resetBtn.addEventListener('click', () => {
     venue.value = 'one_on_one';
     target.value = 'family_friends';
     invIdentity.value = 'individual';
     knowledge.value = 'plain';
+    thumbPreset.value = 'custom';
+    thumbCustom.classList.remove('hidden');
     thumbMission.value = '1';
     thumbCompetition.value = 'low';
     thumbRegulatory.value = 'medium';
@@ -603,24 +724,30 @@
     brief.innerHTML = '<p class="text-slate-400">Fill the setup at left, then click Build Brief.</p>';
     sourcesList.innerHTML = '';
     state.last = null;
+    applyEntityConstraints();
+    applyThumbPreset(thumbPreset.value);
   });
 
   target.addEventListener('change', () => {
     if (target.value === 'family_friends') {
       invIdentity.value = 'individual';
+    } else if (invIdentity.value === 'individual') {
+      invIdentity.value = 'public_pension';
     }
+    applyEntityConstraints();
   });
 
-  copyAll.addEventListener('click', () => {
-    const txt = toText(brief.innerHTML);
-    navigator.clipboard.writeText(txt).then(() => {
-      copyAll.textContent = 'Copied!';
-      setTimeout(() => (copyAll.textContent = 'Copy All'), 1200);
+  copyTextBtn.addEventListener('click', () => {
+    const markdown = buildMarkdown('plain');
+    if (!markdown) return;
+    navigator.clipboard.writeText(markdown).then(() => {
+      copyTextBtn.textContent = 'Copied!';
+      setTimeout(() => (copyTextBtn.textContent = 'Copy Text'), 1200);
     });
   });
 
-  downloadPlain?.addEventListener('click', () => downloadMarkdown('plain'));
-  downloadTechnical?.addEventListener('click', () => downloadMarkdown('technical'));
+  downloadBriefBtn?.addEventListener('click', downloadCombinedMarkdown);
+  printBtn?.addEventListener('click', () => window.print());
 
   fbSend?.addEventListener('click', sendFeedback);
 
@@ -636,7 +763,10 @@ window.__BDS_FALLBACK__ = {
   version: 'fallback-2025-09-25-1',
   openers: { generic: 'We can align investments with basic human rights using professional, benchmark-aware implementation. Large institutions already use narrowly scoped exclusions while maintaining diversification and risk controls.' },
   identity_openers: {
-    individual: { generic: 'Individuals can align personal or household savings with values using low-cost screened funds while keeping diversification and emergency reserves intact.' },
+    individual: {
+      one_on_one: 'For friends or family, emphasize aligning personal savings with shared values and keep the steps concrete and jargon-free.',
+      generic: 'Individuals can align personal or household savings with values using low-cost screened funds while keeping diversification and emergency reserves intact.'
+    },
     swf: { generic: 'A sovereign fund can implement conduct-based exclusions via a formal ethics process, public rationales, and factor-neutral optimization with explicit tracking-error budgets.' },
     public_pension: { generic: 'Public plans can use consultant/manager mandates, set a tracking-error guardrail, and phase implementation while keeping beneficiaries’ risk/return in focus.' },
     corporate_pension: { generic: 'Corporate plans can update the IPS, adopt a screened index or constraints with minimal overhead, and maintain de-risking alignment.' },
