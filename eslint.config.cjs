@@ -1,16 +1,24 @@
 const js = require("@eslint/js");
-const { browser: browserGlobals } = require("globals");
+const { browser: browserGlobals, node: nodeGlobals } = require("globals");
 const react = require("eslint-plugin-react");
 const reactHooks = require("eslint-plugin-react-hooks");
 const jsxA11y = require("eslint-plugin-jsx-a11y");
+const prettier = require("eslint-plugin-prettier");
 
 module.exports = [
   {
-    ignores: ["node_modules/**"],
+    ignores: [
+      "node_modules/**",
+      "dist/**",
+      "public/assets/**",
+      "public/simulator/app.js",
+      "public/divestment/**",
+      "diagnostics/**"
+    ],
   },
   js.configs.recommended,
   {
-    files: ["**/*.jsx"],
+    files: ["**/*.{js,jsx}"],
     languageOptions: {
       parser: require("@babel/eslint-parser"),
       parserOptions: {
@@ -33,6 +41,7 @@ module.exports = [
       react,
       "react-hooks": reactHooks,
       "jsx-a11y": jsxA11y,
+      prettier,
     },
     rules: {
       "react/react-in-jsx-scope": "off",
@@ -42,6 +51,25 @@ module.exports = [
       "react/prop-types": "off",
       "react-hooks/rules-of-hooks": "error",
       "react-hooks/exhaustive-deps": "warn",
+      "prettier/prettier": "error",
+    },
+  },
+  {
+    files: ["tailwind.config.js"],
+    languageOptions: {
+      parserOptions: {
+        sourceType: "commonjs",
+      },
+      globals: nodeGlobals,
+    },
+  },
+  {
+    files: ["tools/**/*.mjs"],
+    languageOptions: {
+      parserOptions: {
+        sourceType: "module",
+      },
+      globals: nodeGlobals,
     },
   },
 ];

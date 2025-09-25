@@ -5,9 +5,14 @@
   "scripts": {
     "build:simulator": "babel PortfolioSimulator.jsx --no-babelrc --presets @babel/preset-react --out-file public/simulator/app.js",
     "build": "npm run build:styles && npm run build:simulator && rm -rf dist && mkdir -p dist && cp -R public/. dist",
-    "lint": "eslint \"**/*.jsx\"",
+    "lint": "eslint --ext .js,.jsx .",
+    "diagnose:divestment": "node tools/divestment-diagnostics.mjs",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:styles": "tailwindcss -c tailwind.config.js -i ./styles/tailwind.css -o public/assets/css/tailwind.css --minify"
+    "build:styles": "cross-env BROWSERSLIST_IGNORE_OLD_DATA=1 tailwindcss -c tailwind.config.js -i ./styles/tailwind.css -o public/assets/css/tailwind.css --minify",
+    "lint:fix": "npm run lint -- --fix",
+    "format": "prettier \"**/*.{js,jsx,ts,tsx,json,md,css,html}\" --write",
+    "format:check": "prettier \"**/*.{js,jsx,ts,tsx,json,md,css,html}\" --check",
+    "lint:divestment": "eslint --no-ignore public/divestment/app.js tools/divestment-diagnostics.mjs"
   },
   "keywords": [],
   "author": "",
@@ -20,11 +25,15 @@
     "@babel/preset-react": "^7.27.1",
     "@eslint/js": "^9.36.0",
     "@tailwindcss/typography": "^0.5.19",
+    "cross-env": "^7.0.3",
     "eslint": "^9.36.0",
+    "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
     "globals": "^16.4.0",
+    "prettier": "^3.3.3",
     "tailwindcss": "^3.4.17"
   }
 }
