@@ -7,13 +7,17 @@
   --ecic-red: #ef4444;
   --surface-white: #ffffff;
   --surface-light: #f9fafb;
-  --surface-hero: linear-gradient(135deg, rgba(88, 28, 135, 0.95), rgba(20, 184, 166, 0.85));
+  --surface-hero: linear-gradient(
+    135deg,
+    rgba(88, 28, 135, 0.95),
+    rgba(20, 184, 166, 0.85)
+  );
   --border-gray: #e5e7eb;
   --text-dark: #111827;
   --text-medium: #4b5563;
   --footer-text: #f3f4f6;
-  --font-sans: 'Raleway', 'Segoe UI', Arial, sans-serif;
-  --font-heading: 'Outfit', 'Raleway', 'Segoe UI', Arial, sans-serif;
+  --font-sans: "Raleway", "Segoe UI", Arial, sans-serif;
+  --font-heading: "Outfit", "Raleway", "Segoe UI", Arial, sans-serif;
 }
 
 * {
@@ -101,13 +105,14 @@ p {
   gap: 0.75rem;
 }
 
-
 .labs-nav__link {
   font-weight: 500;
   font-size: 0.95rem;
   padding: 0.4rem 0.85rem;
   border-radius: 999px;
-  transition: background 0.2s ease, color 0.2s ease;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
   color: rgba(243, 244, 246, 0.85);
 }
 
@@ -200,7 +205,11 @@ p {
   font-size: 0.95rem;
   text-decoration: none;
   border: 1px solid transparent;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease;
 }
 
 .labs-button:hover {
@@ -252,7 +261,9 @@ p {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .labs-card:hover {

@@ -19,6 +19,7 @@ Labs serves as a space for:
 ### Portfolio Strategy Simulator
 
 Our first experiment explores how different investment strategy combinations affect portfolio outcomes over time. Users can:
+
 - Model accumulation and withdrawal phases
 - Visualize the impact of strategy mixing on volatility
 - Explore tax-efficient withdrawal sequences
@@ -31,6 +32,7 @@ The simulator demonstrates general principles rather than providing specific rec
 ### Learning Through Interaction
 
 Research shows users retain 95% of information from interactive experiences vs 10% from text. Our tools prioritize:
+
 - **Visual-First Design**: Complex data presented through intuitive charts and animations
 - **Progressive Complexity**: Simple mode for basics, advanced mode for deeper exploration
 - **Real-Time Feedback**: Immediate visualization of how changes affect outcomes
@@ -39,6 +41,7 @@ Research shows users retain 95% of information from interactive experiences vs 1
 
 Labs follows the same brand system defined for the primary site in
 `~/ethicic-site/_brand.yml`. All projects should:
+
 - Use the shared font stack (`Outfit` for headings, `Raleway` for body copy)
 - Rely on the design tokens in `public/assets/css/labs.css` for colors, spacing,
   panel styles, and buttons instead of ad-hoc Tailwind classes
@@ -52,6 +55,7 @@ Labs follows the same brand system defined for the primary site in
 ### Experimental Approach
 
 Labs tools are experiments in financial education. We:
+
 - Test new ways to communicate financial concepts
 - Iterate based on user interaction patterns
 - Explore the boundary between education and engagement
@@ -60,6 +64,7 @@ Labs tools are experiments in financial education. We:
 ### No Advice, Just Understanding
 
 Every tool clearly states:
+
 - Results are hypothetical illustrations
 - Assumptions may not match real-world conditions
 - Professional consultation is needed for personal decisions
@@ -89,12 +94,14 @@ Every tool clearly states:
 Our experiments draw from established financial research while acknowledging limitations:
 
 ### Sources We Reference
+
 - Academic literature on portfolio theory
 - Published research on withdrawal strategies
 - Behavioral finance studies on decision-making
 - Data visualization best practices
 
 ### How We Apply Research
+
 - Simplify complex models for educational purposes
 - Show ranges of outcomes, not predictions
 - Emphasize uncertainty and variability
@@ -103,12 +110,14 @@ Our experiments draw from established financial research while acknowledging lim
 ## User Guidelines
 
 ### What Labs Tools Can Do
+
 - Help visualize financial concepts
 - Demonstrate relationships between variables
 - Provide frameworks for thinking about decisions
 - Offer starting points for professional discussions
 
 ### What Labs Tools Cannot Do
+
 - Provide personalized recommendations
 - Guarantee accuracy for individual situations
 - Replace professional financial advice
@@ -126,6 +135,7 @@ Labs is explicitly experimental. This means:
 ## Privacy & Data
 
 Labs tools are designed for privacy:
+
 - No user accounts required
 - No personal data collection
 - Local storage only (browser-based)
@@ -153,25 +163,30 @@ All Labs tools include clear disclaimers:
 ## Contributing & Feedback
 
 Labs is about learning together. We welcome:
+
 - Suggestions for new experiments
 - Feedback on existing tools
 - Bug reports and usability issues
 - Ideas for better explanations
 
 Contact through:
+
 - Newsletter: buttondown.com/ethicic
 - Main site: ethicic.com
 
 ## Development Notes
 
 ### Deployment
+
 - Hosted on Cloudflare Pages
 - Static site generation
 - No backend requirements
 - CDN distribution
 
 ### Open Source Consideration
+
 Some Labs experiments may be released as open source for:
+
 - Educational institution use
 - Community improvement
 - Transparency of methods
@@ -179,4 +194,4 @@ Some Labs experiments may be released as open source for:
 
 ---
 
-*Ethical Capital Labs is an experimental platform for financial education. Tools are provided for educational purposes only and do not constitute investment advice. Users should consult qualified professionals for personalized guidance.*
+_Ethical Capital Labs is an experimental platform for financial education. Tools are provided for educational purposes only and do not constitute investment advice. Users should consult qualified professionals for personalized guidance._

@@ -7,7 +7,7 @@ Static Cloudflare Pages project for Ethical Capital’s experimental tools.
 - `public/index.html` – landing page for Labs
 - `public/simulator/index.html` – portfolio strategy simulator
 - `PortfolioSimulator.jsx` – extracted JSX source used for linting
-automation
+  automation
 
 ## Development
 

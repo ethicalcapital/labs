@@ -1,20 +1,26 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Portfolio Strategy Simulator · Ethical Capital Labs</title>
-    <meta name="description" content="Interactive Monte Carlo withdrawal simulator from Ethical Capital Labs." />
+    <meta
+      name="description"
+      content="Interactive Monte Carlo withdrawal simulator from Ethical Capital Labs."
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Raleway:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Raleway:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="/assets/css/labs.css" />
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="/assets/css/tailwind.css" />
-</head>
-<body>
+  </head>
+  <body>
     <header class="labs-header">
       <nav class="labs-nav" aria-label="Primary">
         <a class="labs-nav__logo" href="/">
@@ -52,16 +58,21 @@
     <main class="labs-main">
       <section class="labs-section" aria-labelledby="simulator-hero">
         <div class="labs-panel labs-panel--intro">
-          <p class="labs-eyebrow labs-eyebrow--light">Portfolio strategy simulator</p>
+          <p class="labs-eyebrow labs-eyebrow--light">
+            Portfolio strategy simulator
+          </p>
           <h2 id="simulator-hero">Understand how withdrawals shape outcomes</h2>
           <p>
-            This experiment runs thousands of Monte Carlo paths using configurable
-            savings phases, tax-aware withdrawals, and market stress overlays. It
-            is designed to surface trade-offs—sequence risk, allocation drift,
-            and longevity—without prescribing a specific course of action.
+            This experiment runs thousands of Monte Carlo paths using
+            configurable savings phases, tax-aware withdrawals, and market
+            stress overlays. It is designed to surface trade-offs—sequence risk,
+            allocation drift, and longevity—without prescribing a specific
+            course of action.
           </p>
           <div class="labs-button-row">
-            <a class="labs-button labs-button--solid" href="#simulator">Jump to simulator</a>
+            <a class="labs-button labs-button--solid" href="#simulator"
+              >Jump to simulator</a
+            >
             <a
               class="labs-button labs-button--ghost"
               href="https://github.com/ethicalcapital/labs/issues/new?labels=simulator"
@@ -83,19 +94,34 @@
 
     <footer class="labs-footer">
       <div class="labs-footer__inner">
-        <p><strong>Invest Vegan LLC DBA Ethical Capital</strong> · Utah Registered Investment Adviser</p>
         <p>
-          <a href="https://ethicic.com/content/legal/disclosures.html">Disclosures</a>
+          <strong>Invest Vegan LLC DBA Ethical Capital</strong> · Utah
+          Registered Investment Adviser
+        </p>
+        <p>
+          <a href="https://ethicic.com/content/legal/disclosures.html"
+            >Disclosures</a
+          >
           ·
-          <a href="https://ethicic.com/content/legal/privacy-policy.html">Privacy Policy</a>
+          <a href="https://ethicic.com/content/legal/privacy-policy.html"
+            >Privacy Policy</a
+          >
           ·
-          <a href="https://ethicic.com/content/legal/terms-of-use.html">Terms of Use</a>
+          <a href="https://ethicic.com/content/legal/terms-of-use.html"
+            >Terms of Use</a
+          >
         </p>
         <p>90 N 400 E, Provo, UT 84606 · +1 347 625 9000 · hello@ethicic.com</p>
-        <p><em>This website is for informational purposes only and does not constitute investment advice. Past performance does not guarantee future results.</em></p>
+        <p>
+          <em
+            >This website is for informational purposes only and does not
+            constitute investment advice. Past performance does not guarantee
+            future results.</em
+          >
+        </p>
       </div>
     </footer>
 
     <script src="./app.js?v=20250206" defer></script>
-</body>
+  </body>
 </html>
