@@ -10,6 +10,8 @@ permissions:
 
 env:
   DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN_WORKERS_PROD }}
+  DOPPLER_PROJECT: ${{ secrets.DOPPLER_PROJECT_NAME }}
+  DOPPLER_CONFIG: ${{ secrets.DOPPLER_CONFIG_NAME }}
 
 jobs:
   deploy:
@@ -37,8 +39,8 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
-          doppler secrets download --no-file --format env --project labs --config production \
-            | npx wrangler secret bulk --config wrangler.toml --env production
+          doppler secrets download --no-file --format env --project "${DOPPLER_PROJECT:-labs}" --config "${DOPPLER_CONFIG:-production}" \
+            | npx wrangler pages secret bulk labs
 
       - name: Deploy to Cloudflare Pages
         run: npx wrangler pages deploy dist --project-name labs --commit-dirty=true
