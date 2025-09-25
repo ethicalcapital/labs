@@ -177,6 +177,7 @@
             
             // Account type breakdown for tax-aware withdrawals
             const [accountPreset, setAccountPreset] = useState('balanced');
+            const [showAccountDetails, setShowAccountDetails] = useState(false);
             const [accountTypes, setAccountTypes] = useState(() => ACCOUNT_TYPE_PRESETS.balanced.values);
             
             // Tax assumptions
@@ -250,6 +251,9 @@
                         } else if (config.accountPreset) {
                             setAccountPreset(config.accountPreset);
                         }
+                        if (typeof config.showAccountDetails === 'boolean') {
+                            setShowAccountDetails(config.showAccountDetails);
+                        }
 
                         if (Array.isArray(config.withdrawalPeriods)) {
                             setWithdrawalPeriods(config.withdrawalPeriods.map(period => ({
@@ -308,7 +312,12 @@
                     }
                     return { ...nextValues };
                 });
-            }, [accountPreset]);
+
+            useEffect(() => {
+                if (isNerdMode) {
+                    setShowAccountDetails(true);
+                }
+            }, [isNerdMode]);
 
             // Save configuration when it changes
             useEffect(() => {
@@ -327,12 +336,13 @@
                     taxRate,
                     showPercentiles,
                     accountPreset,
+                    showAccountDetails,
                     stressScenario,
                     inflationRate,
                     simulations
                 };
                 localStorage.setItem('portfolioConfig', JSON.stringify(config));
-            }, [portfolio, currentIncome, savingsRate, savingsYears, strategyMix, accountTypes, withdrawalPeriods, retirementTaxBracket, socialSecurityIncome, standardDeduction, includeTaxes, taxRate, showPercentiles, accountPreset, stressScenario, inflationRate, simulations]);
+            }, [portfolio, currentIncome, savingsRate, savingsYears, strategyMix, accountTypes, withdrawalPeriods, retirementTaxBracket, socialSecurityIncome, standardDeduction, includeTaxes, taxRate, showPercentiles, accountPreset, showAccountDetails, stressScenario, inflationRate, simulations]);
 
             // Calculate simulation years based on withdrawal periods
             const getSimulationYears = useCallback(() => {
