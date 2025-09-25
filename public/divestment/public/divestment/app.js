@@ -173,6 +173,22 @@
     html += `<li><strong>Thumbprint</strong>: Mission/Ethics (${thumb.mission === 'purity' ? 'Values‑driven (Purity)' : 'Risk‑pragmatism (Conduct)'}), Competition (${thumb.competition}), Regulatory (${thumb.regulatory}).</li>`;
     html += '</ul>';
 
+    // Policy alignment (borrowed from Ethical Capital Screening Policy)
+    if (data.policy_alignment && data.policy_alignment.principles && data.policy_alignment.principles.length) {
+      html += `<h3>Policy Alignment</h3>`;
+      html += '<ul>' + data.policy_alignment.principles.map(p => `<li>${sanitize(p)}</li>`).join('') + '</ul>';
+      if (data.policy_alignment.policy_link) {
+        const pl = data.policy_alignment.policy_link;
+        html += `<p class="text-xs text-slate-400">Reference: <a class="text-sky-300 hover:underline" href="${pl.url}" target="_blank" rel="noopener">${sanitize(pl.label)}</a></p>`;
+      }
+    }
+
+    // Government policy snippet
+    if (id === 'government' && data.government_policy_snippet) {
+      html += `<h3>Government Policy Snippet (Approved Issuers)</h3>`;
+      html += `<pre class="whitespace-pre-wrap leading-relaxed">${sanitize(data.government_policy_snippet)}</pre>`;
+    }
+
     html += `<h4>Recommended Approach</h4>`;
     html += '<ul>';
     if (approach.ask) html += `<li><strong>Ask</strong>: ${sanitize(approach.ask)}</li>`;

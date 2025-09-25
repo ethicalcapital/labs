@@ -182,9 +182,21 @@
     { "label": "CFA Institute: Seven Kinds of Asset Owner Institutions", "url": "https://blogs.cfainstitute.org/investor/2018/02/20/the-seven-kinds-of-asset-owner-institutions/" },
     { "label": "What I’d Tell Your CIO about Divestment", "url": "https://ethicic.com/content/research/what-id-tell-your-cio-about-divestment" }
   ],
+  "policy_alignment": {
+    "principles": [
+      "Documented, explainable criteria with public rationales (no black boxes)",
+      "Conduct‑first screening for risk mitigation; product screens for categorical harms when aligned with mission",
+      "Evidence‑based decisions using primary and reputable sources with citations",
+      "Regular review cadence (at least annually) and event‑driven updates",
+      "Escalation path from engagement to exclusion; documented exceptions with time limits",
+      "Implementation discipline: tracking‑error guardrails, diversification, factor neutrality, phased trading",
+      "Transparency: publish criteria and lists subject to prudent trading and confidentiality"
+    ],
+    "policy_link": { "label": "Ethical Capital — Screening Policy", "url": "https://ethicic.com/content/process/screening-policy" }
+  },
+  "government_policy_snippet": "Approved Issuers Policy (template)\\n\\nPurpose: Maintain an Approved Issuers List for fixed‑income investing that aligns treasury practices with ethical standards and risk controls while complying with law and procurement rules.\\n\\nCriteria: Exclude issuers with credible, public evidence of severe human rights violations (including complicity in violations under international humanitarian law). Consider authoritative sources (sanctions lists, court decisions, official investigations) and reputable human‑rights reporting.\\n\\nPortfolio Constraints: Preserve target duration, credit quality, liquidity, and diversification consistent with the investment policy and statutes.\\n\\nProcess: Treasurer (or designee) maintains Approved and Prohibited Issuer lists; legal/procurement review; annual review and event‑driven updates; exceptions require written rationale, legal review, time limits, and notification to the governing body.\\n\\nTransparency & Reporting: Publish criteria and current lists subject to prudent trading and confidentiality; report changes and rationales at least annually.\\n\\nCompliance: This policy operates subject to state law, investment statutes, and procurement rules; in case of conflict, legal requirements prevail.",
   "cio_note": "Implementation focuses on preserving benchmark alignment: specify a tracking‑error budget, maintain factor neutrality, use vendor screened indexes or optimization constraints, and phase trades to avoid divestment shocks.",
   "cio_links": [
     { "label": "CIO Letter (Ethical Capital)", "url": "https://ethicic.com/content/research/what-id-tell-your-cio-about-divestment" }
   ]
 }
-
