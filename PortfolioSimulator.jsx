@@ -1027,107 +1027,6 @@
                     {showDisclaimer && <DisclaimerModal />}
                     
                     <div className="max-w-7xl mx-auto">
-                        {!showDisclaimer && (
-                            <div className="mb-6 rounded-xl border border-indigo-100 bg-indigo-50/90 p-4 sm:p-6 shadow-sm">
-                                <div className="flex flex-col gap-4">
-                                    <div>
-                                        <h2 className="text-base sm:text-lg font-semibold text-indigo-900">Help us prioritize simulator improvements</h2>
-                                        <p className="mt-1 text-xs sm:text-sm text-indigo-700">We store aggregated, anonymous signals only. Please avoid names, account numbers, or sensitive details.</p>
-                                    </div>
-                                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                                        <label className="text-xs sm:text-sm text-indigo-900">
-                                            <span className="mb-1 block font-medium">What are you exploring?</span>
-                                            <select
-                                                value={feedbackUseCase}
-                                                onChange={(e) => setFeedbackUseCase(e.target.value)}
-                                                className="w-full rounded-md border border-indigo-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-indigo-400 focus:outline-none"
-                                            >
-                                                <option value="planning">Baseline retirement readiness</option>
-                                                <option value="drawdown">Drawdown strategy comparisons</option>
-                                                <option value="cashflow">Cash flow stress-testing</option>
-                                                <option value="saving">How much to save before retiring</option>
-                                                <option value="curious">Just exploring possibilities</option>
-                                                <option value="other">Something else</option>
-                                            </select>
-                                        </label>
-                                        <label className="text-xs sm:text-sm text-indigo-900">
-                                            <span className="mb-1 block font-medium">How did this session feel?</span>
-                                            <select
-                                                value={feedbackOutcome}
-                                                onChange={(e) => setFeedbackOutcome(e.target.value)}
-                                                className="w-full rounded-md border border-indigo-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-indigo-400 focus:outline-none"
-                                            >
-                                                <option value="exploring">Still working through answers</option>
-                                                <option value="clarified">Unlocked the insight I needed</option>
-                                                <option value="blocked">I got stuck / missing features</option>
-                                                <option value="share">Ready to share results with someone</option>
-                                            </select>
-                                        </label>
-                                    </div>
-                                    <label className="text-xs sm:text-sm text-indigo-900">
-                                        <span className="mb-1 block font-medium">Key question (optional)</span>
-                                        <input
-                                            type="text"
-                                            value={feedbackObjective}
-                                            onChange={(e) => setFeedbackObjective(e.target.value)}
-                                            maxLength={180}
-                                            className="w-full rounded-md border border-indigo-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-indigo-400 focus:outline-none"
-                                            placeholder="eg. Could I retire at 55 if markets stay volatile?"
-                                        />
-                                    </label>
-                                    <label className="text-xs sm:text-sm text-indigo-900">
-                                        <span className="mb-1 block font-medium">What would make this more useful?</span>
-                                        <textarea
-                                            rows={3}
-                                            value={feedbackNotes}
-                                            onChange={(e) => setFeedbackNotes(e.target.value)}
-                                            maxLength={2000}
-                                            className="w-full rounded-md border border-indigo-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-indigo-400 focus:outline-none"
-                                            placeholder="Feature ideas, confusing steps, data you'd like to see, etc."
-                                        />
-                                    </label>
-                                    <label className="flex items-center gap-2 text-xs sm:text-sm text-indigo-900">
-                                        <input
-                                            type="checkbox"
-                                            checked={feedbackConsent}
-                                            onChange={(e) => setFeedbackConsent(e.target.checked)}
-                                            className="h-4 w-4 rounded border border-indigo-300"
-                                        />
-                                        I consent to share anonymized usage info with Ethical Capital Labs.
-                                    </label>
-                                    <div className="flex flex-wrap items-center gap-3 text-xs sm:text-sm text-indigo-800">
-                                        <button
-                                            type="button"
-                                            onClick={sendLabsFeedback}
-                                            disabled={isSendingFeedback}
-                                            className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-indigo-500 disabled:bg-indigo-400"
-                                        >
-                                            {isSendingFeedback ? 'Sending...' : 'Send anonymous signal'}
-                                        </button>
-                                        <span>{feedbackStatus}</span>
-                                        <div className="flex flex-wrap gap-3">
-                                            <a
-                                                href="https://github.com/ethicalcapital/labs/issues/new?labels=simulator"
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="underline-offset-2 hover:underline"
-                                            >
-                                                Log an issue
-                                            </a>
-                                            <a
-                                                href="https://github.com/ethicalcapital/labs/discussions/new?category=ideas"
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="underline-offset-2 hover:underline"
-                                            >
-                                                Start a discussion
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-
                         {/* Header */}
                         <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 mb-6">
                             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -2103,6 +2002,107 @@
                             
                             </section>
                         </div>
+
+                        {!showDisclaimer && (
+                            <div className="mt-10 rounded-xl border border-indigo-100 bg-indigo-50/90 p-4 sm:p-6 shadow-sm">
+                                <div className="flex flex-col gap-4">
+                                    <div>
+                                        <h2 className="text-base sm:text-lg font-semibold text-indigo-900">Did this help?</h2>
+                                        <p className="text-xs sm:text-sm text-indigo-700">Could it help more?</p>
+                                    </div>
+                                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                                        <label className="text-xs sm:text-sm text-indigo-900">
+                                            <span className="mb-1 block font-medium">What are you exploring?</span>
+                                            <select
+                                                value={feedbackUseCase}
+                                                onChange={(e) => setFeedbackUseCase(e.target.value)}
+                                                className="w-full rounded-md border border-indigo-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-indigo-400 focus:outline-none"
+                                            >
+                                                <option value="planning">Baseline retirement readiness</option>
+                                                <option value="drawdown">Drawdown strategy comparisons</option>
+                                                <option value="cashflow">Cash flow stress-testing</option>
+                                                <option value="saving">How much to save before retiring</option>
+                                                <option value="curious">Just exploring possibilities</option>
+                                                <option value="other">Something else</option>
+                                            </select>
+                                        </label>
+                                        <label className="text-xs sm:text-sm text-indigo-900">
+                                            <span className="mb-1 block font-medium">How did this session feel?</span>
+                                            <select
+                                                value={feedbackOutcome}
+                                                onChange={(e) => setFeedbackOutcome(e.target.value)}
+                                                className="w-full rounded-md border border-indigo-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-indigo-400 focus:outline-none"
+                                            >
+                                                <option value="exploring">Still working through answers</option>
+                                                <option value="clarified">Unlocked the insight I needed</option>
+                                                <option value="blocked">I got stuck / missing features</option>
+                                                <option value="share">Ready to share results with someone</option>
+                                            </select>
+                                        </label>
+                                    </div>
+                                    <label className="text-xs sm:text-sm text-indigo-900">
+                                        <span className="mb-1 block font-medium">Key question (optional)</span>
+                                        <input
+                                            type="text"
+                                            value={feedbackObjective}
+                                            onChange={(e) => setFeedbackObjective(e.target.value)}
+                                            maxLength={180}
+                                            className="w-full rounded-md border border-indigo-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-indigo-400 focus:outline-none"
+                                            placeholder="eg. Could I retire at 55 if markets stay volatile?"
+                                        />
+                                    </label>
+                                    <label className="text-xs sm:text-sm text-indigo-900">
+                                        <span className="mb-1 block font-medium">What would make this more useful?</span>
+                                        <textarea
+                                            rows={3}
+                                            value={feedbackNotes}
+                                            onChange={(e) => setFeedbackNotes(e.target.value)}
+                                            maxLength={2000}
+                                            className="w-full rounded-md border border-indigo-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-indigo-400 focus:outline-none"
+                                            placeholder="Feature ideas, confusing steps, data you'd like to see, etc."
+                                        />
+                                    </label>
+                                    <label className="flex items-center gap-2 text-xs sm:text-sm text-indigo-900">
+                                        <input
+                                            type="checkbox"
+                                            checked={feedbackConsent}
+                                            onChange={(e) => setFeedbackConsent(e.target.checked)}
+                                            className="h-4 w-4 rounded border border-indigo-300"
+                                        />
+                                        I consent to share anonymized usage info.
+                                    </label>
+                                    <div className="flex flex-wrap items-center gap-3 text-xs sm:text-sm text-indigo-800">
+                                        <button
+                                            type="button"
+                                            onClick={sendLabsFeedback}
+                                            disabled={isSendingFeedback}
+                                            className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-indigo-500 disabled:bg-indigo-400"
+                                        >
+                                            {isSendingFeedback ? 'Sending...' : 'Send anonymous signal'}
+                                        </button>
+                                        <span>{feedbackStatus}</span>
+                                        <div className="flex flex-wrap gap-3">
+                                            <a
+                                                href="https://github.com/ethicalcapital/labs/issues/new?labels=simulator"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="underline-offset-2 hover:underline"
+                                            >
+                                                Log an issue
+                                            </a>
+                                            <a
+                                                href="https://github.com/ethicalcapital/labs/discussions/new?category=ideas"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="underline-offset-2 hover:underline"
+                                            >
+                                                Start a discussion
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
 
                         {/* Simple Footer */}
                         <div className="mt-6 bg-white rounded-lg shadow p-4">
