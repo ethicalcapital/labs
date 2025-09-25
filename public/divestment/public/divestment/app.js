@@ -16,6 +16,12 @@
   const sourcesList = el('sources');
   const lookupQuery = el('lookupQuery');
   const lookupBtn = el('lookupBtn');
+  const fbUse = el('fb_usecase');
+  const fbOutcome = el('fb_outcome');
+  const fbNotes = el('fb_notes');
+  const fbConsent = el('fb_consent');
+  const fbSend = el('fb_send');
+  const fbStatus = el('fb_status');
 
   const state = { data: null };
 
@@ -67,6 +73,44 @@
     const url = new URL('https://investigate.afsc.org/search');
     if (q) url.searchParams.set('search', q);
     lookupBtn.href = url.toString();
+  }
+
+  async function sendFeedback() {
+    fbStatus.textContent = '';
+    if (!fbConsent.checked) {
+      fbStatus.textContent = 'Please check consent to send.';
+      return;
+    }
+    const payload = {
+      consent: true,
+      venue: venue.value,
+      target: target.value,
+      entityType: invIdentity.value,
+      thumb: { mission: thumbMission.value, competition: thumbCompetition.value, regulatory: thumbRegulatory.value },
+      objective: objective.value,
+      use_case: fbUse.value,
+      outcome: fbOutcome.value,
+      notes: (fbNotes.value || '').slice(0, 2000)
+    };
+    try {
+      const resp = await fetch('/api/feedback', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) });
+      if (!resp.ok) throw new Error('bad status ' + resp.status);
+      fbStatus.textContent = 'Thanks — feedback received.';
+      fbSend.disabled = true;
+      setTimeout(() => { fbSend.disabled = false; fbStatus.textContent = ''; }, 4000);
+    } catch (e) {
+      // Fallback: download JSON locally
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'divestment-feedback.json';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      fbStatus.textContent = 'Saved feedback file locally (no server available).';
+    }
   }
 
   function deriveApproach(identityGuide, thumb) {
@@ -263,6 +307,8 @@
   });
 
   printBtn.addEventListener('click', () => window.print());
+
+  fbSend?.addEventListener('click', sendFeedback);
 
   lookupQuery?.addEventListener('input', updateLookupHref);
   updateLookupHref();
