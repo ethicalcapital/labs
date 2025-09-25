@@ -184,7 +184,171 @@ p {
 .home-hero {
   position: relative;
   display: grid;
+  grid-template-columns: minmax(220px, 360px) minmax(0, 1fr);
+  gap: 2rem;
+  color: var(--text-dark);
+  background: var(--surface-white);
+  border: 1px solid rgba(88, 28, 135, 0.14);
+  box-shadow: 0 24px 48px rgba(88, 28, 135, 0.1);
+}
+
+.home-hero::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: var(--surface-hero);
+  opacity: 0.12;
+  pointer-events: none;
+}
+
+.home-hero > * {
+  position: relative;
+  z-index: 1;
+}
+
+.home-hero__image {
+  border-radius: 18px;
+  border: 1px dashed rgba(88, 28, 135, 0.35);
+  background: rgba(88, 28, 135, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(88, 28, 135, 0.6);
+  min-height: 240px;
+}
+
+.home-hero__content {
+  display: grid;
   gap: 1.5rem;
+  align-content: start;
+}
+
+.home-hero h2 {
+  color: var(--text-dark);
+}
+
+.home-hero p {
+  color: var(--text-medium);
+}
+
+.home-hero .labs-eyebrow {
+  color: var(--ecic-purple);
+}
+
+.home-hero__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.home-hero__meta {
+  margin: 0;
+  font-size: 0.92rem;
+  color: rgba(17, 24, 39, 0.72);
+}
+
+.home-hero .labs-button--solid {
+  background: var(--ecic-purple);
+  color: #fff;
+}
+
+.home-hero .labs-button--solid:hover {
+  box-shadow: 0 16px 26px rgba(88, 28, 135, 0.2);
+}
+
+.home-hero .labs-button--ghost {
+  border-color: rgba(88, 28, 135, 0.35);
+  color: var(--ecic-purple);
+}
+
+.home-hero .labs-button--ghost:hover {
+  background: rgba(88, 28, 135, 0.08);
+  color: var(--ecic-purple);
+}
+
+.labs-panel--cards {
+  margin-top: 2.5rem;
+}
+
+.labs-cards {
+  display: grid;
+  gap: 1.75rem;
+}
+
+.labs-card--feature {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: minmax(220px, 360px) minmax(0, 1fr);
+  align-items: start;
+}
+
+.labs-card--standard {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.labs-card__media {
+  border-radius: 16px;
+  border: 1px dashed rgba(88, 28, 135, 0.35);
+  background: rgba(88, 28, 135, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(88, 28, 135, 0.6);
+  min-height: 200px;
+}
+
+.labs-card__content {
+  display: grid;
+  gap: 1rem;
+}
+
+.labs-card__title {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.labs-card__title a {
+  color: var(--text-dark);
+}
+
+.labs-card__title a:hover {
+  text-decoration: underline;
+}
+
+.labs-card__description {
+  margin: 0;
+  color: var(--text-medium);
+  line-height: 1.6;
+}
+
+.labs-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.labs-card__action {
+  flex: 0 0 auto;
+}
+
+
+.home-hero {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(220px, 360px) minmax(0, 1fr);
+  gap: 2rem;
   color: var(--text-dark);
   background: var(--surface-white);
   border: 1px solid rgba(88, 28, 135, 0.14);
@@ -261,11 +425,17 @@ p {
 
 .labs-cards {
   display: grid;
-  gap: 1.5rem;
+  gap: 1.75rem;
 }
 
-.labs-card--full {
-  width: 100%;
+.labs-card--feature {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: minmax(220px, 360px) minmax(0, 1fr);
+  align-items: start;
+}
+
+.labs-card--standard {
   display: grid;
   gap: 1.25rem;
 }
@@ -323,7 +493,17 @@ p {
 
 @media (max-width: 720px) {
   .home-hero {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
     padding: 2rem;
+  }
+
+  .home-hero__image {
+    min-height: 180px;
+  }
+
+  .labs-card--feature {
+    grid-template-columns: 1fr;
   }
 
   .home-hero__buttons .labs-button {
@@ -653,5 +833,23 @@ p {
     margin-left: auto;
     margin-right: auto;
     text-align: left;
+  }
+}
+
+@media (max-width: 720px) {
+  .home-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .home-hero__image {
+    min-height: 180px;
+  }
+
+  .labs-card--feature {
+    grid-template-columns: 1fr;
+  }
+
+  .home-hero__buttons .labs-button {
+    width: auto;
   }
 }
