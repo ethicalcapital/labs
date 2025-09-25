@@ -46,6 +46,7 @@ export async function onRequestPost({
       objective: sanitize(body.objective, 80),
       use_case: sanitize(body.use_case, 80),
       outcome: sanitize(body.outcome, 40),
+      followUp: Boolean(body.follow_up),
       // Truncate notes; strip leading/trailing whitespace
       notes: sanitize(body.notes, 2000),
       contentVersion: sanitize(body.content_version, 40),

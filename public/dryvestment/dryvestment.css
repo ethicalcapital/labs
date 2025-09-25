@@ -275,6 +275,10 @@ body {
   line-height: 1.4;
 }
 
+.feedback-followup {
+  margin-top: -0.3rem;
+}
+
 .builder-grid {
   display: grid;
   gap: 1.75rem;

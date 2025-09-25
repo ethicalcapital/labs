@@ -22,6 +22,7 @@
   const fbOutcome = el("fb_outcome");
   const fbNotes = el("fb_notes");
   const fbConsent = el("fb_consent");
+  const fbFollowUp = el("fb_followup");
   const fbSend = el("fb_send");
   const fbStatus = el("fb_status");
   const onePagerFieldset = el("onePagerFieldset");
@@ -644,6 +645,7 @@
       use_case: fbUse.value,
       outcome: fbOutcome.value,
       notes: (fbNotes.value || "").slice(0, 2000),
+      follow_up: fbFollowUp ? !!fbFollowUp.checked : false,
       content_version:
         state.data && state.data.version
           ? String(state.data.version)
