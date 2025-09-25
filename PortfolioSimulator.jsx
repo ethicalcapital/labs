@@ -1024,18 +1024,19 @@
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-                            {/* Configuration Panel */}
-                            <div className="lg:col-span-1 space-y-4 sm:space-y-6">
-                                {/* Portfolio Setup */}
+                        <div className="space-y-10">
+                            {/* Configuration Form */}
+                            <section className="space-y-6" aria-labelledby="simulator-inputs">
+                                <h2 id="simulator-inputs" className="sr-only">Simulation Inputs</h2>
+
+                                {/* Quick Setup */}
                                 <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
-                                    <h2 className="text-lg sm:text-xl font-semibold mb-4">Portfolio Setup</h2>
-                                    
+                                    <h3 className="text-lg sm:text-xl font-semibold mb-4">Quick setup</h3>
                                     <div className="space-y-5">
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700">
                                                 Current Portfolio Value
-                                                <InfoTooltip text="Total investable assets you want to model today" />
+                                                <InfoTooltip text="Total investable assets you want to model today." />
                                             </label>
                                             <div className="mt-3 flex flex-wrap gap-2">
                                                 {QUICK_PORTFOLIO_VALUES.map((value) => (
@@ -1063,7 +1064,7 @@
                                                     min={CONFIG.MIN_PORTFOLIO}
                                                     max={CONFIG.MAX_PORTFOLIO}
                                                 />
-                                                <p className="mt-1 text-xs text-gray-500">Quick select an amount or enter a custom portfolio value.</p>
+                                                <p className="mt-1 text-xs text-gray-500">Quick select an amount or enter a custom value.</p>
                                             </div>
                                         </div>
 
@@ -1071,7 +1072,7 @@
                                             <div>
                                                 <label className="block text-sm font-medium text-gray-700">
                                                     Annual Household Income
-                                                    <InfoTooltip text="Used to estimate ongoing savings during the accumulation phase." />
+                                                    <InfoTooltip text="Used to estimate ongoing savings during accumulation." />
                                                 </label>
                                                 <div className="mt-2 relative">
                                                     <span className="absolute left-3 top-2 text-gray-500">$</span>
@@ -1122,7 +1123,7 @@
                                             </div>
                                             <div className="bg-gray-50 rounded-lg p-3 text-xs text-gray-600">
                                                 <p>
-                                                    In simple mode we assume a retirement withdrawal plan after year {savingsYears + 1}. Switch to Advanced mode to craft custom withdrawal periods, tax handling, and stress scenarios.
+                                                    Simple mode assumes withdrawals begin in year {savingsYears + 1}. Advanced mode lets you customize periods, tax treatment, and stress scenarios.
                                                 </p>
                                             </div>
                                         </div>
@@ -1131,12 +1132,53 @@
 
                                 {/* Strategy Mix */}
                                 <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
-                                    <h2 className="text-lg sm:text-xl font-semibold mb-4">
-                                        Strategy Mix
+                                    <div className="flex items-center justify-between mb-4">
+                                        <h3 className="text-lg sm:text-xl font-semibold">Strategy Mix</h3>
                                         <InfoTooltip text="Combine strategies to balance growth and stability. More diversification = more predictable outcomes." />
-                                    </h2>
+                                    </div>
 
-                                    {!isNerdMode ? (
+                                    {isNerdMode ? (
+                                        <div className="space-y-4">
+                                            {Object.entries(STRATEGIES).map(([key, strategy]) => (
+                                                <div key={key}>
+                                                    <div className="flex justify-between items-center mb-1">
+                                                        <span className="text-sm font-medium" style={{ color: strategy.color }}>
+                                                            {strategy.name}
+                                                        </span>
+                                                        <span className="text-sm">{strategyMix[key]}%</span>
+                                                    </div>
+                                                    <input
+                                                        type="range"
+                                                        min="0"
+                                                        max="100"
+                                                        value={strategyMix[key]}
+                                                        onChange={(e) => setStrategyMix({
+                                                            ...strategyMix,
+                                                            [key]: Number(e.target.value)
+                                                        })}
+                                                        className="w-full"
+                                                    />
+                                                    <p className="text-xs text-gray-500 mt-1">{strategy.examples}</p>
+                                                </div>
+                                            ))}
+                                            <div className="pt-3 border-t">
+                                                <div className="grid grid-cols-2 gap-4 text-sm">
+                                                    <div>
+                                                        <span className="text-gray-600">Expected Return:</span>
+                                                        <div className="font-bold text-lg">
+                                                            {getEffectiveParameters().expectedReturn.toFixed(1)}%
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <span className="text-gray-600">Volatility:</span>
+                                                        <div className="font-bold text-lg">
+                                                            {getEffectiveParameters().volatility.toFixed(1)}%
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ) : (
                                         <div className="space-y-4">
                                             <div>
                                                 <label className="block text-sm font-medium text-gray-700 mb-3">
@@ -1168,8 +1210,8 @@
                                                             key={key}
                                                             onClick={() => applyPreset(key)}
                                                             className={`preset-chip px-3 py-1 text-xs rounded-full border ${
-                                                                riskTolerance === key 
-                                                                    ? 'bg-blue-600 text-white border-blue-600' 
+                                                                riskTolerance === key
+                                                                    ? 'bg-blue-600 text-white border-blue-600'
                                                                     : 'bg-white text-gray-700 border-gray-300 hover:border-blue-400'
                                                             }`}
                                                         >
@@ -1206,58 +1248,216 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    ) : (
-                                        <div className="space-y-4">
-                                            {Object.entries(STRATEGIES).map(([key, strategy]) => (
-                                                <div key={key}>
-                                                    <div className="flex justify-between items-center mb-1">
-                                                        <span className="text-sm font-medium" style={{ color: strategy.color }}>
-                                                            {strategy.name}
-                                                        </span>
-                                                        <span className="text-sm">{strategyMix[key]}%</span>
-                                                    </div>
-                                                    <input
-                                                        type="range"
-                                                        min="0"
-                                                        max="100"
-                                                        value={strategyMix[key]}
-                                                        onChange={(e) => setStrategyMix({
-                                                            ...strategyMix,
-                                                            [key]: Number(e.target.value)
-                                                        })}
-                                                        className="w-full"
-                                                    />
-                                                    <p className="text-xs text-gray-500 mt-1">{strategy.examples}</p>
-                                                </div>
-                                            ))}
-                                            
-                                            <div className="pt-3 border-t">
-                                                <div className="grid grid-cols-2 gap-4 text-sm">
-                                                    <div>
-                                                        <span className="text-gray-600">Expected Return:</span>
-                                                        <div className="font-bold text-lg">
-                                                            {getEffectiveParameters().expectedReturn.toFixed(1)}%
-                                                        </div>
-                                                    </div>
-                                                    <div>
-                                                        <span className="text-gray-600">Volatility:</span>
-                                                        <div className="font-bold text-lg">
-                                                            {getEffectiveParameters().volatility.toFixed(1)}%
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                    )}
+                                </div>
+
+                                <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
+                                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
+                                        <div>
+                                            <h3 className="text-lg sm:text-xl font-semibold">Account Mix</h3>
+                                            <p className="text-xs text-gray-500">
+                                                Currently using the {(ACCOUNT_TYPE_PRESETS[accountPreset] ? ACCOUNT_TYPE_PRESETS[accountPreset].label : 'Custom')} preset.
+                                            </p>
+                                        </div>
+                                        {!(isNerdMode || showAccountDetails) && (
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowAccountDetails(true)}
+                                                className="labs-button labs-button--outline text-sm"
+                                            >
+                                                Adjust account types
+                                            </button>
+                                        )}
+                                    </div>
+
+                                    {!(isNerdMode || showAccountDetails) && (
+                                        <div className="grid sm:grid-cols-3 gap-3 text-sm">
+                                            <div className="bg-gray-50 rounded-lg p-3">
+                                                <p className="font-semibold text-gray-900">Taxable</p>
+                                                <p className="text-xs text-gray-500">Brokerage / capital gains</p>
+                                                <p className="mt-2 text-lg font-bold text-green-700">{accountTypes.taxable}%</p>
                                             </div>
+                                            <div className="bg-gray-50 rounded-lg p-3">
+                                                <p className="font-semibold text-gray-900">Tax-Deferred</p>
+                                                <p className="text-xs text-gray-500">401(k) / IRA balances</p>
+                                                <p className="mt-2 text-lg font-bold text-amber-700">{accountTypes.taxDeferred}%</p>
+                                            </div>
+                                            <div className="bg-gray-50 rounded-lg p-3">
+                                                <p className="font-semibold text-gray-900">Roth</p>
+                                                <p className="text-xs text-gray-500">Tax-free withdrawals</p>
+                                                <p className="mt-2 text-lg font-bold text-blue-700">{accountTypes.roth}%</p>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {(isNerdMode || showAccountDetails) && (
+                                        <div className="space-y-4 mt-4">
+                                            {!isNerdMode && (
+                                                <div className="flex justify-end">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setShowAccountDetails(false)}
+                                                        className="labs-button labs-button--outline text-sm"
+                                                    >
+                                                        Done adjusting
+                                                    </button>
+                                                </div>
+                                            )}
+
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                    Start with a preset
+                                                </label>
+                                                <select
+                                                    value={accountPreset}
+                                                    onChange={(e) => {
+                                                        const nextPreset = e.target.value;
+                                                        setAccountPreset(nextPreset);
+                                                        if (nextPreset === 'custom') {
+                                                            setShowAccountDetails(true);
+                                                        }
+                                                    }}
+                                                    className="block w-full border-gray-300 rounded-md shadow-sm p-2 border text-sm"
+                                                >
+                                                    {Object.entries(ACCOUNT_TYPE_PRESETS).map(([key, preset]) => (
+                                                        <option key={key} value={key}>
+                                                            {preset.label}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+
+                                            {accountPreset !== 'custom' ? (
+                                                <div className="bg-gray-50 rounded-lg p-4 text-sm text-gray-700">
+                                                    <p className="font-semibold text-gray-900">Current mix</p>
+                                                    <ul className="mt-2 space-y-1">
+                                                        <li>Taxable: {ACCOUNT_TYPE_PRESETS[accountPreset].values.taxable}%</li>
+                                                        <li>Tax-Deferred: {ACCOUNT_TYPE_PRESETS[accountPreset].values.taxDeferred}%</li>
+                                                        <li>Roth: {ACCOUNT_TYPE_PRESETS[accountPreset].values.roth}%</li>
+                                                    </ul>
+                                                    <p className="mt-3 text-xs text-gray-500">Select <strong>Custom</strong> to enter your own allocation.</p>
+                                                </div>
+                                            ) : (
+                                                <div className="space-y-3">
+                                                    <div>
+                                                        <div className="flex justify-between items-center mb-1">
+                                                            <span className="text-sm font-medium text-green-700">Taxable (Brokerage)</span>
+                                                            <span className="text-sm font-bold">{accountTypes.taxable}%</span>
+                                                        </div>
+                                                        <input
+                                                            type="range"
+                                                            min="0"
+                                                            max="100"
+                                                            value={accountTypes.taxable}
+                                                            onChange={(e) => {
+                                                                setAccountPreset('custom');
+                                                                setAccountTypes({
+                                                                    ...accountTypes,
+                                                                    taxable: Number(e.target.value)
+                                                                });
+                                                                setShowAccountDetails(true);
+                                                            }}
+                                                            className="w-full"
+                                                            style={{
+                                                                background: `linear-gradient(to right, #10b981 0%, #10b981 ${accountTypes.taxable}%, #e5e7eb ${accountTypes.taxable}%, #e5e7eb 100%)`
+                                                            }}
+                                                        />
+                                                        <p className="text-xs text-gray-500 mt-1">Lower long-term capital gains rates.</p>
+                                                    </div>
+
+                                                    <div>
+                                                        <div className="flex justify-between items-center mb-1">
+                                                            <span className="text-sm font-medium text-amber-700">Tax-Deferred (401k/IRA)</span>
+                                                            <span className="text-sm font-bold">{accountTypes.taxDeferred}%</span>
+                                                        </div>
+                                                        <input
+                                                            type="range"
+                                                            min="0"
+                                                            max="100"
+                                                            value={accountTypes.taxDeferred}
+                                                            onChange={(e) => {
+                                                                setAccountPreset('custom');
+                                                                setAccountTypes({
+                                                                    ...accountTypes,
+                                                                    taxDeferred: Number(e.target.value)
+                                                                });
+                                                                setShowAccountDetails(true);
+                                                            }}
+                                                            className="w-full"
+                                                            style={{
+                                                                background: `linear-gradient(to right, #d97706 0%, #d97706 ${accountTypes.taxDeferred}%, #e5e7eb ${accountTypes.taxDeferred}%, #e5e7eb 100%)`
+                                                            }}
+                                                        />
+                                                        <p className="text-xs text-gray-500 mt-1">Taxed as ordinary income when withdrawn.</p>
+                                                    </div>
+
+                                                    <div>
+                                                        <div className="flex justify-between items-center mb-1">
+                                                            <span className="text-sm font-medium text-blue-700">Roth (Tax-Free)</span>
+                                                            <span className="text-sm font-bold">{accountTypes.roth}%</span>
+                                                        </div>
+                                                        <input
+                                                            type="range"
+                                                            min="0"
+                                                            max="100"
+                                                            value={accountTypes.roth}
+                                                            onChange={(e) => {
+                                                                setAccountPreset('custom');
+                                                                setAccountTypes({
+                                                                    ...accountTypes,
+                                                                    roth: Number(e.target.value)
+                                                                });
+                                                                setShowAccountDetails(true);
+                                                            }}
+                                                            className="w-full"
+                                                            style={{
+                                                                background: `linear-gradient(to right, #2563eb 0%, #2563eb ${accountTypes.roth}%, #e5e7eb ${accountTypes.roth}%, #e5e7eb 100%)`
+                                                            }}
+                                                        />
+                                                        <p className="text-xs text-gray-500 mt-1">Qualified withdrawals remain tax-free.</p>
+                                                    </div>
+
+                                                    {accountTypes.taxable + accountTypes.taxDeferred + accountTypes.roth !== 100 && (
+                                                        <p className="text-xs text-red-600">
+                                                            Total: {accountTypes.taxable + accountTypes.taxDeferred + accountTypes.roth}% (will be normalized to 100%)
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            )}
+
+                                            {!isNerdMode && (
+                                                <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+                                                    <p className="text-xs text-blue-700">
+                                                        <strong>Tax-Smart Withdrawal Order:</strong> We'll optimize withdrawals to minimize lifetime taxes using the TDD strategy - filling your standard deduction first, then taxable accounts, preserving Roth for last.
+                                                    </p>
+                                                </div>
+                                            )}
                                         </div>
                                     )}
                                 </div>
 
-                                {/* Withdrawal Schedule */}
+                                <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 flex items-center space-x-3">
+                                    <span className={`font-medium text-sm ${!isNerdMode ? 'text-blue-600' : 'text-gray-500'}`}>
+                                        Simple
+                                    </span>
+                                    <label className="mode-toggle">
+                                        <input
+                                            type="checkbox"
+                                            checked={isNerdMode}
+                                            onChange={(e) => setIsNerdMode(e.target.checked)}
+                                        />
+                                        <span className="slider"></span>
+                                    </label>
+                                    <span className={`font-medium text-sm ${isNerdMode ? 'text-blue-600' : 'text-gray-500'}`}>
+                                        Advanced
+                                    </span>
+                                </div>
+
                                 <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
-                                    <h2 className="text-lg sm:text-xl font-semibold mb-4">
+                                    <h3 className="text-lg sm:text-xl font-semibold mb-4">
                                         Retirement Withdrawal Plan
-                                        <InfoTooltip text="Define withdrawal amounts for different periods after retirement" />
-                                    </h2>
-                                    
+                                        <InfoTooltip text="Define withdrawal amounts for different periods after retirement." />
+                                    </h3>
                                     {savingsYears > 0 && (
                                         <div className="mb-4 p-3 bg-blue-50 rounded-lg">
                                             <p className="text-xs text-blue-700">
@@ -1265,7 +1465,7 @@
                                             </p>
                                         </div>
                                     )}
-                                    
+
                                     <div className="space-y-3">
                                         {withdrawalPeriods.map((period, index) => (
                                             <div key={index} className="withdrawal-period">
@@ -1318,7 +1518,7 @@
                                                 </div>
                                             </div>
                                         ))}
-                                        
+
                                         <button
                                             onClick={addWithdrawalPeriod}
                                             className="w-full py-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-blue-400 hover:text-blue-600 text-sm"
@@ -1328,11 +1528,9 @@
                                     </div>
                                 </div>
 
-                                {/* Advanced Settings */}
                                 {isNerdMode && (
                                     <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
-                                        <h2 className="text-lg sm:text-xl font-semibold mb-4">Advanced Settings</h2>
-                                        
+                                        <h3 className="text-lg sm:text-xl font-semibold mb-4">Advanced Settings</h3>
                                         <div className="space-y-4">
                                             <div className="grid grid-cols-2 gap-4">
                                                 <div>
@@ -1473,7 +1671,6 @@
                                     </div>
                                 )}
 
-                                {/* Run Button */}
                                 <button
                                     onClick={runSimulation}
                                     disabled={isCalculating}
@@ -1481,10 +1678,11 @@
                                 >
                                     {isCalculating ? `Running ${simulations.toLocaleString()} Simulations...` : `Run ${simulations.toLocaleString()} Simulations`}
                                 </button>
-                            </div>
+                            </section>
 
                             {/* Results Panel */}
-                            <div className="lg:col-span-2 space-y-4 sm:space-y-6">
+                            <section className="space-y-4 sm:space-y-6" aria-labelledby="simulator-results">
+                                <h2 id="simulator-results" className="sr-only">Simulation Results</h2>
                                 {results ? (
                                     <>
                                         {/* Visual Mode Toggle */}
@@ -1708,7 +1906,8 @@
                                         </div>
                                     </div>
                                 )}
-                            </div>
+                            
+                            </section>
                         </div>
 
                         {/* Simple Footer */}

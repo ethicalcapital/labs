@@ -100,7 +100,8 @@
       objective: objective.value,
       use_case: fbUse.value,
       outcome: fbOutcome.value,
-      notes: (fbNotes.value || '').slice(0, 2000)
+      notes: (fbNotes.value || '').slice(0, 2000),
+      content_version: (state.data && state.data.version) ? String(state.data.version) : 'fallback'
     };
     try {
       const resp = await fetch('/api/feedback', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) });
@@ -342,6 +343,7 @@
 
 // Minimal embedded fallback to avoid fetch/CSP failures
 window.__BDS_FALLBACK__ = {
+  version: 'fallback-2025-09-25-1',
   openers: { generic: 'We can align investments with basic human rights using professional, benchmark-aware implementation. Large institutions already use narrowly scoped exclusions while maintaining diversification and risk controls.' },
   identity_openers: {
     swf: { generic: 'A sovereign fund can implement conduct-based exclusions via a formal ethics process, public rationales, and factor-neutral optimization with explicit tracking-error budgets.' },
