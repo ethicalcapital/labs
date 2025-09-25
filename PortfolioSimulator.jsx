@@ -1021,12 +1021,12 @@
                                         Advanced
                                     </span>
                                 </div>
-                            </div>
+                            </section>
                         </div>
 
-                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-                            {/* Configuration Panel */}
-                            <div className="lg:col-span-1 space-y-4 sm:space-y-6">
+                        <div className="space-y-8">
+                            {/* Configuration Form */}
+                            <section className="space-y-6">
                                 {/* Portfolio Setup */}
                                 <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
                                     <h2 className="text-lg sm:text-xl font-semibold mb-4">Portfolio Setup</h2>
@@ -1481,10 +1481,10 @@
                                 >
                                     {isCalculating ? `Running ${simulations.toLocaleString()} Simulations...` : `Run ${simulations.toLocaleString()} Simulations`}
                                 </button>
-                            </div>
+                            </section>
 
                             {/* Results Panel */}
-                            <div className="lg:col-span-2 space-y-4 sm:space-y-6">
+                            <section className="space-y-4 sm:space-y-6">
                                 {results ? (
                                     <>
                                         {/* Visual Mode Toggle */}
