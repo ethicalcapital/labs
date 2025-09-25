@@ -1,6 +1,6 @@
 (() => {
   const el = (id) => document.getElementById(id);
-  const audience = el('audience');
+  const venue = el('venue');
   const target = el('target');
   const invIdentity = el('invIdentity');
   const thumbMission = el('thumb_mission');
@@ -21,8 +21,14 @@
 
   async function loadData() {
     if (state.data) return state.data;
-    const resp = await fetch('./content/bds_pack.json');
-    state.data = await resp.json();
+    try {
+      const resp = await fetch('/public/divestment/content/bds_pack.json', { cache: 'no-store' });
+      if (!resp.ok) throw new Error('bad status ' + resp.status);
+      state.data = await resp.json();
+    } catch (err) {
+      console.warn('Falling back to embedded content pack:', err);
+      state.data = window.__BDS_FALLBACK__;
+    }
     return state.data;
   }
 
@@ -91,7 +97,7 @@
 
   async function buildBrief() {
     const data = await loadData();
-    const a = audience.value;
+    const v = venue.value;
     const tg = target.value;
     const id = invIdentity.value;
     const ln = (localName.value || '').trim();
@@ -103,7 +109,7 @@
     };
 
     // Opening: audience + identity aware
-    const opening = (data.identity_openers?.[id]?.[a]) || (data.identity_openers?.[id]?.generic) || data.openers.generic;
+    const opening = (data.identity_openers?.[id]?.[v]) || (data.identity_openers?.[id]?.generic) || data.openers.generic;
 
     // Key points (fixed count)
     const points = pick(data.key_points, 6);
@@ -204,7 +210,7 @@
 
   buildBtn.addEventListener('click', buildBrief);
   resetBtn.addEventListener('click', () => {
-    audience.value = 'town_meeting';
+    venue.value = 'one_on_one';
     target.value = 'cio';
     invIdentity.value = 'public_pension';
     thumbMission.value = 'pragmatism';
@@ -238,3 +244,48 @@
   });
 })();
 
+// Minimal embedded fallback to avoid fetch/CSP failures
+window.__BDS_FALLBACK__ = {
+  openers: { generic: 'We can align investments with basic human rights using professional, benchmark-aware implementation. Large institutions already use narrowly scoped exclusions while maintaining diversification and risk controls.' },
+  identity_openers: {
+    swf: { generic: 'A sovereign fund can implement conduct-based exclusions via a formal ethics process, public rationales, and factor-neutral optimization with explicit tracking-error budgets.' },
+    public_pension: { generic: 'Public plans can use consultant/manager mandates, set a tracking-error guardrail, and phase implementation while keeping beneficiaries’ risk/return in focus.' },
+    corporate_pension: { generic: 'Corporate plans can update the IPS, adopt a screened index or constraints with minimal overhead, and maintain de-risking alignment.' },
+    endowment: { generic: 'Endowments can align with mission through a committee process, publish rationales, and maintain prudent risk controls.' },
+    foundation: { generic: 'Foundations can align programs and portfolios, reduce reputational risk through clear criteria, and use simplified implementation paths.' },
+    insurance: { generic: 'Insurance portfolios can adopt narrow conduct screens consistent with ALM and capital/rating constraints, emphasizing best-efforts and risk integrity.' },
+    central_bank: { generic: 'Official institutions can clarify mandate limits, apply best‑efforts exclusions, and provide transparent rationales and constraints.' },
+    government: { generic: 'Government investors (city/county/state) can apply issuer screens/approved lists for bonds, observe procurement/governance limits, and report with best‑efforts language.' }
+  },
+  identity_guides: {
+    public_pension: {
+      ask: 'Consultant memo and manager mandates for conduct-based exclusions; define guardrails.',
+      implementation: 'Passive screened index or benchmark‑aware constraints; phased divestment to minimize costs; maintain diversification.',
+      reporting: 'Quarterly one‑page dashboard; publish criteria and exclusion list.',
+      risk: 'Tracking‑error limit (e.g., ≤30 bps) and factor neutrality by vendor.'
+    }
+  },
+  key_points: [
+    { title: 'Professional exclusions maintain benchmark-like performance', body: 'Large public funds implement conduct-based exclusions and continue to deliver returns close to their benchmarks by rebalancing and preserving factor exposures.', citations: [ { label: 'NBIM Responsible Investment', url: 'https://www.nbim.no/en/responsibility/' } ] },
+    { title: 'Tracking error and factor neutrality', body: 'Exclusions can be implemented with explicit tracking-error budgets and factor controls so the portfolio stays close to its benchmark while meeting policy goals.', citations: [ { label: 'MSCI ESG Index Construction', url: 'https://www.msci.com/our-solutions/indexes/esg-indexes' } ] },
+    { title: 'Fiduciary duty and values alignment', body: 'Modern fiduciary guidance recognizes that material ESG risks and client objectives can be incorporated without abandoning prudent, return-seeking management.', citations: [ { label: 'UN PRI: Fiduciary Duty', url: 'https://www.unpri.org/fiduciary-duty' } ] }
+  ],
+  counters: [
+    { claim: 'Divestment will significantly hurt performance and beneficiaries.', response: 'Naive exclusions can be costly, but professional managers use optimization and tracking-error limits to preserve factor exposures and benchmark-like returns.', citations: [ { label: 'MSCI ESG Index Construction', url: 'https://www.msci.com/our-solutions/indexes/esg-indexes' } ] },
+    { claim: 'Exclusions violate fiduciary duty.', response: 'Fiduciary duty requires prudence, loyalty, and attention to material risk and client objectives. Values alignment and risk management can be implemented within a disciplined, return-seeking mandate.', citations: [ { label: 'UN PRI: Fiduciary Duty', url: 'https://www.unpri.org/fiduciary-duty' } ] }
+  ],
+  model_resolution: 'RESOLVED: That the {localName} shall adopt a conduct-based investment exclusion policy... ',
+  next_steps: [ 'Request current holdings/exposure report from managers.', 'Adopt written conduct criteria and escalation process.' ],
+  sources: [
+    { label: 'NBIM Responsible Investment', url: 'https://www.nbim.no/en/responsibility/' },
+    { label: 'UN PRI: Fiduciary Duty', url: 'https://www.unpri.org/fiduciary-duty' },
+    { label: 'MSCI: ESG Indexes & Methodology', url: 'https://www.msci.com/our-solutions/indexes/esg-indexes' }
+  ],
+  further_reading: [
+    { label: 'SSRN: Investor Identity (4324537)', url: 'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4324537' },
+    { label: 'CFA Institute: Seven Kinds of Asset Owner Institutions', url: 'https://blogs.cfainstitute.org/investor/2018/02/20/the-seven-kinds-of-asset-owner-institutions/' },
+    { label: 'What I’d Tell Your CIO about Divestment', url: 'https://ethicic.com/content/research/what-id-tell-your-cio-about-divestment' }
+  ],
+  cio_note: 'Specify a tracking‑error budget, maintain factor neutrality, use screened indexes or constraints, and phase trades to avoid divestment shocks.',
+  cio_links: [ { label: 'CIO Letter (Ethical Capital)', url: 'https://ethicic.com/content/research/what-id-tell-your-cio-about-divestment' } ]
+};

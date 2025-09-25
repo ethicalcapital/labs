@@ -42,13 +42,14 @@
           <h2 class="text-lg font-semibold text-white">1) Setup</h2>
           <form id="builder" class="mt-4 grid grid-cols-1 gap-4">
             <label class="block">
-              <span class="mb-1 block text-sm text-slate-300">Audience</span>
-              <select id="audience" class="w-full rounded-md border border-slate-600/60 bg-slate-900/50 px-3 py-2 text-sm">
-                <option value="town_meeting">Town Meeting</option>
-                <option value="city_council">City Council</option>
-                <option value="school_board">School Board</option>
-                <option value="university_board">University Trustees</option>
-                <option value="pension_board">Pension Board</option>
+              <span class="mb-1 block text-sm text-slate-300">Venue</span>
+              <select id="venue" class="w-full rounded-md border border-slate-600/60 bg-slate-900/50 px-3 py-2 text-sm">
+                <option value="one_on_one">1:1 Conversation</option>
+                <option value="small_group">Small Group Meeting</option>
+                <option value="committee_hearing">Committee Hearing</option>
+                <option value="full_board_meeting">Full Board/Council Meeting</option>
+                <option value="public_testimony">Public Testimony / Town Hall</option>
+                <option value="written_memo">Written Memo / Email</option>
               </select>
             </label>
 
@@ -65,7 +66,7 @@
             </label>
 
             <label class="block">
-              <span class="mb-1 block text-sm text-slate-300">Investor Identity (CFA Institute)</span>
+              <span class="mb-1 block text-sm text-slate-300">Entity Type (CFA Institute)</span>
               <select id="invIdentity" class="w-full rounded-md border border-slate-600/60 bg-slate-900/50 px-3 py-2 text-sm">
                 <option value="swf">Sovereign Wealth Fund</option>
                 <option value="public_pension">Public Pension Plan</option>
