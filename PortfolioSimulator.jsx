@@ -96,6 +96,48 @@
             }
         };
 
+        const QUICK_PORTFOLIO_VALUES = [10000, 100000, 1000000];
+
+        const ACCOUNT_TYPE_PRESETS = {
+            balanced: {
+                label: 'Balanced (40/40/20)',
+                values: { taxable: 40, taxDeferred: 40, roth: 20 }
+            },
+            taxEfficient: {
+                label: 'Tax Efficient (30/50/20)',
+                values: { taxable: 30, taxDeferred: 50, roth: 20 }
+            },
+            growthTaxable: {
+                label: 'Growth / Taxable Heavy (60/25/15)',
+                values: { taxable: 60, taxDeferred: 25, roth: 15 }
+            },
+            rothFocused: {
+                label: 'Roth Focused (20/30/50)',
+                values: { taxable: 20, taxDeferred: 30, roth: 50 }
+            },
+            custom: {
+                label: 'Custom',
+                values: null
+            }
+        };
+
+        const matchAccountPreset = (mix) => {
+            for (const [key, preset] of Object.entries(ACCOUNT_TYPE_PRESETS)) {
+                if (key === 'custom') continue;
+                const values = preset.values;
+                if (
+                    values.taxable === mix.taxable &&
+                    values.taxDeferred === mix.taxDeferred &&
+                    values.roth === mix.roth
+                ) {
+                    return key;
+                }
+            }
+            return 'custom';
+        };
+
+        const formatCurrency = (value) => value.toLocaleString('en-US');
+
         const DEFAULT_WITHDRAWAL_PERIODS = [
             { startYear: 11, endYear: 20, annualAmount: 60000, label: 'Early Retirement (Age 60-69)' },
             { startYear: 21, endYear: 40, annualAmount: 80000, label: 'Full Retirement (Age 70+)' }
@@ -134,11 +176,8 @@
             const [riskTolerance, setRiskTolerance] = useState('balanced');
             
             // Account type breakdown for tax-aware withdrawals
-            const [accountTypes, setAccountTypes] = useState({
-                taxable: 40,      // Regular brokerage (green)
-                taxDeferred: 40,  // 401k/IRA (brown "tax dirt")
-                roth: 20          // Roth IRA (blue "tax-free sky")
-            });
+            const [accountPreset, setAccountPreset] = useState('balanced');
+            const [accountTypes, setAccountTypes] = useState(() => ACCOUNT_TYPE_PRESETS.balanced.values);
             
             // Tax assumptions
             const [retirementTaxBracket, setRetirementTaxBracket] = useState(12); // Expected retirement bracket
@@ -159,8 +198,6 @@
             const [visualMode, setVisualMode] = useState('paths'); // 'paths', 'buckets', 'waterfall'
             
             // Progressive engagement tracking
-            const [emailSubmitted, setEmailSubmitted] = useState(false);
-            
             // Advanced settings
             const [inflationRate, setInflationRate] = useState(2.5);
             const [simulations, setSimulations] = useState(CONFIG.DEFAULT_SIMULATIONS);
@@ -203,11 +240,15 @@
                         }
 
                         if (config.accountTypes) {
-                            setAccountTypes({
+                            const savedTypes = {
                                 taxable: config.accountTypes.taxable ?? 40,
                                 taxDeferred: config.accountTypes.taxDeferred ?? 40,
                                 roth: config.accountTypes.roth ?? 20
-                            });
+                            };
+                            setAccountTypes(savedTypes);
+                            setAccountPreset(config.accountPreset ?? matchAccountPreset(savedTypes));
+                        } else if (config.accountPreset) {
+                            setAccountPreset(config.accountPreset);
                         }
 
                         if (Array.isArray(config.withdrawalPeriods)) {
@@ -248,6 +289,27 @@
                 }
             }, []);
 
+            useEffect(() => {
+                if (accountPreset === 'custom') {
+                    return;
+                }
+                const preset = ACCOUNT_TYPE_PRESETS[accountPreset];
+                if (!preset || !preset.values) {
+                    return;
+                }
+                const nextValues = preset.values;
+                setAccountTypes((prev) => {
+                    if (
+                        prev.taxable === nextValues.taxable &&
+                        prev.taxDeferred === nextValues.taxDeferred &&
+                        prev.roth === nextValues.roth
+                    ) {
+                        return prev;
+                    }
+                    return { ...nextValues };
+                });
+            }, [accountPreset]);
+
             // Save configuration when it changes
             useEffect(() => {
                 const config = {
@@ -264,12 +326,13 @@
                     includeTaxes,
                     taxRate,
                     showPercentiles,
+                    accountPreset,
                     stressScenario,
                     inflationRate,
                     simulations
                 };
                 localStorage.setItem('portfolioConfig', JSON.stringify(config));
-            }, [portfolio, currentIncome, savingsRate, savingsYears, strategyMix, accountTypes, withdrawalPeriods, retirementTaxBracket, socialSecurityIncome, standardDeduction, includeTaxes, taxRate, showPercentiles, stressScenario, inflationRate, simulations]);
+            }, [portfolio, currentIncome, savingsRate, savingsYears, strategyMix, accountTypes, withdrawalPeriods, retirementTaxBracket, socialSecurityIncome, standardDeduction, includeTaxes, taxRate, showPercentiles, accountPreset, stressScenario, inflationRate, simulations]);
 
             // Calculate simulation years based on withdrawal periods
             const getSimulationYears = useCallback(() => {
@@ -768,117 +831,123 @@
                                 <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
                                     <h2 className="text-lg sm:text-xl font-semibold mb-4">
                                         Account Types
-                                        <InfoTooltip text="Different account types have different tax treatments. Optimizing withdrawals across these can save significant taxes." />
+                                        <InfoTooltip text="Different account types have different tax treatments. Choose a preset or switch to custom to fine-tune." />
                                     </h2>
-                                    
-                                    <div className="space-y-3">
+
+                                    <div className="space-y-4">
                                         <div>
-                                            <div className="flex justify-between items-center mb-1">
-                                                <span className="text-sm font-medium text-green-700">
-                                                    Taxable (Brokerage)
-                                                </span>
-                                                <span className="text-sm font-bold">{accountTypes.taxable}%</span>
-                                                {/* Simple CTA after results */}
-                                            {results && results.successRate > 0 && !emailSubmitted && (
-                                                <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-                                                    <p className="text-sm text-gray-700 mb-3">
-                                                        Want to stay updated on market insights and retirement planning?
-                                                    </p>
-                                                    <div className="flex flex-col sm:flex-row gap-3">
-                                                    <a
-                                                        href="https://buttondown.com/ethicic"
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        onClick={() => setEmailSubmitted(true)}
-                                                        className="inline-block px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm text-center"
-                                                    >
-                                                        Subscribe to Newsletter
-                                                    </a>
-                                                    <a
-                                                        href="https://forms.lessannoyingcrm.com/view/4050759343360583472689106586874"
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        onClick={() => setEmailSubmitted(true)}
-                                                        className="inline-block px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 text-sm text-center"
-                                                    >
-                                                        Get Professional Help
-                                                    </a>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                Start with a preset
+                                            </label>
+                                            <select
+                                                value={accountPreset}
+                                                onChange={(e) => setAccountPreset(e.target.value)}
+                                                className="block w-full border-gray-300 rounded-md shadow-sm p-2 border text-sm"
+                                            >
+                                                {Object.entries(ACCOUNT_TYPE_PRESETS).map(([key, preset]) => (
+                                                    <option key={key} value={key}>
+                                                        {preset.label}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+
+                                        {accountPreset !== 'custom' ? (
+                                            <div className="bg-gray-50 rounded-lg p-4 text-sm text-gray-700">
+                                                <p className="font-semibold text-gray-900">Current mix</p>
+                                                <ul className="mt-2 space-y-1">
+                                                    <li>Taxable: {ACCOUNT_TYPE_PRESETS[accountPreset].values.taxable}%</li>
+                                                    <li>Tax-Deferred: {ACCOUNT_TYPE_PRESETS[accountPreset].values.taxDeferred}%</li>
+                                                    <li>Roth: {ACCOUNT_TYPE_PRESETS[accountPreset].values.roth}%</li>
+                                                </ul>
+                                                <p className="mt-3 text-xs text-gray-500">Select <strong>Custom</strong> to enter your own allocation.</p>
+                                            </div>
+                                        ) : (
+                                            <div className="space-y-3">
+                                                <div>
+                                                    <div className="flex justify-between items-center mb-1">
+                                                        <span className="text-sm font-medium text-green-700">Taxable (Brokerage)</span>
+                                                        <span className="text-sm font-bold">{accountTypes.taxable}%</span>
                                                     </div>
+                                                    <input
+                                                        type="range"
+                                                        min="0"
+                                                        max="100"
+                                                        value={accountTypes.taxable}
+                                                        onChange={(e) => {
+                                                            setAccountPreset('custom');
+                                                            setAccountTypes({
+                                                                ...accountTypes,
+                                                                taxable: Number(e.target.value)
+                                                            });
+                                                        }}
+                                                        className="w-full"
+                                                        style={{
+                                                            background: `linear-gradient(to right, #10b981 0%, #10b981 ${accountTypes.taxable}%, #e5e7eb ${accountTypes.taxable}%, #e5e7eb 100%)`
+                                                        }}
+                                                    />
+                                                    <p className="text-xs text-gray-500 mt-1">Lower long-term capital gains rates.</p>
                                                 </div>
-                                            )}
-                                        </div>
-                                            <input
-                                                type="range"
-                                                min="0"
-                                                max="100"
-                                                value={accountTypes.taxable}
-                                                onChange={(e) => setAccountTypes({
-                                                    ...accountTypes,
-                                                    taxable: Number(e.target.value)
-                                                })}
-                                                className="w-full"
-                                                style={{
-                                                    background: `linear-gradient(to right, #10b981 0%, #10b981 ${accountTypes.taxable}%, #e5e7eb ${accountTypes.taxable}%, #e5e7eb 100%)`
-                                                }}
-                                            />
-                                            <p className="text-xs text-gray-500 mt-1">Pay capital gains tax (lower rate)</p>
-                                        </div>
-                                        
-                                        <div>
-                                            <div className="flex justify-between items-center mb-1">
-                                                <span className="text-sm font-medium text-amber-700">
-                                                    Tax-Deferred (401k/IRA)
-                                                </span>
-                                                <span className="text-sm font-bold">{accountTypes.taxDeferred}%</span>
-                                            </div>
-                                            <input
-                                                type="range"
-                                                min="0"
-                                                max="100"
-                                                value={accountTypes.taxDeferred}
-                                                onChange={(e) => setAccountTypes({
-                                                    ...accountTypes,
-                                                    taxDeferred: Number(e.target.value)
-                                                })}
-                                                className="w-full"
-                                                style={{
-                                                    background: `linear-gradient(to right, #d97706 0%, #d97706 ${accountTypes.taxDeferred}%, #e5e7eb ${accountTypes.taxDeferred}%, #e5e7eb 100%)`
-                                                }}
-                                            />
-                                            <p className="text-xs text-gray-500 mt-1">Pay income tax when withdrawn</p>
-                                        </div>
-                                        
-                                        <div>
-                                            <div className="flex justify-between items-center mb-1">
-                                                <span className="text-sm font-medium text-blue-700">
-                                                    Roth (Tax-Free)
-                                                </span>
-                                                <span className="text-sm font-bold">{accountTypes.roth}%</span>
-                                            </div>
-                                            <input
-                                                type="range"
-                                                min="0"
-                                                max="100"
-                                                value={accountTypes.roth}
-                                                onChange={(e) => setAccountTypes({
-                                                    ...accountTypes,
-                                                    roth: Number(e.target.value)
-                                                })}
-                                                className="w-full"
-                                                style={{
-                                                    background: `linear-gradient(to right, #2563eb 0%, #2563eb ${accountTypes.roth}%, #e5e7eb ${accountTypes.roth}%, #e5e7eb 100%)`
-                                                }}
-                                            />
-                                            <p className="text-xs text-gray-500 mt-1">No taxes on qualified withdrawals</p>
-                                        </div>
-                                        
-                                        {accountTypes.taxable + accountTypes.taxDeferred + accountTypes.roth !== 100 && (
-                                            <div className="p-2 bg-amber-50 rounded text-xs text-amber-700">
-                                                Total: {accountTypes.taxable + accountTypes.taxDeferred + accountTypes.roth}% (will be normalized to 100%)
+
+                                                <div>
+                                                    <div className="flex justify-between items-center mb-1">
+                                                        <span className="text-sm font-medium text-amber-700">Tax-Deferred (401k/IRA)</span>
+                                                        <span className="text-sm font-bold">{accountTypes.taxDeferred}%</span>
+                                                    </div>
+                                                    <input
+                                                        type="range"
+                                                        min="0"
+                                                        max="100"
+                                                        value={accountTypes.taxDeferred}
+                                                        onChange={(e) => {
+                                                            setAccountPreset('custom');
+                                                            setAccountTypes({
+                                                                ...accountTypes,
+                                                                taxDeferred: Number(e.target.value)
+                                                            });
+                                                        }}
+                                                        className="w-full"
+                                                        style={{
+                                                            background: `linear-gradient(to right, #d97706 0%, #d97706 ${accountTypes.taxDeferred}%, #e5e7eb ${accountTypes.taxDeferred}%, #e5e7eb 100%)`
+                                                        }}
+                                                    />
+                                                    <p className="text-xs text-gray-500 mt-1">Taxed as ordinary income when withdrawn.</p>
+                                                </div>
+
+                                                <div>
+                                                    <div className="flex justify-between items-center mb-1">
+                                                        <span className="text-sm font-medium text-blue-700">Roth (Tax-Free)</span>
+                                                        <span className="text-sm font-bold">{accountTypes.roth}%</span>
+                                                    </div>
+                                                    <input
+                                                        type="range"
+                                                        min="0"
+                                                        max="100"
+                                                        value={accountTypes.roth}
+                                                        onChange={(e) => {
+                                                            setAccountPreset('custom');
+                                                            setAccountTypes({
+                                                                ...accountTypes,
+                                                                roth: Number(e.target.value)
+                                                            });
+                                                        }}
+                                                        className="w-full"
+                                                        style={{
+                                                            background: `linear-gradient(to right, #2563eb 0%, #2563eb ${accountTypes.roth}%, #e5e7eb ${accountTypes.roth}%, #e5e7eb 100%)`
+                                                        }}
+                                                    />
+                                                    <p className="text-xs text-gray-500 mt-1">Qualified withdrawals remain tax-free.</p>
+                                                </div>
+
+                                                {accountTypes.taxable + accountTypes.taxDeferred + accountTypes.roth !== 100 && (
+                                                    <p className="text-xs text-red-600">
+                                                        Total: {accountTypes.taxable + accountTypes.taxDeferred + accountTypes.roth}% (will be normalized to 100%)
+                                                    </p>
+                                                )}
                                             </div>
                                         )}
                                     </div>
-                                    
+
                                     {!isNerdMode && (
                                         <div className="mt-4 p-3 bg-blue-50 rounded-lg">
                                             <p className="text-xs text-blue-700">
@@ -919,7 +988,23 @@
                                                 Current Portfolio Value
                                                 <InfoTooltip text="Your total investment portfolio today" />
                                             </label>
-                                            <div className="mt-1 relative">
+                                            <div className="mt-3 flex flex-wrap gap-2">
+                                                {QUICK_PORTFOLIO_VALUES.map((value) => (
+                                                    <button
+                                                        key={value}
+                                                        type="button"
+                                                        onClick={() => setPortfolio(value)}
+                                                        className={`px-3 py-1.5 rounded-full text-xs font-medium border transition ${
+                                                            portfolio === value
+                                                                ? 'bg-blue-600 text-white border-blue-600'
+                                                                : 'bg-white text-gray-700 border-gray-300 hover:border-blue-400'
+                                                        }`}
+                                                    >
+                                                        ${formatCurrency(value)}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                            <div className="mt-3 relative">
                                                 <span className="absolute left-3 top-2 text-gray-500">$</span>
                                                 <input
                                                     type="number"
@@ -929,6 +1014,7 @@
                                                     min={CONFIG.MIN_PORTFOLIO}
                                                     max={CONFIG.MAX_PORTFOLIO}
                                                 />
+                                                <p className="mt-1 text-xs text-gray-500">Enter a custom amount if the quick options do not match your situation.</p>
                                             </div>
                                         </div>
                                     </div>
