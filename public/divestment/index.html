@@ -503,11 +503,48 @@
             </form>
 
             <div class="builder-subsection builder-span-all">
-              <h3>Feedback (optional)</h3>
+              <h3>Consent & Concerns</h3>
               <p>
                 Share anonymous usage details to help improve the tool. Please
                 do not include names or sensitive information.
               </p>
+              <label class="feedback-consent">
+                <input id="fb_consent" type="checkbox" class="checkbox checkbox-primary" />
+                <span>
+                  I consent to send anonymized usage details about how I’m using Dryvestment so the
+                  team can make it better.
+                </span>
+              </label>
+
+              <fieldset class="builder-field builder-choice-field">
+                <legend>Issue focus</legend>
+                <div
+                  class="builder-choice-group"
+                  data-choice-group="issue"
+                  role="group"
+                  aria-label="Issue focus"
+                >
+                  <input type="hidden" id="issue" value="palestine" />
+                  <button
+                    type="button"
+                    class="choice-btn is-active"
+                    data-choice="palestine"
+                    aria-pressed="true"
+                  >
+                    <i class="fa-solid fa-dove"></i><span>Palestine</span>
+                  </button>
+                </div>
+                <label class="issue-suggestion" for="issueSuggestion">
+                  <span>Suggest another issue (optional)</span>
+                  <input
+                    type="text"
+                    id="issueSuggestion"
+                    placeholder="e.g., Climate, Surveillance tech"
+                    class="builder-input input input-bordered"
+                  />
+                </label>
+              </fieldset>
+
               <div class="builder-feedback-grid">
                 <label class="builder-field">
                   <span class="builder-field__label">Use case</span>
@@ -551,15 +588,6 @@
                     placeholder="What worked? What should be improved?"
                     class="builder-input textarea textarea-bordered w-full"
                   ></textarea>
-                </label>
-                <label class="flex items-center gap-2 text-sm text-muted">
-                  <input
-                    id="fb_consent"
-                    type="checkbox"
-                    class="checkbox checkbox-primary"
-                  />
-                  I consent to send anonymized usage details to improve this
-                  tool.
                 </label>
               </div>
               <div class="builder-actions">
