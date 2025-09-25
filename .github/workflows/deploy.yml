@@ -38,12 +38,14 @@ jobs:
         run: |
           set -euo pipefail
           secrets_json=$(doppler secrets download --no-file --format json --project "${DOPPLER_PROJECT:-labs}" --config "${DOPPLER_CONFIG:-production}")
+          export CLOUDFLARE_API_TOKEN=$(echo "$secrets_json" | jq -r '.CLOUDFLARE_API_TOKEN')
+          export CLOUDFLARE_ACCOUNT_ID=$(echo "$secrets_json" | jq -r '.CLOUDFLARE_ACCOUNT_ID')
           echo "Syncing secrets to Cloudflare Pages"
           echo "$secrets_json" | jq -r 'to_entries[] | @base64' | while read -r row; do
             key=$(echo "$row" | base64 --decode | jq -r '.key')
             value=$(echo "$row" | base64 --decode | jq -r '.value')
             # Skip Doppler-provided runtime metadata we don't want as Pages secrets
-            if [[ "$key" == NODE_VERSION ]]; then
+            if [[ "$key" == NODE_VERSION ]] || [[ "$key" == CLOUDFLARE_API_TOKEN ]] || [[ "$key" == CLOUDFLARE_ACCOUNT_ID ]] || [[ "$key" == CF_API_KEY ]]; then
               continue
             fi
             printf '%s\n' "$value" | npx wrangler pages secret put "$key" --project-name labs >/dev/null
