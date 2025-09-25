@@ -173,7 +173,7 @@
             
             // Core inputs with validation
             const [portfolio, setPortfolio] = useState(CONFIG.DEFAULT_PORTFOLIO);
-            const [currentIncome, setCurrentIncome] = useState(80610);
+            const [currentIncome, setCurrentIncome] = useState(83730);
             const [savingsRate, setSavingsRate] = useState(4.4); // Percentage of income saved (can be negative)
             const [savingsYears, setSavingsYears] = useState(10); // Years until retirement/withdrawal starts
             const [withdrawalStartMode, setWithdrawalStartMode] = useState('estimate');
@@ -246,7 +246,7 @@
                     try {
                         const config = JSON.parse(saved);
                         setPortfolio(config.portfolio ?? CONFIG.DEFAULT_PORTFOLIO);
-                        setCurrentIncome(config.currentIncome ?? 80610);
+                        setCurrentIncome(config.currentIncome ?? 83730);
                         setSavingsRate(config.savingsRate ?? 4.4);
                         setSavingsYears(config.savingsYears ?? 10);
                         setWithdrawalStartMode(config.withdrawalStartMode ?? 'estimate');
@@ -1314,38 +1314,50 @@
             );
 
             const DisclaimerModal = () => (
-                <div className="disclaimer-modal">
-                    <div className="disclaimer-content">
-                        <h2 className="text-xl font-bold mb-4">Important Disclaimer</h2>
-                        <div className="text-sm text-gray-600 space-y-3">
-                            <p>
-                                This tool provides hypothetical illustrations based on Monte Carlo simulations. 
-                                Results are not guarantees of future performance.
-                            </p>
-                            <p>
-                                <strong>Key Limitations:</strong>
-                            </p>
-                            <ul className="list-disc pl-5 space-y-1">
-                                <li>Past performance does not guarantee future results</li>
-                                <li>Actual returns will vary and may be negative</li>
-                                <li>Model assumptions may not reflect actual market conditions</li>
-                                <li>Tax implications are simplified or excluded</li>
-                                <li>Does not account for all fees and expenses</li>
-                            </ul>
-                            <p>
-                                <strong>Not Personal Advice:</strong> This tool is for educational purposes only. 
-                                Consult with a qualified financial advisor before making investment decisions.
+                <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-slate-100 flex items-center justify-center p-6">
+                    <div className="max-w-3xl w-full bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl shadow-2xl p-8 sm:p-12 space-y-6">
+                        <div>
+                            <p className="text-xs uppercase tracking-[0.4em] text-amber-300">Ethical Capital Labs</p>
+                            <h1 className="mt-3 text-3xl sm:text-4xl font-bold text-white">Educational Use Only</h1>
+                            <p className="mt-4 text-base sm:text-lg text-slate-200 leading-relaxed">
+                                The Portfolio Strategy Simulator provides hypothetical illustrations only. It does not predict actual investment outcomes, and it cannot account for every aspect of your personal financial situation.
                             </p>
                         </div>
+
+                        <div className="grid gap-4 sm:grid-cols-2">
+                            <div className="bg-white/5 rounded-2xl p-4 sm:p-5 border border-white/10">
+                                <h2 className="text-lg font-semibold text-amber-200 mb-2">Key Limitations</h2>
+                                <ul className="list-disc pl-5 space-y-1 text-sm text-slate-200">
+                                    <li>Past performance does not guarantee future results.</li>
+                                    <li>Simulated returns can differ materially from actual markets.</li>
+                                    <li>Taxes and fees are simplified approximations.</li>
+                                    <li>Inputs reflect assumptions you provide; inaccurate inputs yield misleading outputs.</li>
+                                </ul>
+                            </div>
+                            <div className="bg-white/5 rounded-2xl p-4 sm:p-5 border border-white/10">
+                                <h2 className="text-lg font-semibold text-amber-200 mb-2">Your Responsibility</h2>
+                                <ul className="list-disc pl-5 space-y-1 text-sm text-slate-200">
+                                    <li>This tool is not investment, tax, or legal advice.</li>
+                                    <li>You should consult a qualified fiduciary adviser before acting.</li>
+                                    <li>Never base financial decisions solely on a simulator output.</li>
+                                    <li>By continuing you acknowledge these limits.</li>
+                                </ul>
+                            </div>
+                        </div>
+
                         <button
                             onClick={() => setShowDisclaimer(false)}
-                            className="mt-6 w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
+                            className="w-full sm:w-auto bg-amber-400 hover:bg-amber-300 text-slate-900 font-semibold px-8 py-3 rounded-xl transition-colors"
                         >
-                            I Understand
+                            I understand the limits — continue to the simulator
                         </button>
                     </div>
                 </div>
             );
+
+            if (showDisclaimer) {
+                return <DisclaimerModal />;
+            }
 
             const simulationDisplayCount = withdrawalStartMode === 'estimate'
                 ? Math.max(simulations, CONFIG.ESTIMATION_SIMULATIONS)
@@ -1361,8 +1373,6 @@
 
             return (
                 <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-4 sm:py-8 px-4">
-                    {showDisclaimer && <DisclaimerModal />}
-                    
                     <div className="max-w-7xl mx-auto">
                         {/* Header */}
                         <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 mb-6">
@@ -1440,7 +1450,7 @@
                                             <div>
                                                 <label className="block text-sm font-medium text-gray-700">
                                                     Annual Household Income
-                                                    <InfoTooltip text="Defaults to the 2023 U.S. median household income ($80,610). Source: U.S. Census Bureau, Income in the United States: 2023 (P60-282)." />
+                                                    <InfoTooltip text="Defaults to the latest U.S. median household income ($83,730). Source: FRED series MEHOINUSA672N." />
                                                 </label>
                                                 <div className="mt-2 relative">
                                                     <span className="absolute left-3 top-2 text-gray-500">$</span>
@@ -1451,7 +1461,7 @@
                                                         className="pl-8 block w-full border-gray-300 rounded-md shadow-sm p-2 border"
                                                         min={0}
                                                     />
-                                                    <p className="mt-1 text-xs text-gray-500">Default uses the latest reported U.S. median household income of {formatCurrency(80610)}.</p>
+                                                    <p className="mt-1 text-xs text-gray-500">Default uses the latest reported U.S. median household income of {formatCurrency(83730)} from <a className="text-blue-600 underline hover:text-blue-700" href="https://fred.stlouisfed.org/series/MEHOINUSA672N" target="_blank" rel="noopener noreferrer">FRED (MEHOINUSA672N)</a>.</p>
                                                 </div>
                                             </div>
                                             <div>
