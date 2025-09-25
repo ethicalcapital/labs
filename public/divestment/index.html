@@ -3,227 +3,176 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Divestment Brief Builder — Identity‑First</title>
+    <title>Divestment Brief Builder &mdash; Identity-First</title>
     <meta
       name="description"
-      content="Build a concise, evidence‑backed divestment brief tailored to investor identity and decision makers to support constructive dialogue. Educational only."
+      content="Build a concise, identity-aware divestment brief tailored to decision makers while reinforcing that screening compounds knowledge. Educational only."
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Raleway:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="/assets/css/labs.css" />
     <link rel="stylesheet" href="/assets/css/tailwind.css" />
-    <style>
-      :root {
-        color-scheme: dark;
-      }
-      body {
-        font-family:
-          "Inter",
-          system-ui,
-          -apple-system,
-          BlinkMacSystemFont,
-          "Segoe UI",
-          sans-serif;
-        background: #05070f;
-        color: #e7ebf5;
-      }
-      .panel {
-        background: rgba(15, 23, 42, 0.55);
-        border: 1px solid rgba(148, 163, 184, 0.1);
-        backdrop-filter: blur(12px);
-      }
-      @media print {
-        .no-print {
-          display: none !important;
-        }
-        body {
-          background: #fff;
-          color: #000;
-        }
-        .panel {
-          border: none;
-          backdrop-filter: none;
-          background: transparent;
-        }
-        a::after {
-          content: " (" attr(href) ")";
-          font-size: 10px;
-          color: #444;
-        }
-        h1,
-        h2,
-        h3,
-        h4 {
-          color: #0ea5e9;
-        }
-      }
-      .kbd {
-        border: 1px solid rgba(148, 163, 184, 0.35);
-        background: rgba(148, 163, 184, 0.12);
-        padding: 0.15rem 0.4rem;
-        border-radius: 0.35rem;
-        font-size: 0.78rem;
-      }
-      details > summary {
-        cursor: pointer;
-      }
-    </style>
+    <link rel="stylesheet" href="./divestment.css" />
   </head>
-  <body class="min-h-screen">
-    <header class="px-6 py-6 sm:px-10">
-      <div
-        class="mx-auto flex max-w-5xl flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between"
-      >
-        <div>
-          <p class="text-xs uppercase tracking-[0.35em] text-slate-400">
-            Ethical Capital
-          </p>
-          <h1 class="mt-1 text-2xl font-semibold text-white">
-            Divestment Brief Builder
-          </h1>
-          <p class="mt-1 text-sm text-slate-400">
-            Identity‑first toolkit enabling constructive, role‑aware dialogue
-            between activists and decision makers.
-          </p>
-        </div>
-        <div class="flex flex-wrap items-center gap-3">
+  <body>
+    <header class="labs-header">
+      <nav class="labs-nav" aria-label="Primary">
+        <a class="labs-nav__logo" href="/">
+          <img
+            src="/assets/brand/logos/ecic-logo.svg"
+            alt="Invest Vegan LLC DBA Ethical Capital"
+            width="44"
+            height="44"
+          />
+          <span>Labs</span>
+        </a>
+        <div class="labs-nav__links">
+          <a class="labs-nav__link" href="/simulator/">Portfolio Simulator</a>
+          <a class="labs-nav__link" href="/divestment/">Divestment Explorer</a>
           <a
-            href="https://github.com/ethicalcapital/labs/issues/new?labels=divestment"
-            class="rounded-full border border-slate-500/70 px-5 py-2 text-sm font-medium text-slate-200 transition hover:border-slate-300 hover:text-white no-print"
-            target="_blank"
+            class="labs-nav__link"
+            href="https://github.com/ethicalcapital/labs"
             rel="noopener noreferrer"
-            >Log an issue</a
-          >
-          <a
-            href="https://github.com/ethicalcapital/labs/discussions/new?category=ideas"
-            class="rounded-full border border-slate-500/70 px-5 py-2 text-sm font-medium text-slate-200 transition hover:border-slate-300 hover:text-white no-print"
             target="_blank"
-            rel="noopener noreferrer"
-            >Start a discussion</a
           >
+            GitHub
+          </a>
           <a
-            href="/"
-            class="rounded-full border border-slate-500/70 px-5 py-2 text-sm font-medium text-slate-200 transition hover:border-slate-300 hover:text-white no-print"
-            >Back to Labs</a
+            class="labs-nav__cta"
+            href="https://ethicic.com"
+            rel="noopener noreferrer"
+            target="_blank"
           >
+            Visit Ethical Capital
+          </a>
         </div>
-      </div>
+      </nav>
     </header>
 
-    <main class="px-6 pb-16 sm:px-10">
-      <section class="mx-auto max-w-5xl space-y-6">
-        <!-- Builder -->
-        <section class="panel rounded-3xl p-6 sm:p-8">
-          <h2 class="text-lg font-semibold text-white">1) Setup</h2>
-          <form id="builder" class="mt-4 grid grid-cols-1 gap-4">
-            <label class="block">
-              <span class="mb-1 block text-sm text-slate-300">Venue</span>
-              <select
-                id="venue"
-                class="w-full rounded-md border border-slate-600/60 bg-slate-900/50 px-3 py-2 text-sm"
+    <main class="labs-main">
+      <section class="labs-section" aria-labelledby="divestment-hero">
+        <div class="labs-panel labs-panel--intro">
+          <p class="labs-eyebrow labs-eyebrow--light">Divestment brief builder</p>
+          <h2 id="divestment-hero">Identity-first preparation for constructive divestment dialogue</h2>
+          <p>
+            This experimental toolkit helps activists translate their case into
+            language a specific decision maker will respect. Configure venue,
+            investor identity, and thumbprint to surface aligned asks while
+            emphasizing that screening compounds knowledge about fragile
+            business models. Educational prototype only&mdash;never investment
+            advice.
+          </p>
+          <div class="labs-button-row">
+            <a class="labs-button labs-button--solid" href="#builder-panel"
+              >Start building</a
+            >
+            <a
+              class="labs-button labs-button--ghost"
+              href="https://github.com/ethicalcapital/labs/discussions/new?category=ideas"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Share feedback</a
+            >
+          </div>
+        </div>
+
+        <div class="labs-panel builder-panel" id="builder-panel">
+          <div class="builder-panel__top">
+            <div class="builder-panel__header">
+              <h2 class="builder-panel__title">1) Configure the briefing context</h2>
+              <p class="builder-panel__description">
+                Select the setting, decision maker, and identity signals. Each
+                combination tunes language choices and documents which investor
+                constraints you are addressing.
+              </p>
+            </div>
+            <div class="builder-links no-print">
+              <a
+                class="builder-button builder-button--outline"
+                href="https://github.com/ethicalcapital/labs/issues/new?labels=divestment"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Log an issue</a
               >
+              <a
+                class="builder-button builder-button--ghost"
+                href="https://github.com/ethicalcapital/labs/discussions/new?category=ideas"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Start a discussion</a
+              >
+            </div>
+          </div>
+
+          <form id="builder" class="builder-form">
+            <label class="builder-field">
+              <span class="builder-field__label">Venue</span>
+              <select id="venue" class="builder-input">
                 <option value="one_on_one">1:1 Conversation</option>
                 <option value="small_group">Small Group Meeting</option>
                 <option value="committee_hearing">Committee Hearing</option>
-                <option value="full_board_meeting">
-                  Full Board/Council Meeting
-                </option>
-                <option value="public_testimony">
-                  Public Testimony / Town Hall
-                </option>
+                <option value="full_board_meeting">Full Board/Council Meeting</option>
+                <option value="public_testimony">Public Testimony / Town Hall</option>
                 <option value="written_memo">Written Memo / Email</option>
               </select>
             </label>
 
-            <label class="block">
-              <span class="mb-1 block text-sm text-slate-300"
-                >Target Decision Maker</span
-              >
-              <select
-                id="target"
-                class="w-full rounded-md border border-slate-600/60 bg-slate-900/50 px-3 py-2 text-sm"
-              >
+            <label class="builder-field">
+              <span class="builder-field__label">Target decision maker</span>
+              <select id="target" class="builder-input">
                 <option value="family_friends">Family / Friends</option>
                 <option value="cio">CIO / Investment Officer</option>
                 <option value="consultant">Investment Consultant</option>
                 <option value="treasurer">Treasurer / Finance Director</option>
                 <option value="trustee">Board / Trustee</option>
-                <option value="council_member">
-                  Council / Committee Member
-                </option>
+                <option value="council_member">Council / Committee Member</option>
               </select>
             </label>
 
-            <label class="block">
-              <span class="mb-1 block text-sm text-slate-300">Entity Type</span>
-              <select
-                id="invIdentity"
-                class="w-full rounded-md border border-slate-600/60 bg-slate-900/50 px-3 py-2 text-sm"
-              >
+            <label class="builder-field">
+              <span class="builder-field__label">Entity type</span>
+              <select id="invIdentity" class="builder-input">
                 <option value="individual">Individual</option>
                 <option value="swf">Sovereign Wealth Fund</option>
                 <option value="public_pension">Public Pension Plan</option>
-                <option value="corporate_pension">
-                  Corporate Pension Plan
-                </option>
+                <option value="corporate_pension">Corporate Pension Plan</option>
                 <option value="endowment">Endowment</option>
                 <option value="foundation">Foundation</option>
                 <option value="insurance">Insurance General Account</option>
-                <option value="central_bank">
-                  Central Bank / Official Institution
-                </option>
-                <option value="government">
-                  Government (City/County/State bond portfolios)
-                </option>
+                <option value="central_bank">Central Bank / Official Institution</option>
+                <option value="government">Government (City/County/State bond portfolios)</option>
               </select>
             </label>
 
-            <label class="block">
-              <span class="mb-1 block text-sm text-slate-300"
-                >Knowledge Level</span
-              >
-              <select
-                id="knowledge"
-                class="w-full rounded-md border border-slate-600/60 bg-slate-900/50 px-3 py-2 text-sm"
-              >
+            <label class="builder-field">
+              <span class="builder-field__label">Knowledge level</span>
+              <select id="knowledge" class="builder-input">
                 <option value="plain">Plain English</option>
                 <option value="technical">Technical / Nerd</option>
               </select>
             </label>
 
-            <fieldset class="rounded-md border border-slate-700/40 p-3">
-              <legend
-                class="px-1 text-xs uppercase tracking-[0.25em] text-slate-400"
-              >
-                What matters to them?
-              </legend>
-              <div class="space-y-4">
-                <label class="block">
-                  <span class="mb-1 block text-xs text-slate-400">Profile</span>
-                  <select
-                    id="thumb_preset"
-                    class="w-full rounded-md border border-slate-600/60 bg-slate-900/50 px-3 py-2 text-sm"
-                  >
+            <fieldset class="builder-fieldset builder-span-all">
+              <legend>What matters to them?</legend>
+              <div class="builder-thumb-grid">
+                <label class="builder-field">
+                  <span class="builder-field__label">Profile</span>
+                  <select id="thumb_preset" class="builder-input">
                     <option value="custom">Custom</option>
-                    <option value="mission_nonprofit">
-                      Mission-driven nonprofit
-                    </option>
+                    <option value="mission_nonprofit">Mission-driven nonprofit</option>
                     <option value="public_pension">Public pension</option>
-                    <option value="university_endowment">
-                      University endowment
-                    </option>
+                    <option value="university_endowment">University endowment</option>
                   </select>
                 </label>
-                <div id="thumb_custom" class="space-y-3">
+                <div id="thumb_custom" class="builder-thumb-grid">
                   <div>
-                    <span class="mb-1 block text-xs text-slate-400"
-                      >Mission/Ethics emphasis</span
-                    >
-                    <div class="flex items-center gap-3">
-                      <span class="text-xs text-slate-400">Purity</span>
+                    <span class="builder-field__label">Mission / ethics emphasis</span>
+                    <div class="builder-slider-row">
+                      <span>Purity</span>
                       <input
                         id="thumb_mission"
                         type="range"
@@ -231,32 +180,22 @@
                         max="1"
                         step="1"
                         value="1"
-                        class="flex-1"
+                        class="builder-slider"
                       />
-                      <span class="text-xs text-slate-400">Pragmatism</span>
+                      <span>Pragmatism</span>
                     </div>
                   </div>
-                  <label class="block">
-                    <span class="mb-1 block text-xs text-slate-400"
-                      >Pressure from competition</span
-                    >
-                    <select
-                      id="thumb_competition"
-                      class="w-full rounded-md border border-slate-600/60 bg-slate-900/50 px-3 py-2 text-sm"
-                    >
+                  <label class="builder-field">
+                    <span class="builder-field__label">Pressure from competition</span>
+                    <select id="thumb_competition" class="builder-input">
                       <option value="low">Low</option>
                       <option value="medium">Medium</option>
                       <option value="high">High</option>
                     </select>
                   </label>
-                  <label class="block">
-                    <span class="mb-1 block text-xs text-slate-400"
-                      >Regulatory constraints</span
-                    >
-                    <select
-                      id="thumb_regulatory"
-                      class="w-full rounded-md border border-slate-600/60 bg-slate-900/50 px-3 py-2 text-sm"
-                    >
+                  <label class="builder-field">
+                    <span class="builder-field__label">Regulatory constraints</span>
+                    <select id="thumb_regulatory" class="builder-input">
                       <option value="low">Low</option>
                       <option value="medium">Medium</option>
                       <option value="high">High</option>
@@ -265,147 +204,119 @@
                 </div>
               </div>
             </fieldset>
-            <label class="block">
-              <span class="mb-1 block text-sm text-slate-300"
-                >Local Name (appears in template)</span
-              >
+
+            <label class="builder-field">
+              <span class="builder-field__label">Local name (appears in template)</span>
               <input
                 id="localName"
                 type="text"
                 placeholder="e.g., City of Riverton"
-                class="w-full rounded-md border border-slate-600/60 bg-slate-900/50 px-3 py-2 text-sm"
+                class="builder-input"
               />
             </label>
 
-            <label class="block">
-              <span class="mb-1 block text-sm text-slate-300">Objective</span>
-              <select
-                id="objective"
-                class="w-full rounded-md border border-slate-600/60 bg-slate-900/50 px-3 py-2 text-sm"
-              >
-                <option value="resolution_support">
-                  Support Divestment Resolution
-                </option>
+            <label class="builder-field">
+              <span class="builder-field__label">Objective</span>
+              <select id="objective" class="builder-input">
+                <option value="resolution_support">Support Divestment Resolution</option>
                 <option value="fact_sheet">Neutral Fact Sheet</option>
                 <option value="testimony">Public Testimony</option>
               </select>
             </label>
 
-            <div class="mt-2 flex flex-wrap items-center gap-3">
+            <div class="builder-actions builder-span-all">
               <button
                 id="buildBtn"
                 type="button"
-                class="rounded-md bg-sky-500 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-sky-400"
+                class="builder-button builder-button--primary"
               >
-                Build Brief
+                Build brief
               </button>
               <button
                 id="resetBtn"
                 type="button"
-                class="rounded-md border border-slate-600/60 px-4 py-2 text-sm text-slate-200 hover:border-slate-400"
+                class="builder-button builder-button--outline"
               >
                 Reset
               </button>
-              <span class="text-xs text-slate-400"
-                >Tip: Press <span class="kbd">B</span> to rebuild.</span
-              >
+              <span class="builder-hint">
+                Tip: Press <span class="kbd">B</span> to rebuild.
+              </span>
             </div>
           </form>
 
-          <div class="mt-8">
-            <h3
-              class="text-sm font-semibold uppercase tracking-[0.3em] text-slate-400"
-            >
-              Feedback (optional)
-            </h3>
-            <p class="mt-2 text-xs text-slate-400">
-              Help us improve by sharing anonymous usage details. Do not include
-              names or sensitive information.
+          <div class="builder-subsection builder-span-all">
+            <h3>Feedback (optional)</h3>
+            <p>
+              Share anonymous usage details to help improve the tool. Please do
+              not include names or sensitive information.
             </p>
-            <div class="mt-3 grid grid-cols-1 gap-3">
-              <label class="block">
-                <span class="mb-1 block text-xs text-slate-400">Use Case</span>
-                <select
-                  id="fb_usecase"
-                  class="w-full rounded-md border border-slate-600/60 bg-slate-900/50 px-3 py-2 text-sm"
-                >
+            <div class="builder-feedback-grid">
+              <label class="builder-field">
+                <span class="builder-field__label">Use case</span>
+                <select id="fb_usecase" class="builder-input">
                   <option value="one_on_one">1:1 Conversation</option>
                   <option value="small_group">Small Group Meeting</option>
                   <option value="committee_hearing">Committee Hearing</option>
-                  <option value="full_board_meeting">
-                    Full Board/Council Meeting
-                  </option>
-                  <option value="public_testimony">
-                    Public Testimony / Town Hall
-                  </option>
+                  <option value="full_board_meeting">Full Board/Council Meeting</option>
+                  <option value="public_testimony">Public Testimony / Town Hall</option>
                   <option value="written_memo">Written Memo / Email</option>
                   <option value="social">Social / Friends & Family</option>
                   <option value="other">Other</option>
                 </select>
               </label>
-              <label class="block">
-                <span class="mb-1 block text-xs text-slate-400"
-                  >Outcome (optional)</span
-                >
-                <select
-                  id="fb_outcome"
-                  class="w-full rounded-md border border-slate-600/60 bg-slate-900/50 px-3 py-2 text-sm"
-                >
+              <label class="builder-field">
+                <span class="builder-field__label">Outcome (optional)</span>
+                <select id="fb_outcome" class="builder-input">
                   <option value="na">N/A</option>
                   <option value="constructive">Constructive</option>
                   <option value="neutral">Neutral</option>
                   <option value="pushback">Pushback</option>
                 </select>
               </label>
-              <label class="block">
-                <span class="mb-1 block text-xs text-slate-400"
-                  >Notes (no personal info)</span
-                >
+              <label class="builder-field builder-span-all">
+                <span class="builder-field__label">Notes (no personal info)</span>
                 <textarea
                   id="fb_notes"
                   rows="3"
                   placeholder="What worked? What should be improved?"
-                  class="w-full rounded-md border border-slate-600/60 bg-slate-900/50 px-3 py-2 text-sm"
+                  class="builder-input"
                 ></textarea>
               </label>
-              <label class="flex items-center gap-2 text-xs text-slate-300">
+              <label class="flex items-center gap-2 text-sm text-muted">
                 <input
                   id="fb_consent"
                   type="checkbox"
-                  class="h-4 w-4 rounded border-slate-600/60 bg-slate-900/50"
+                  class="h-4 w-4 rounded border border-gray-300"
                 />
                 I consent to send anonymized usage details to improve this tool.
               </label>
-              <div class="flex items-center gap-3">
-                <button
-                  id="fb_send"
-                  type="button"
-                  class="rounded-md bg-sky-500 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-sky-400"
-                >
-                  Send Feedback
-                </button>
-                <span id="fb_status" class="text-xs text-slate-400"></span>
-              </div>
+            </div>
+            <div class="builder-actions">
+              <button
+                id="fb_send"
+                type="button"
+                class="builder-button builder-button--primary"
+              >
+                Send feedback
+              </button>
+              <span id="fb_status" class="builder-feedback-status"></span>
             </div>
           </div>
 
-          <div class="mt-8">
-            <h3
-              class="text-sm font-semibold uppercase tracking-[0.3em] text-slate-400"
-            >
-              Disclaimers
-            </h3>
-            <p class="mt-2 text-xs text-slate-400">
+          <div class="builder-subsection builder-span-all">
+            <h3>Disclaimers</h3>
+            <p>
               This tool is educational only. It creates hypothetical
               illustrative materials and links to public sources. It is not
               investment advice. Assumptions may not reflect your situation.
               Ethical Capital Labs accepts editorial responsibility for this
               content and welcomes corrections.
             </p>
-            <p class="mt-2 text-xs text-slate-400">
+            <p>
               Subscribe for updates:
               <a
-                class="text-sky-300 hover:underline"
+                class="subscribe-link"
                 href="https://buttondown.com/ethicic"
                 target="_blank"
                 rel="noopener"
@@ -413,87 +324,78 @@
               >
             </p>
           </div>
-        </section>
+        </div>
 
-        <!-- Output -->
-        <section class="panel rounded-3xl p-0">
-          <div
-            class="flex items-center justify-between border-b border-slate-700/40 px-6 py-4"
-          >
-            <h2 class="text-lg font-semibold text-white">2) Brief</h2>
-            <div class="no-print flex flex-wrap gap-2">
+        <div class="labs-panel brief-panel">
+          <div class="brief-panel__header">
+            <h2 class="brief-panel__title">2) Brief</h2>
+            <div class="brief-actions no-print">
               <button
                 id="copyText"
-                class="rounded-md border border-slate-600/60 px-3 py-2 text-sm text-slate-200 hover:border-slate-400"
+                class="builder-button builder-button--outline"
               >
-                Copy Text
+                Copy text
               </button>
               <button
                 id="downloadBrief"
-                class="rounded-md bg-emerald-500 px-3 py-2 text-sm font-semibold text-white hover:bg-emerald-400"
+                class="builder-button builder-button--secondary"
               >
-                Download Brief (Markdown)
+                Download brief (includes both versions)
               </button>
-              <button
-                id="printBtn"
-                class="rounded-md bg-slate-500 px-3 py-2 text-sm font-semibold text-white hover:bg-slate-400"
-              >
+              <button id="printBtn" class="builder-button builder-button--outline">
                 Print
               </button>
             </div>
           </div>
-
-          <article
-            id="brief"
-            class="prose prose-invert max-w-none px-6 pb-8 pt-6 sm:px-8"
-          >
-            <p class="text-slate-400">
-              Fill the setup at left, then click Build Brief.
+          <article id="brief" class="brief-content prose">
+            <p class="brief-placeholder">
+              Configure the briefing context above, then select "Build brief."
             </p>
           </article>
-        </section>
-      </section>
+        </div>
 
-      <section
-        class="mx-auto mt-6 max-w-5xl rounded-3xl border border-slate-700/40 p-6 sm:p-8"
-      >
-        <h3
-          class="text-sm font-semibold uppercase tracking-[0.3em] text-slate-400"
-        >
-          Methodology & Sources
-        </h3>
-        <ul
-          id="sources"
-          class="mt-3 list-disc pl-5 text-sm text-slate-300"
-        ></ul>
-        <p class="mt-4 text-xs text-slate-500">
-          Prepared by Ethical Capital Labs. Educational toolkit only — not
-          investment advice. Subscribe:
-          <a
-            class="text-sky-300 hover:underline"
-            href="https://buttondown.com/ethicic"
-            target="_blank"
-            rel="noopener"
-            >buttondown.com/ethicic</a
-          >
-        </p>
+        <div class="labs-panel methodology-panel">
+          <h3 class="methodology-panel__title">Methodology & sources</h3>
+          <ul id="sources" class="methodology-panel__list"></ul>
+          <p class="methodology-panel__footnote">
+            Prepared by Ethical Capital Labs. Educational toolkit only&mdash;never
+            investment advice. Subscribe:
+            <a
+              class="subscribe-link"
+              href="https://buttondown.com/ethicic"
+              target="_blank"
+              rel="noopener"
+              >buttondown.com/ethicic</a
+            >
+          </p>
+        </div>
       </section>
     </main>
 
-    <footer class="px-6 pb-10 pt-12 sm:px-10">
-      <div
-        class="mx-auto max-w-5xl border-t border-slate-700/40 pt-6 text-sm text-slate-500"
-      >
+    <footer class="labs-footer">
+      <div class="labs-footer__inner">
         <p>
-          &copy; <span id="year"></span> Ethical Capital Labs — educational
-          experiments only.
+          <strong>Invest Vegan LLC DBA Ethical Capital</strong> · Utah Registered
+          Investment Adviser
+        </p>
+        <p>
+          <a href="https://ethicic.com/content/legal/disclosures.html">Disclosures</a>
+          ·
+          <a href="https://ethicic.com/content/legal/privacy-policy.html">Privacy Policy</a>
+          ·
+          <a href="https://ethicic.com/content/legal/terms-of-use.html">Terms of Use</a>
+        </p>
+        <p>90 N 400 E, Provo, UT 84606 · +1 347 625 9000 · hello@ethicic.com</p>
+        <p>
+          <em>
+            This website is for informational purposes only and does not
+            constitute investment advice. Past performance does not guarantee
+            future results.
+          </em>
         </p>
       </div>
     </footer>
 
-    <script src="./app.js"></script>
-    <script>
-      document.getElementById("year").textContent = new Date().getFullYear();
-    </script>
+    <script src="./app.js" defer></script>
   </body>
 </html>

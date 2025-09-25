@@ -266,6 +266,17 @@ p {
     box-shadow 0.2s ease;
 }
 
+.labs-card--hero {
+  padding: 2.25rem;
+  border-width: 2px;
+  border-color: rgba(88, 28, 135, 0.18);
+  box-shadow: 0 24px 40px rgba(88, 28, 135, 0.08);
+}
+
+.labs-card--hero:hover {
+  box-shadow: 0 28px 48px rgba(88, 28, 135, 0.12);
+}
+
 .labs-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 16px 32px rgba(17, 24, 39, 0.08);

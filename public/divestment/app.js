@@ -148,7 +148,7 @@
     (furtherReading || []).forEach((s) => items.push(s));
     for (const s of items) {
       const li = document.createElement("li");
-      li.innerHTML = `${sanitize(s.label)} — <a class="text-sky-300 hover:underline" href="${s.url}" target="_blank" rel="noopener noreferrer">${s.url}</a>`;
+      li.innerHTML = `${sanitize(s.label)} — <a class="brief-link" href="${s.url}" target="_blank" rel="noopener noreferrer">${s.url}</a>`;
       sourcesList.appendChild(li);
     }
   }
@@ -439,10 +439,10 @@
         const c = p.citations
           .map(
             (ci) =>
-              `<a class="text-sky-300 hover:underline" href="${ci.url}" target="_blank" rel="noopener">${sanitize(ci.label)}</a>`,
+              `<a class="brief-link" href="${ci.url}" target="_blank" rel="noopener">${sanitize(ci.label)}</a>`,
           )
           .join(" · ");
-        html += `<div class="mt-1 text-xs text-slate-400">Sources: ${c}</div>`;
+        html += `<div class="mt-1 text-xs text-subtle">Sources: ${c}</div>`;
       }
       html += `</li>`;
     }
@@ -450,21 +450,21 @@
 
     html += `<h3>${sanitize(headings.counters)}</h3>`;
     for (const c of counters) {
-      html += `<p><span class="text-slate-400">Claim:</span> <em>${sanitize(c.claim)}</em><br><span class="text-slate-400">Response:</span> ${sanitize(c.response)}`;
+      html += `<p><span class="text-subtle">Claim:</span> <em>${sanitize(c.claim)}</em><br><span class="text-subtle">Response:</span> ${sanitize(c.response)}`;
       if (c.citations && c.citations.length) {
         const cs = c.citations
           .map(
             (ci) =>
-              `<a class="text-sky-300 hover:underline" href="${ci.url}" target="_blank" rel="noopener">${sanitize(ci.label)}</a>`,
+              `<a class="brief-link" href="${ci.url}" target="_blank" rel="noopener">${sanitize(ci.label)}</a>`,
           )
           .join(" · ");
-        html += `<div class="mt-1 text-xs text-slate-400">Sources: ${cs}</div>`;
+        html += `<div class="mt-1 text-xs text-subtle">Sources: ${cs}</div>`;
       }
       html += `</p>`;
     }
 
     html += `<h3>${sanitize(headings.guide)}</h3>`;
-    html += `<p class="text-slate-300">${sanitize(headings.guideIntro)}</p>`;
+    html += `<p class="text-muted">${sanitize(headings.guideIntro)}</p>`;
     html +=
       "<ul>" +
       guideBullets.map((b) => `<li>${sanitize(b)}</li>`).join("") +
@@ -477,7 +477,7 @@
         policyPrinciples.map((p) => `<li>${sanitize(p)}</li>`).join("") +
         "</ul>";
       if (policyLink) {
-        html += `<p class="text-xs text-slate-400">Reference: <a class="text-sky-300 hover:underline" href="${policyLink.url}" target="_blank" rel="noopener">${sanitize(policyLink.label || policyLink.url)}</a></p>`;
+        html += `<p class="text-xs text-subtle">Reference: <a class="brief-link" href="${policyLink.url}" target="_blank" rel="noopener">${sanitize(policyLink.label || policyLink.url)}</a></p>`;
       }
     }
 
@@ -511,7 +511,7 @@
       html += `<h3>${sanitize(headings.screening)}</h3>`;
       if (knowledgeLevel === "plain") {
         html +=
-          '<p class="text-slate-300">Screening builds cumulative knowledge about fragile business models, regulatory exposure, and reputational risk. Share the insight, not just the exclusion list.</p>';
+          '<p class="text-muted">Screening builds cumulative knowledge about fragile business models, regulatory exposure, and reputational risk. Share the insight, not just the exclusion list.</p>';
       }
       const screeningList =
         knowledgeLevel === "technical"
@@ -529,10 +529,10 @@
             const c = point.citations
               .map(
                 (ci) =>
-                  `<a class="text-sky-300 hover:underline" href="${ci.url}" target="_blank" rel="noopener">${sanitize(ci.label)}</a>`,
+                  `<a class="brief-link" href="${ci.url}" target="_blank" rel="noopener">${sanitize(ci.label)}</a>`,
               )
               .join(" · ");
-            html += `<div class="mt-1 text-xs text-slate-400">Sources: ${c}</div>`;
+            html += `<div class="mt-1 text-xs text-subtle">Sources: ${c}</div>`;
           }
           html += "</li>";
         }
@@ -547,10 +547,10 @@
         const l = data.cio_links
           .map(
             (ci) =>
-              `<a class="text-sky-300 hover:underline" href="${ci.url}" target="_blank" rel="noopener">${sanitize(ci.label)}</a>`,
+              `<a class="brief-link" href="${ci.url}" target="_blank" rel="noopener">${sanitize(ci.label)}</a>`,
           )
           .join(" · ");
-        html += `<div class="mt-1 text-xs text-slate-400">Read: ${l}</div>`;
+        html += `<div class="mt-1 text-xs text-subtle">Read: ${l}</div>`;
       }
     }
 
@@ -880,7 +880,7 @@
     localName.value = "";
     objective.value = "resolution_support";
     brief.innerHTML =
-      '<p class="text-slate-400">Fill the setup at left, then click Build Brief.</p>';
+      '<p class="brief-placeholder">Configure the briefing context above, then select "Build brief."</p>';
     sourcesList.innerHTML = "";
     state.last = null;
     applyEntityConstraints();

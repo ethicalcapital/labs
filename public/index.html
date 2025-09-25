@@ -29,8 +29,10 @@
           <span>Labs</span>
         </a>
         <div class="labs-nav__links">
-          <a class="labs-nav__link" href="/simulator/">Portfolio Simulator</a>
-          <a class="labs-nav__link" href="/divestment/">Divestment Explorer</a>
+          <a class="labs-nav__link" href="/simulator/">Portfolio Time Travel</a>
+          <a class="labs-nav__link" href="/divestment/"
+            >Divestment Brief Builder</a
+          >
           <a
             class="labs-nav__link"
             href="https://github.com/ethicalcapital/labs"
@@ -52,110 +54,58 @@
     </header>
 
     <main class="labs-main">
-      <section class="labs-section" aria-labelledby="labs-intro">
+      <section class="labs-section" aria-labelledby="labs-projects">
         <div class="labs-panel labs-panel--intro">
-          <p class="labs-eyebrow labs-eyebrow--light">
-            Open-source experiments
-          </p>
-          <h2 id="labs-intro">Financial research in the open</h2>
+          <p class="labs-eyebrow labs-eyebrow--light">Active experiments</p>
+          <h2 id="labs-projects">Explore the Labs sandbox</h2>
           <p>
-            Ethical Capital Labs shares prototypes, datasets, and interactive
-            tools that make values-aligned investing easier to explore. Every
-            project is transparent, reproducible, and invites community review.
-            Nothing here is investment advice—just hypotheses tested in public.
+            Ethical Capital Labs prototypes ideas for values-aligned investors.
+            The projects below ship as open-source experiments so you can test,
+            critique, and extend them.
           </p>
-          <div class="labs-button-row">
-            <a class="labs-button labs-button--solid" href="/simulator/">
-              Launch portfolio simulator
+          <div class="labs-grid">
+            <a class="labs-card labs-card--hero" href="/simulator/">
+              <span class="labs-card__title">Portfolio Time Travel</span>
+              <p class="labs-card__body">
+                Understand how your investment selections, savings, and spending
+                rate shape your investment experience. Switch between quick
+                assumptions and advanced tax-aware scenarios to test what
+                matters most.
+              </p>
+              <span class="labs-card__link">Open the simulator →</span>
+            </a>
+            <a class="labs-card labs-card--hero" href="/divestment/">
+              <span class="labs-card__title">Divestment Brief Builder</span>
+              <p class="labs-card__body">
+                Build identity-first divestment briefs tailored to venue,
+                decision maker, and regulatory context. Blend plain-language and
+                technical messaging, and export shareable outlines in seconds.
+              </p>
+              <span class="labs-card__link">Launch the builder →</span>
             </a>
             <a
-              class="labs-button labs-button--ghost"
+              class="labs-card labs-card--hero"
               href="https://github.com/ethicalcapital/labs"
               rel="noopener noreferrer"
               target="_blank"
             >
-              Browse the code on GitHub
+              <span class="labs-card__title">Review the codebase</span>
+              <p class="labs-card__body">
+                Every experiment lives in GitHub with issues, discussions, and
+                implementation notes. Fork the repo, suggest changes, or log the
+                next research question.
+              </p>
+              <span class="labs-card__link">Browse on GitHub →</span>
             </a>
           </div>
         </div>
-
-        <div class="labs-panel" aria-labelledby="labs-projects">
-          <p class="labs-eyebrow" id="labs-projects">Active projects</p>
-          <div class="labs-grid">
-            <a class="labs-card" href="/simulator/">
-              <span class="labs-card__title">Portfolio Strategy Simulator</span>
-              <p class="labs-card__body">
-                Run thousands of Monte Carlo paths with tax-aware withdrawals,
-                stress scenarios, and progressive disclosure between simple and
-                advanced modes. File issues for bugs or new scenario ideas.
-              </p>
-              <span class="labs-card__link">Open simulator →</span>
-            </a>
-            <a class="labs-card" href="/divestment/">
-              <span class="labs-card__title">Divestment Explorer</span>
-              <p class="labs-card__body">
-                A working bench for values-aligned screening: open datasets,
-                methodology notes, and scripts for vetting corporate behavior.
-                Contributions and critiques keep the taxonomy honest.
-              </p>
-              <span class="labs-card__link">View project →</span>
-            </a>
-            <a
-              class="labs-card"
-              href="https://github.com/ethicalcapital/labs/discussions"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              <span class="labs-card__title">Suggest the next experiment</span>
-              <p class="labs-card__body">
-                Use GitHub Discussions to request datasets, propose new
-                visualizations, or collaborate on ethical investment research.
-                Open dialogue shapes the roadmap.
-              </p>
-              <span class="labs-card__link">Start a discussion →</span>
-            </a>
-          </div>
-        </div>
-
         <div class="labs-panel" aria-labelledby="labs-collab">
           <p class="labs-eyebrow" id="labs-collab">How to collaborate</p>
-          <div class="labs-grid">
-            <a
-              class="labs-card"
-              href="https://github.com/ethicalcapital/labs/issues/new/choose"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              <span class="labs-card__title">Report an issue</span>
-              <p class="labs-card__body">
-                Found a bug, data quality concern, or UX pain point? Submit an
-                issue so fixes are documented and shared with everyone.
-              </p>
-              <span class="labs-card__link">Open an issue →</span>
-            </a>
-            <a
-              class="labs-card"
-              href="https://github.com/ethicalcapital/labs"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              <span class="labs-card__title">Fork &amp; contribute</span>
-              <p class="labs-card__body">
-                Pull requests are welcome. Follow the project AGENTS.md for
-                design conventions, disclaimer language, and testing
-                expectations.
-              </p>
-              <span class="labs-card__link">Read contribution guide →</span>
-            </a>
-            <a class="labs-card" href="mailto:hello@ethicic.com">
-              <span class="labs-card__title">Share private feedback</span>
-              <p class="labs-card__body">
-                If you need to report sensitive information or coordinate a
-                responsible disclosure, email the team directly.
-              </p>
-              <span class="labs-card__link">Email Ethical Capital →</span>
-            </a>
-          </div>
+          <p>
+            Prefer to talk? Email
+            <a href="mailto:hello@ethicic.com">hello@ethicic.com</a>
+            or open an issue in the repo—both reach the same team.
+          </p>
         </div>
 
         <div class="labs-panel" aria-labelledby="labs-disclaimer">
