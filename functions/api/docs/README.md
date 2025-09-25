@@ -12,6 +12,6 @@
 - Optional `LACRM_PIPELINE_ID`, `LACRM_STEP_ID`
 
 ### KV bindings
-- `hooks` (KV namespace ID `caf4e19f1388423fade84340c27a929c`)
+- `hooks` (KV namespace configured via `wrangler.toml`; check Cloudflare dashboard for the active ID)
 
 Keep this doc updated as new Functions ship.

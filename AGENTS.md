@@ -5,7 +5,7 @@
 ## Cloudflare Workers & Pages Runtime
 
 ### Bindings
-- `hooks` KV: namespace `caf4e19f1388423fade84340c27a929c`. Declared in `wrangler.toml`. Accessible inside functions as `env.hooks`.
+- `hooks` KV: namespace configured in `wrangler.toml` (see Cloudflare dashboard for IDs). Accessible inside functions as `env.hooks`.
 
 ### Secrets & Doppler
 - Secrets live in Doppler; GitHub Action runs `doppler secrets download … | wrangler secret bulk` before deploy.
