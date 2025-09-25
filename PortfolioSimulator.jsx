@@ -174,7 +174,7 @@
             // Core inputs with validation
             const [portfolio, setPortfolio] = useState(CONFIG.DEFAULT_PORTFOLIO);
             const [currentIncome, setCurrentIncome] = useState(80610);
-            const [savingsRate, setSavingsRate] = useState(15); // Percentage of income saved (can be negative)
+            const [savingsRate, setSavingsRate] = useState(4.4); // Percentage of income saved (can be negative)
             const [savingsYears, setSavingsYears] = useState(10); // Years until retirement/withdrawal starts
             const [withdrawalStartMode, setWithdrawalStartMode] = useState('estimate');
             const [riskTolerance, setRiskTolerance] = useState('balanced');
@@ -247,7 +247,7 @@
                         const config = JSON.parse(saved);
                         setPortfolio(config.portfolio ?? CONFIG.DEFAULT_PORTFOLIO);
                         setCurrentIncome(config.currentIncome ?? 80610);
-                        setSavingsRate(config.savingsRate ?? 15);
+                        setSavingsRate(config.savingsRate ?? 4.4);
                         setSavingsYears(config.savingsYears ?? 10);
                         setWithdrawalStartMode(config.withdrawalStartMode ?? 'estimate');
 
@@ -1462,7 +1462,7 @@
                                                     type="range"
                                                     min="-20"
                                                     max="50"
-                                                    step="1"
+                                                    step="0.1"
                                                     value={savingsRate}
                                                     onChange={(e) => setSavingsRate(Number(e.target.value))}
                                                     className="w-full"
@@ -1471,6 +1471,9 @@
                                                     <span>{savingsRate}%</span>
                                                     <span>Annual savings ≈ {formatCurrency(Math.max(savingsRate, 0) * currentIncome / 100)}</span>
                                                 </div>
+                                                <p className="mt-1 text-[11px] text-gray-500">
+                                                    Default tracks the latest <a className="text-blue-600 underline hover:text-blue-700" href="https://fred.stlouisfed.org/series/PSAVERT" target="_blank" rel="noopener noreferrer">U.S. personal saving rate (FRED: PSAVERT)</a> of 4.4%.
+                                                </p>
                                             </div>
                                         </div>
 
