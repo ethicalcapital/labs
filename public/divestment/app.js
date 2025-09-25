@@ -693,9 +693,9 @@
     const plain = buildMarkdown('plain');
     const technical = buildMarkdown('technical');
     if (!plain || !technical) return;
-    const combined = [plain, technical].join('
+    const combined = (plain + '
 
-').trim();
+' + technical).trim();
     const blob = new Blob([combined], { type: 'text/markdown' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
