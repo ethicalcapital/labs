@@ -35,14 +35,10 @@ jobs:
         run: npm run build
 
       - name: Sync secrets to Cloudflare
-        env:
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
-          doppler secrets download --no-file --format env --project "${DOPPLER_PROJECT:-labs}" --config "${DOPPLER_CONFIG:-production}" \
-            | npx wrangler pages secret bulk labs
+          doppler run --project "${DOPPLER_PROJECT:-labs}" --config "${DOPPLER_CONFIG:-production}" -- \
+            bash -c 'doppler secrets download --no-file --format env | npx wrangler pages secret bulk labs'
 
       - name: Deploy to Cloudflare Pages
-        run: npx wrangler pages deploy dist --project-name labs --commit-dirty=true
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: doppler run --project "${DOPPLER_PROJECT:-labs}" --config "${DOPPLER_CONFIG:-production}" -- \
+          npx wrangler pages deploy dist --project-name labs --commit-dirty=true
