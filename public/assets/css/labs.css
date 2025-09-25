@@ -181,15 +181,101 @@ p {
   color: var(--text-dark);
 }
 
+.home-hero {
+  position: relative;
+  display: grid;
+  gap: 1.5rem;
+  color: var(--text-dark);
+  background: var(--surface-white);
+  border: 1px solid rgba(88, 28, 135, 0.14);
+  box-shadow: 0 24px 48px rgba(88, 28, 135, 0.1);
+}
+
+.home-hero::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: var(--surface-hero);
+  opacity: 0.12;
+  pointer-events: none;
+}
+
+.home-hero > * {
+  position: relative;
+  z-index: 1;
+}
+
+
+.home-hero__content {
+  display: grid;
+  gap: 1.5rem;
+  align-content: start;
+}
+
+.home-hero h2 {
+  color: var(--text-dark);
+}
+
+.home-hero p {
+  color: var(--text-medium);
+}
+
+.home-hero .labs-eyebrow {
+  color: var(--ecic-purple);
+}
+
+.home-hero__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.home-hero__meta {
+  margin: 0;
+  font-size: 0.92rem;
+  color: rgba(17, 24, 39, 0.72);
+}
+
+.home-hero .labs-button--solid {
+  background: var(--ecic-purple);
+  color: #fff;
+}
+
+.home-hero .labs-button--solid:hover {
+  box-shadow: 0 16px 26px rgba(88, 28, 135, 0.2);
+}
+
+.home-hero .labs-button--ghost {
+  border-color: rgba(88, 28, 135, 0.35);
+  color: var(--ecic-purple);
+}
+
+.home-hero .labs-button--ghost:hover {
+  background: rgba(88, 28, 135, 0.08);
+  color: var(--ecic-purple);
+}
+
 .labs-panel--cards {
   margin-top: 2.5rem;
 }
 
 .labs-cards {
   display: grid;
-  gap: 1.5rem;
+  gap: 1.75rem;
 }
 
+.labs-card--feature {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: minmax(220px, 360px) minmax(0, 1fr);
+  align-items: start;
+}
+
+.labs-card--standard {
+  display: grid;
+  gap: 1.25rem;
+}
 
 
 .labs-card__content {
@@ -239,7 +325,20 @@ p {
   box-shadow: 0 24px 48px rgba(88, 28, 135, 0.1);
 }
 
+.home-hero::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: var(--surface-hero);
+  opacity: 0.12;
+  pointer-events: none;
+}
 
+.home-hero > * {
+  position: relative;
+  z-index: 1;
+}
 
 .home-hero__content {
   display: grid;
@@ -259,6 +358,11 @@ p {
   color: var(--ecic-purple);
 }
 
+.home-hero__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
 
 .home-hero__meta {
   margin: 0;
