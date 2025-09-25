@@ -121,20 +121,37 @@
 
         <div class="builder-layout">
           <div class="labs-panel builder-panel" id="builder-panel">
-            <div class="builder-panel__top">
-              <div class="builder-panel__header">
-                <h2 class="builder-panel__title">
-                  1) Configure the briefing context
-                </h2>
-                <p class="builder-panel__description">
-                  Select the setting, decision maker, and identity signals. Each
-                  combination tunes language choices and documents which
-                  investor constraints you are addressing.
-                </p>
-              </div>
-            </div>
-
             <form id="builder" class="builder-form">
+              <fieldset
+                class="builder-field builder-choice-field builder-span-all"
+              >
+                <legend>Issue focus</legend>
+                <div
+                  class="builder-choice-group"
+                  data-choice-group="issue"
+                  role="group"
+                  aria-label="Issue focus"
+                >
+                  <input type="hidden" id="issue" value="palestine" />
+                  <button
+                    type="button"
+                    class="choice-btn is-active"
+                    data-choice="palestine"
+                    aria-pressed="true"
+                  >
+                    <i class="fa-solid fa-dove"></i><span>Palestine</span>
+                  </button>
+                </div>
+                <label class="issue-suggestion" for="issueSuggestion">
+                  <span>Suggest another issue (optional)</span>
+                  <input
+                    type="text"
+                    id="issueSuggestion"
+                    placeholder="e.g., Climate, Surveillance tech"
+                    class="builder-input input input-bordered"
+                  />
+                </label>
+              </fieldset>
               <div class="builder-field builder-choice-field">
                 <span class="builder-field__label">Entity type</span>
                 <div

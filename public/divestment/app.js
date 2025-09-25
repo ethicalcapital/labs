@@ -26,6 +26,8 @@
   const fbStatus = el("fb_status");
   const onePagerFieldset = el("onePagerFieldset");
   const onePagerOptions = el("onePagerOptions");
+  const issueInput = el("issue");
+  const issueSuggestionInput = el("issueSuggestion");
   const disclaimerOverlay = el("disclaimerOverlay");
   const disclaimerCheckbox = el("disclaimerAccept");
   const disclaimerContinue = el("disclaimerContinue");
@@ -84,6 +86,7 @@
     return false;
   }
 
+  let issueChoice;
   let entityChoice;
   let venueChoice;
   let targetChoice;
@@ -163,6 +166,16 @@
     public_pension: "Public pension",
     university_endowment: "University endowment",
     custom: "Custom",
+  };
+
+  const ISSUE_LABELS = {
+    palestine: "Palestine",
+  };
+
+  const DEFAULT_THUMB = {
+    mission: "pragmatism",
+    competition: "low",
+    regulatory: "medium",
   };
 
   const ENTITY_PRESET_MAP = {
@@ -494,8 +507,6 @@
 
     if (!items.length) {
       (fallbackSources || []).forEach(addSource);
-    } else {
-      (fallbackSources || []).forEach(addSource);
     }
 
     (furtherReading || []).forEach(addSource);
@@ -541,13 +552,20 @@
 
   function applyEntityPreset(entityVal, { forceCustom = false } = {}) {
     if (!thumbPreset) return;
-    const preset = !forceCustom
-      ? ENTITY_PRESET_MAP[entityVal] || "custom"
-      : "custom";
-    if (thumbPreset.value !== preset) {
-      thumbPreset.value = preset;
+    const presetKey = !forceCustom ? ENTITY_PRESET_MAP[entityVal] : null;
+    if (!presetKey || !PRESET_CONFIGS[presetKey]) {
+      thumbPreset.value = "custom";
+      thumbCustom.classList.remove("hidden");
+      toggleThumbInputs(false);
+      setThumbInputs(DEFAULT_THUMB);
+      return;
     }
-    applyThumbPreset(preset);
+
+    const presetConfig = PRESET_CONFIGS[presetKey];
+    thumbPreset.value = "custom";
+    thumbCustom.classList.remove("hidden");
+    toggleThumbInputs(false);
+    setThumbInputs(presetConfig);
   }
 
   function setThumbInputs(config) {
@@ -597,6 +615,11 @@
     }
     const payload = {
       consent: true,
+      issue: issueInput ? issueInput.value : "palestine",
+      issueSuggestion:
+        issueSuggestionInput && issueSuggestionInput.value
+          ? issueSuggestionInput.value.slice(0, 200)
+          : "",
       venue: venue.value,
       target: target.value,
       entityType: invIdentity.value,
@@ -688,6 +711,10 @@
   async function buildBrief() {
     const data = await loadData();
     const context = {
+      issue: issueInput ? issueInput.value : "palestine",
+      issueSuggestion: issueSuggestionInput
+        ? issueSuggestionInput.value.trim()
+        : "",
       venue: venue.value,
       target: target.value,
       entity: invIdentity.value,
@@ -910,7 +937,6 @@
 
     if (dynamicSources.length) {
       dynamicSources.forEach(addSourceForState);
-      fallbackSources.forEach(addSourceForState);
     } else {
       fallbackSources.forEach(addSourceForState);
     }
@@ -950,6 +976,15 @@
         .join(" · ");
       html += `<p class="text-xs text-subtle">Attached one-pagers: ${attachTitles}</p>`;
     }
+
+    const issueLabel = ISSUE_LABELS[context.issue] || context.issue;
+    const sanitizedIssueSuggestion = context.issueSuggestion
+      ? sanitize(context.issueSuggestion)
+      : "";
+    const issueNote = sanitizedIssueSuggestion
+      ? ` (user note: ${sanitizedIssueSuggestion})`
+      : "";
+    html += `<p class="text-xs text-muted">Issue focus: ${sanitize(issueLabel)}${issueNote}</p>`;
 
     html += `<h3>${sanitize(headings.key)}</h3>`;
     html += "<ol>";
@@ -1169,7 +1204,7 @@
       })),
     };
 
-    renderSources(sourcesForState, [], data.further_reading || []);
+    renderSources(sourcesForState, fallbackSources, data.further_reading || []);
   }
 
   function buildMarkdown(mode) {
@@ -1182,6 +1217,13 @@
     const lines = [];
     lines.push(`# Dryvestment Brief (${knowledgeLabel})`);
     lines.push("");
+    const issueLabelMarkdown = ISSUE_LABELS[context.issue] || context.issue;
+    lines.push(`- Issue focus: ${markdownCell(issueLabelMarkdown)}`);
+    if (context.issueSuggestion) {
+      lines.push(
+        `- Issue suggestion: ${markdownCell(context.issueSuggestion)}`,
+      );
+    }
     lines.push(`- Venue: ${VENUE_LABELS[context.venue] || context.venue}`);
     lines.push(`- Target: ${TARGET_LABELS[context.target] || context.target}`);
     lines.push(
@@ -1441,9 +1483,14 @@
   applyThumbPreset(thumbPreset.value);
   ensureOnePagerOptions().catch(() => {});
 
+  issueChoice = createChoiceController("issue", "issue");
   entityChoice = createChoiceController("entity", "invIdentity");
   venueChoice = createChoiceController("venue", "venue");
   targetChoice = createChoiceController("target", "target");
+
+  if (issueChoice) {
+    issueChoice.onChange = () => {};
+  }
 
   if (entityChoice) {
     entityChoice.onChange = (value) => {
@@ -1475,6 +1522,8 @@
     buildBrief();
   });
   resetBtn.addEventListener("click", () => {
+    issueChoice?.set("palestine");
+    if (issueSuggestionInput) issueSuggestionInput.value = "";
     entityChoice?.set("individual");
     venueChoice?.set("one_on_one");
     targetChoice?.set("family_friends");
