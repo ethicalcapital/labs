@@ -128,6 +128,26 @@
       ]
     }
   ],
+  "screening_knowledge": {
+    "title": "Screening as Cumulative Knowledge",
+    "points": [
+      {
+        "title": "Identify business model fragility",
+        "body": "Systematic exclusions focus attention on issuers whose operating models exhibit hidden tail risks (legal, reputational, sovereign), fragile customer bases, or supply chains exposed to human‑rights litigation.",
+        "citations": [ { "label": "AFSC Investigate", "url": "https://investigate.afsc.org/" } ]
+      },
+      {
+        "title": "Knowledge compounds",
+        "body": "Each exclusion deepens understanding of the investable universe: supply‑chain dependencies, regulatory exposure, and patterns of controversy. Screening becomes a means to gather cumulative knowledge about your opportunity set, not just a filter.",
+        "citations": []
+      },
+      {
+        "title": "Integration cadence as practice standard",
+        "body": "Treat credible database updates as investment intelligence: aim to assess and integrate material changes within 30 days (faster when practicable) with documented rationale.",
+        "citations": [ { "label": "AFSC Investigate", "url": "https://investigate.afsc.org/" } ]
+      }
+    ]
+  },
   "counters": [
     {
       "claim": "Divestment will significantly hurt performance and beneficiaries.",

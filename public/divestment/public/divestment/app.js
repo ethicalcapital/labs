@@ -199,6 +199,21 @@
     if (approach.framing) html += `<li><strong>Framing</strong>: ${sanitize(approach.framing)}</li>`;
     html += '</ul>';
 
+    // Screening as cumulative knowledge (neutral, non-promotional framing)
+    if (data.screening_knowledge && Array.isArray(data.screening_knowledge.points)) {
+      html += `<h3>${sanitize(data.screening_knowledge.title || 'Screening as Cumulative Knowledge')}</h3>`;
+      html += '<ul>';
+      for (const p of data.screening_knowledge.points) {
+        html += `<li><strong>${sanitize(p.title)}</strong>: ${sanitize(p.body)}`;
+        if (p.citations && p.citations.length) {
+          const c = p.citations.map(ci => `<a class=\"text-sky-300 hover:underline\" href=\"${ci.url}\" target=\"_blank\" rel=\"noopener\">${sanitize(ci.label)}</a>`).join(' · ');
+          html += `<div class=\"mt-1 text-xs text-slate-400\">Sources: ${c}</div>`;
+        }
+        html += `</li>`;
+      }
+      html += '</ul>';
+    }
+
     if (showCIO && data.cio_note) {
       html += `<h4>For CIOs / Consultants</h4>`;
       html += `<p>${sanitize(data.cio_note)}</p>`;
@@ -290,6 +305,14 @@ window.__BDS_FALLBACK__ = {
     { claim: 'Divestment will significantly hurt performance and beneficiaries.', response: 'Naive exclusions can be costly, but professional managers use optimization and tracking-error limits to preserve factor exposures and benchmark-like returns.', citations: [ { label: 'MSCI ESG Index Construction', url: 'https://www.msci.com/our-solutions/indexes/esg-indexes' } ] },
     { claim: 'Exclusions violate fiduciary duty.', response: 'Fiduciary duty requires prudence, loyalty, and attention to material risk and client objectives. Values alignment and risk management can be implemented within a disciplined, return-seeking mandate.', citations: [ { label: 'UN PRI: Fiduciary Duty', url: 'https://www.unpri.org/fiduciary-duty' } ] }
   ],
+  screening_knowledge: {
+    title: 'Screening as Cumulative Knowledge',
+    points: [
+      { title: 'Identify business model fragility', body: 'Systematic exclusions focus attention on issuers with hidden tail risks and controversy exposure.', citations: [ { label: 'AFSC Investigate', url: 'https://investigate.afsc.org/' } ] },
+      { title: 'Knowledge compounds', body: 'Each exclusion deepens understanding of supply chains, regulatory exposure, and controversy patterns.' },
+      { title: 'Integration cadence', body: 'Treat credible database updates as investment intelligence; aim to integrate within 30 days with documented rationale.', citations: [ { label: 'AFSC Investigate', url: 'https://investigate.afsc.org/' } ] }
+    ]
+  },
   model_resolution: 'RESOLVED: That the {localName} shall adopt a conduct-based investment exclusion policy... ',
   next_steps: [ 'Request current holdings/exposure report from managers.', 'Adopt written conduct criteria and escalation process.' ],
   sources: [
