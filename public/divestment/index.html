@@ -119,7 +119,8 @@
           </div>
         </div>
 
-        <div class="labs-panel builder-panel" id="builder-panel">
+        <div class="builder-layout">
+          <div class="labs-panel builder-panel" id="builder-panel">
           <div class="builder-panel__top">
             <div class="builder-panel__header">
               <h2 class="builder-panel__title">
@@ -130,22 +131,6 @@
                 combination tunes language choices and documents which investor
                 constraints you are addressing.
               </p>
-            </div>
-            <div class="builder-links no-print">
-              <a
-                class="builder-button btn btn-outline"
-                href="https://github.com/ethicalcapital/labs/issues/new?labels=divestment"
-                target="_blank"
-                rel="noopener noreferrer"
-                >Log an issue</a
-              >
-              <a
-                class="builder-button btn btn-ghost"
-                href="https://github.com/ethicalcapital/labs/discussions/new?category=ideas"
-                target="_blank"
-                rel="noopener noreferrer"
-                >Start a discussion</a
-              >
             </div>
           </div>
 
@@ -371,35 +356,21 @@
             </div>
 
             <label class="builder-field">
-              <span class="builder-field__label">Knowledge level</span>
-              <select
-                id="knowledge"
-                class="builder-input select select-bordered w-full"
-              >
+              <span class="builder-field__label">Output detail</span>
+              <select id="knowledge" class="builder-input select select-bordered w-full">
                 <option value="plain">Plain English</option>
                 <option value="technical">Technical / Nerd</option>
               </select>
+              <span class="builder-field__hint"
+                >Plain English keeps it conversational; Technical adds policy detail
+                and extra citations.</span
+              >
             </label>
 
             <fieldset class="builder-fieldset builder-span-all">
               <legend>What matters to them?</legend>
               <div class="builder-thumb-grid">
-                <label class="builder-field">
-                  <span class="builder-field__label">Profile</span>
-                  <select
-                    id="thumb_preset"
-                    class="builder-input select select-bordered w-full"
-                  >
-                    <option value="custom">Custom</option>
-                    <option value="mission_nonprofit">
-                      Mission-driven nonprofit
-                    </option>
-                    <option value="public_pension">Public pension</option>
-                    <option value="university_endowment">
-                      University endowment
-                    </option>
-                  </select>
-                </label>
+                <input type="hidden" id="thumb_preset" value="custom" />
                 <div id="thumb_custom" class="builder-thumb-grid">
                   <div>
                     <span class="builder-field__label"
@@ -579,26 +550,50 @@
             </div>
           </div>
 
-          <div class="builder-subsection builder-span-all">
-            <h3>Disclaimers</h3>
-            <p>
-              This tool is educational only. It creates hypothetical
-              illustrative materials and links to public sources. It is not
-              investment advice. Assumptions may not reflect your situation.
-              Invest Vegan LLC DBA Ethical Capital accepts editorial
-              responsibility for this content and welcomes corrections.
+        </div>
+          <aside class="labs-panel builder-support no-print" aria-labelledby="builder-support-title">
+            <h3 id="builder-support-title">Need anything?</h3>
+            <p class="builder-support__intro">
+              Share context, bugs, or feature requests with the team in real
+              time.
             </p>
-            <p>
-              Subscribe for updates:
+            <div class="builder-support__actions">
               <a
-                class="subscribe-link"
-                href="https://buttondown.com/ethicic"
+                class="support-button"
+                href="https://github.com/ethicalcapital/labs/issues/new?labels=divestment"
                 target="_blank"
-                rel="noopener"
-                >buttondown.com/ethicic</a
+                rel="noopener noreferrer"
               >
-            </p>
-          </div>
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <span>Log an issue</span>
+              </a>
+              <a
+                class="support-button"
+                href="https://github.com/ethicalcapital/labs/discussions/new?category=ideas"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <i class="fa-solid fa-comments"></i>
+                <span>Start a discussion</span>
+              </a>
+            </div>
+            <div class="builder-support__foot">
+              <p>
+                Prefer email? Reach us at
+                <a href="mailto:hello@ethicic.com">hello@ethicic.com</a>.
+              </p>
+              <p>
+                Subscribe for updates:
+                <a
+                  class="subscribe-link"
+                  href="https://buttondown.com/ethicic"
+                  target="_blank"
+                  rel="noopener"
+                  >buttondown.com/ethicic</a
+                >
+              </p>
+            </div>
+          </aside>
         </div>
 
         <div class="labs-panel brief-panel">

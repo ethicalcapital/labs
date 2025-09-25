@@ -56,15 +56,41 @@
     <main class="labs-main">
       <section class="labs-section" aria-labelledby="labs-projects">
         <div class="labs-panel labs-panel--intro home-hero">
-          <p class="labs-eyebrow labs-eyebrow--light">Active experiments</p>
-          <h2 id="labs-projects">Explore the Labs sandbox</h2>
-          <p>
-            Ethical Capital Labs prototypes ideas for values-aligned investors.
-            The projects below ship as open-source experiments so you can test,
-            critique, and extend them.
-          </p>
-          <div class="labs-grid">
-            <a class="labs-card labs-card--hero" href="/simulator/">
+          <div class="home-hero__content">
+            <p class="labs-eyebrow">Ethical Capital Labs</p>
+            <h2 id="labs-projects">Explore the Labs sandbox</h2>
+            <p>
+              Ethical Capital Labs prototypes ideas for values-aligned investors.
+              Every experiment is an open-source build you can inspect, extend,
+              and critique.
+            </p>
+            <div class="home-hero__buttons">
+              <a
+                class="labs-button labs-button--solid"
+                href="https://github.com/ethicalcapital/labs"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                View the code
+              </a>
+              <a
+                class="labs-button labs-button--ghost"
+                href="https://github.com/ethicalcapital/labs/issues/new"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                Log an issue
+              </a>
+            </div>
+            <p class="home-hero__meta">Select an experiment below to start exploring.</p>
+          </div>
+          <div class="home-hero__image" aria-hidden="true">Hero image (tk)</div>
+        </div>
+
+        <div class="labs-panel labs-panel--cards" aria-labelledby="labs-experiments">
+          <p class="labs-eyebrow" id="labs-experiments">Active experiments</p>
+          <div class="labs-cards">
+            <a class="labs-card labs-card--hero labs-card--full" href="/simulator/">
               <span class="labs-card__title">Portfolio Time Travel</span>
               <p class="labs-card__body">
                 Understand how your investment selections, savings, and spending
@@ -74,7 +100,7 @@
               </p>
               <span class="labs-card__link">Open the simulator →</span>
             </a>
-            <a class="labs-card labs-card--hero" href="/divestment/">
+            <a class="labs-card labs-card--hero labs-card--full" href="/divestment/">
               <span class="labs-card__title">Dryvestment</span>
               <p class="labs-card__body">
                 Dryvestment: Where values and valuations meet. Translate
@@ -83,20 +109,6 @@
                 briefs to venue, decision maker, and regulatory context.
               </p>
               <span class="labs-card__link">Launch the builder →</span>
-            </a>
-            <a
-              class="labs-card labs-card--hero"
-              href="https://github.com/ethicalcapital/labs"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              <span class="labs-card__title">Review the codebase</span>
-              <p class="labs-card__body">
-                Every experiment lives in GitHub with issues, discussions, and
-                implementation notes. Fork the repo, suggest changes, or log the
-                next research question.
-              </p>
-              <span class="labs-card__link">Browse on GitHub →</span>
             </a>
           </div>
         </div>
