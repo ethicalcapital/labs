@@ -24,16 +24,13 @@ jobs:
           node-version: '20'
 
       - name: Install Doppler CLI
-        run: sudo curl -Ls https://cli.doppler.com/install.sh | sudo DOPPLER_INSTALL_AIO=0 sh
+        run: curl -Ls https://cli.doppler.com/install.sh | sudo sh
 
       - name: Install dependencies
         run: npm ci
 
       - name: Build site
         run: npm run build
-
-      - name: Build hooks workspace
-        run: cd hooks && npm run build --workspaces
 
       - name: Sync secrets to Cloudflare
         env:
