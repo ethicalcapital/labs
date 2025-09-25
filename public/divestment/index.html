@@ -3,145 +3,221 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Divestment Toolkit · Ethical Capital Labs</title>
-    <meta
-      name="description"
-      content="Resource hub and toolkit for constructive, identity‑aware divestment dialogue."
-    />
+    <title>Divestment Brief Builder — Identity‑First</title>
+    <meta name="description" content="Build a concise, evidence‑backed divestment brief tailored to investor identity and decision makers to support constructive dialogue. Educational only.">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Raleway:wght@400;500;600&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="/assets/css/labs.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <style>
+      :root { color-scheme: dark; }
+      body { font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #05070f; color: #e7ebf5; }
+      .panel { background: rgba(15, 23, 42, 0.55); border: 1px solid rgba(148, 163, 184, 0.1); backdrop-filter: blur(12px); }
+      @media print {
+        .no-print { display: none !important; }
+        body { background: #fff; color: #000; }
+        .panel { border: none; backdrop-filter: none; background: transparent; }
+        a::after { content: " (" attr(href) ")"; font-size: 10px; color: #444; }
+        h1, h2, h3, h4 { color: #0ea5e9; }
+      }
+      .kbd { border: 1px solid rgba(148, 163, 184, 0.35); background: rgba(148, 163, 184, 0.12); padding: 0.15rem 0.4rem; border-radius: 0.35rem; font-size: 0.78rem; }
+      details > summary { cursor: pointer; }
+    </style>
   </head>
-  <body>
-    <header class="labs-header">
-      <nav class="labs-nav" aria-label="Primary">
-        <a class="labs-nav__logo" href="/">
-          <img
-            src="/assets/brand/logos/ecic-logo.svg"
-            alt="Invest Vegan LLC DBA Ethical Capital"
-            width="44"
-            height="44"
-          />
-          <span>Labs</span>
-        </a>
-        <div class="labs-nav__links">
-          <a class="labs-nav__link" href="/simulator/">Portfolio Simulator</a>
-          <a class="labs-nav__link" href="/divestment/">Divestment Toolkit</a>
-          <a
-            class="labs-nav__link"
-            href="https://github.com/ethicalcapital/labs"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            GitHub
-          </a>
-          <a
-            class="labs-nav__cta"
-            href="https://ethicic.com"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            Visit Ethical Capital
-          </a>
+  <body class="min-h-screen">
+    <header class="px-6 py-6 sm:px-10">
+      <div class="mx-auto flex max-w-5xl flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p class="text-xs uppercase tracking-[0.35em] text-slate-400">Ethical Capital</p>
+          <h1 class="mt-1 text-2xl font-semibold text-white">Divestment Brief Builder</h1>
+          <p class="mt-1 text-sm text-slate-400">Identity‑first toolkit for constructive, role‑aware dialogue between activists and decision makers.</p>
         </div>
-      </nav>
+        <a href="/" class="rounded-full border border-slate-500/70 px-5 py-2 text-sm font-medium text-slate-200 transition hover:border-slate-300 hover:text-white no-print">Back to Labs</a>
+      </div>
     </header>
 
-    <main class="labs-main">
-      <section class="labs-section" aria-labelledby="divestment-hero">
-        <div class="labs-panel labs-panel--intro">
-          <p class="labs-eyebrow labs-eyebrow--light">Divestment toolkit</p>
-          <h2 id="divestment-hero">A resource hub for constructive, identity‑aware dialogue</h2>
-          <p>
-            This space offers practical tools, write‑ups, and templates to help people
-            disagree constructively about divestment. It focuses on identity‑aware
-            translation between activists and decision makers, enabling respectful,
-            role‑appropriate conversations and paper trails.
-          </p>
-          <div class="labs-button-row">
-            <a class="labs-button labs-button--solid" href="/divestment/">Open Brief Builder</a>
-            <a
-              class="labs-button labs-button--ghost"
-              href="https://github.com/ethicalcapital/labs/tree/main/public/divestment"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              Browse toolkit code &amp; docs
-            </a>
-          </div>
-        </div>
+    <main class="px-6 pb-16 sm:px-10">
+      <div class="mx-auto grid max-w-5xl gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
+        <!-- Builder -->
+        <section class="panel rounded-3xl p-6 sm:p-8">
+          <h2 class="text-lg font-semibold text-white">1) Setup</h2>
+          <form id="builder" class="mt-4 grid grid-cols-1 gap-4">
+            <label class="block">
+              <span class="mb-1 block text-sm text-slate-300">Venue</span>
+              <select id="venue" class="w-full rounded-md border border-slate-600/60 bg-slate-900/50 px-3 py-2 text-sm">
+                <option value="one_on_one">1:1 Conversation</option>
+                <option value="small_group">Small Group Meeting</option>
+                <option value="committee_hearing">Committee Hearing</option>
+                <option value="full_board_meeting">Full Board/Council Meeting</option>
+                <option value="public_testimony">Public Testimony / Town Hall</option>
+                <option value="written_memo">Written Memo / Email</option>
+              </select>
+            </label>
 
-        <div class="labs-panel" aria-labelledby="divestment-components">
-          <p class="labs-eyebrow" id="divestment-components">What’s inside</p>
-          <div class="labs-grid">
-            <a class="labs-card" href="/divestment/">
-              <span class="labs-card__title">Divestment Brief Builder</span>
-              <p class="labs-card__body">
-                Generate a printable, identity‑aware, evidence‑backed one‑pager to
-                support constructive dialogue in meetings and testimony.
-              </p>
-              <span class="labs-card__link">Open the builder →</span>
-            </a>
-            <a
-              class="labs-card"
-              href="https://github.com/ethicalcapital/labs/issues/new?labels=divestment"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              <span class="labs-card__title">Report a correction</span>
-              <p class="labs-card__body">
-                Submit updated intelligence, company reclassifications, or data
-                quality concerns. We track every change so users can audit the
-                provenance.
-              </p>
-              <span class="labs-card__link">File an issue →</span>
-            </a>
-            <a
-              class="labs-card"
-              href="https://github.com/ethicalcapital/labs/tree/main/public/divestment"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              <span class="labs-card__title">Toolkit code</span>
-              <p class="labs-card__body">
-                Code and content packs for the builder and related utilities.
-                Fork the tooling and adapt it for your community’s needs.
-              </p>
-              <span class="labs-card__link">Browse repository →</span>
-            </a>
-            <a class="labs-card" href="mailto:hello@ethicic.com">
-              <span class="labs-card__title">Private collaboration</span>
-              <p class="labs-card__body">
-                Sensitive data, embargoed research, or institutional
-                partnerships are best coordinated via email. Reach out and we
-                will respond promptly.
-              </p>
-              <span class="labs-card__link">Email Ethical Capital →</span>
-            </a>
-          </div>
-        </div>
+            <label class="block">
+              <span class="mb-1 block text-sm text-slate-300">Target Decision Maker</span>
+              <select id="target" class="w-full rounded-md border border-slate-600/60 bg-slate-900/50 px-3 py-2 text-sm">
+                <option value="cio">CIO / Investment Officer</option>
+                <option value="consultant">Investment Consultant</option>
+                <option value="treasurer">Treasurer / Finance Director</option>
+                <option value="trustee">Board / Trustee</option>
+                <option value="council_member">Council / Committee Member</option>
+                <option value="family_friends">Family / Friends</option>
+              </select>
+            </label>
 
-      </section>
+            <label class="block">
+              <span class="mb-1 block text-sm text-slate-300">Entity Type</span>
+              <select id="invIdentity" class="w-full rounded-md border border-slate-600/60 bg-slate-900/50 px-3 py-2 text-sm">
+                <option value="swf">Sovereign Wealth Fund</option>
+                <option value="public_pension">Public Pension Plan</option>
+                <option value="corporate_pension">Corporate Pension Plan</option>
+                <option value="endowment">Endowment</option>
+                <option value="foundation">Foundation</option>
+                <option value="insurance">Insurance General Account</option>
+                <option value="central_bank">Central Bank / Official Institution</option>
+                <option value="government">Government (City/County/State bond portfolios)</option>
+              </select>
+            </label>
+
+            <fieldset class="rounded-md border border-slate-700/40 p-3">
+              <legend class="px-1 text-xs uppercase tracking-[0.25em] text-slate-400">Thumbprint</legend>
+              <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                <label class="block">
+                  <span class="mb-1 block text-xs text-slate-400">Mission/Ethics</span>
+                  <select id="thumb_mission" class="w-full rounded-md border border-slate-600/60 bg-slate-900/50 px-3 py-2 text-sm">
+                    <option value="purity">Values-driven (Purity)</option>
+                    <option value="pragmatism">Risk‑pragmatism (Conduct)</option>
+                  </select>
+                </label>
+                <label class="block">
+                  <span class="mb-1 block text-xs text-slate-400">Competition Pressure</span>
+                  <select id="thumb_competition" class="w-full rounded-md border border-slate-600/60 bg-slate-900/50 px-3 py-2 text-sm">
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                  </select>
+                </label>
+                <label class="block">
+                  <span class="mb-1 block text-xs text-slate-400">Regulatory Constraints</span>
+                  <select id="thumb_regulatory" class="w-full rounded-md border border-slate-600/60 bg-slate-900/50 px-3 py-2 text-sm">
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                  </select>
+                </label>
+              </div>
+              <p class="mt-2 text-xs text-slate-400">Investor identity should shape the response. A two‑person plan executes differently than NBIM.</p>
+            </fieldset>
+
+            <label class="block">
+              <span class="mb-1 block text-sm text-slate-300">Local Name (appears in template)</span>
+              <input id="localName" type="text" placeholder="e.g., City of Riverton" class="w-full rounded-md border border-slate-600/60 bg-slate-900/50 px-3 py-2 text-sm" />
+            </label>
+
+            <label class="block">
+              <span class="mb-1 block text-sm text-slate-300">Objective</span>
+              <select id="objective" class="w-full rounded-md border border-slate-600/60 bg-slate-900/50 px-3 py-2 text-sm">
+                <option value="resolution_support">Support Divestment Resolution</option>
+                <option value="fact_sheet">Neutral Fact Sheet</option>
+                <option value="testimony">Public Testimony</option>
+              </select>
+            </label>
+
+            <div class="mt-2 flex flex-wrap items-center gap-3">
+              <button id="buildBtn" type="button" class="rounded-md bg-sky-500 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-sky-400">Build Brief</button>
+              <button id="resetBtn" type="button" class="rounded-md border border-slate-600/60 px-4 py-2 text-sm text-slate-200 hover:border-slate-400">Reset</button>
+              <span class="text-xs text-slate-400">Tip: Press <span class="kbd">B</span> to rebuild, <span class="kbd">P</span> to print</span>
+            </div>
+          </form>
+
+          <div class="mt-8">
+            <h3 class="text-sm font-semibold uppercase tracking-[0.3em] text-slate-400">Company Lookup</h3>
+            <p class="mt-2 text-xs text-slate-300">Search AFSC Investigate for a company’s profile and controversies.</p>
+            <div class="mt-2 flex gap-2">
+              <input id="lookupQuery" type="text" placeholder="Company name (e.g., Caterpillar)" class="w-full rounded-md border border-slate-600/60 bg-slate-900/50 px-3 py-2 text-sm" />
+              <a id="lookupBtn" target="_blank" rel="noopener noreferrer" href="https://investigate.afsc.org/search" class="rounded-md border border-slate-600/60 px-4 py-2 text-sm text-slate-200 hover:border-slate-400">Open</a>
+            </div>
+          </div>
+
+          <div class="mt-8">
+            <h3 class="text-sm font-semibold uppercase tracking-[0.3em] text-slate-400">Feedback (optional)</h3>
+            <p class="mt-2 text-xs text-slate-400">Help us improve by sharing anonymous usage details. Do not include names or sensitive information.</p>
+            <div class="mt-3 grid grid-cols-1 gap-3">
+              <label class="block">
+                <span class="mb-1 block text-xs text-slate-400">Use Case</span>
+                <select id="fb_usecase" class="w-full rounded-md border border-slate-600/60 bg-slate-900/50 px-3 py-2 text-sm">
+                  <option value="one_on_one">1:1 Conversation</option>
+                  <option value="small_group">Small Group Meeting</option>
+                  <option value="committee_hearing">Committee Hearing</option>
+                  <option value="full_board_meeting">Full Board/Council Meeting</option>
+                  <option value="public_testimony">Public Testimony / Town Hall</option>
+                  <option value="written_memo">Written Memo / Email</option>
+                  <option value="social">Social / Friends & Family</option>
+                  <option value="other">Other</option>
+                </select>
+              </label>
+              <label class="block">
+                <span class="mb-1 block text-xs text-slate-400">Outcome (optional)</span>
+                <select id="fb_outcome" class="w-full rounded-md border border-slate-600/60 bg-slate-900/50 px-3 py-2 text-sm">
+                  <option value="na">N/A</option>
+                  <option value="constructive">Constructive</option>
+                  <option value="neutral">Neutral</option>
+                  <option value="pushback">Pushback</option>
+                </select>
+              </label>
+              <label class="block">
+                <span class="mb-1 block text-xs text-slate-400">Notes (no personal info)</span>
+                <textarea id="fb_notes" rows="3" placeholder="What worked? What should be improved?" class="w-full rounded-md border border-slate-600/60 bg-slate-900/50 px-3 py-2 text-sm"></textarea>
+              </label>
+              <label class="flex items-center gap-2 text-xs text-slate-300">
+                <input id="fb_consent" type="checkbox" class="h-4 w-4 rounded border-slate-600/60 bg-slate-900/50" />
+                I consent to send anonymized usage details to improve this tool.
+              </label>
+              <div class="flex items-center gap-3">
+                <button id="fb_send" type="button" class="rounded-md bg-sky-500 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-sky-400">Send Feedback</button>
+                <span id="fb_status" class="text-xs text-slate-400"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-8">
+            <h3 class="text-sm font-semibold uppercase tracking-[0.3em] text-slate-400">Disclaimers</h3>
+            <p class="mt-2 text-xs text-slate-400">This tool is educational only. It creates hypothetical illustrative materials and links to public sources. It is not investment advice. Assumptions may not reflect your situation. Ethical Capital Labs accepts editorial responsibility for this content and welcomes corrections.</p>
+            <p class="mt-2 text-xs text-slate-400">Subscribe for updates: <a class="text-sky-300 hover:underline" href="https://buttondown.com/ethicic" target="_blank" rel="noopener">buttondown.com/ethicic</a></p>
+          </div>
+        </section>
+
+        <!-- Output -->
+        <section class="panel rounded-3xl p-0">
+          <div class="flex items-center justify-between border-b border-slate-700/40 px-6 py-4">
+            <h2 class="text-lg font-semibold text-white">2) Brief</h2>
+            <div class="no-print flex gap-2">
+              <button id="copyAll" class="rounded-md border border-slate-600/60 px-3 py-2 text-sm text-slate-200 hover:border-slate-400">Copy All</button>
+              <button id="printBtn" class="rounded-md bg-emerald-500 px-3 py-2 text-sm font-semibold text-white hover:bg-emerald-400">Print / Save PDF</button>
+            </div>
+          </div>
+
+          <article id="brief" class="prose prose-invert max-w-none px-6 pb-8 pt-6 sm:px-8">
+            <p class="text-slate-400">Fill the setup at left, then click Build Brief.</p>
+          </article>
+        </section>
+      </div>
+
+      <section class="mx-auto mt-6 max-w-5xl rounded-3xl border border-slate-700/40 p-6 sm:p-8">
+        <h3 class="text-sm font-semibold uppercase tracking-[0.3em] text-slate-400">Methodology & Sources</h3>
+        <ul id="sources" class="mt-3 list-disc pl-5 text-sm text-slate-300"></ul>
+        <p class="mt-4 text-xs text-slate-500">Prepared by Ethical Capital Labs. Educational toolkit only — not investment advice. Subscribe: <a class="text-sky-300 hover:underline" href="https://buttondown.com/ethicic" target="_blank" rel="noopener">buttondown.com/ethicic</a></p>
       </section>
     </main>
 
-    <footer class="labs-footer">
-      <div class="labs-footer__inner">
-        <p><strong>Invest Vegan LLC DBA Ethical Capital</strong> · Utah Registered Investment Adviser</p>
-        <p>
-          <a href="https://ethicic.com/content/legal/disclosures.html">Disclosures</a>
-          ·
-          <a href="https://ethicic.com/content/legal/privacy-policy.html">Privacy Policy</a>
-          ·
-          <a href="https://ethicic.com/content/legal/terms-of-use.html">Terms of Use</a>
-        </p>
-        <p>90 N 400 E, Provo, UT 84606 · +1 347 625 9000 · hello@ethicic.com</p>
-        <p><em>This website is for informational purposes only and does not constitute investment advice. Past performance does not guarantee future results.</em></p>
+    <footer class="px-6 pb-10 pt-12 sm:px-10">
+      <div class="mx-auto max-w-5xl border-t border-slate-700/40 pt-6 text-sm text-slate-500">
+        <p>&copy; <span id="year"></span> Ethical Capital Labs — educational experiments only.</p>
       </div>
     </footer>
+
+    <script src="./app.js"></script>
+    <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
   </body>
-</html>
+  </html>

@@ -4,7 +4,7 @@ Purpose
 - Build a concise, printable brief that translates activist goals to decision‑makers using an investor identity model — with language tuned for constructive, role‑aware dialogue. Client‑side only, educational.
 
 Use
-- Open this folder as /public/divestment in your site.
+- Folder is served at /divestment/ on the site (legacy /public/divestment/ redirects).
 - Choose Audience, Target decision maker, Investor Identity, Thumbprint, Local Name, and Objective.
 - Click “Build Brief” → “Print / Save PDF” or “Copy All”.
 - Use the AFSC Investigate lookup for company research.
