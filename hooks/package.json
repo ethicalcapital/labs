@@ -1,0 +1,24 @@
+{
+  "name": "@ethicalcapital/hooks-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Cloudflare Workers automation platform for operational hooks.",
+  "type": "module",
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "lint": "npm run lint --workspaces",
+    "test": "npm run test --workspaces",
+    "deploy": "npm run deploy --workspaces"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250304.0",
+    "eslint": "^9.15.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ethicalcapital/labs.git"
+  }
+}

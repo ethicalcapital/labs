@@ -1,0 +1,17 @@
+{
+  "name": "@ethicalcapital/hooks-shared",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsup src/index.ts --dts --format esm",
+    "lint": "eslint 'src/**/*.ts'",
+    "test": "echo 'no tests yet'"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "tsup": "^8.5.0"
+  }
+}
