@@ -104,6 +104,24 @@
       "title": "Technical Review: JLens/ADL Divestment Impact Study",
       "description": "Methodology critique for consultants and investment staff demanding replication standards.",
       "path": "content/jlens_technical.md"
+    },
+    {
+      "id": "fiduciary_playbook",
+      "title": "Fiduciary Playbook: Norway Model in a Box",
+      "description": "Gives trustees the guardrails, governance motions, and implementation checklist activists should ask for.",
+      "path": "content/fiduciary_playbook.md"
+    },
+    {
+      "id": "performance_reality",
+      "title": "Performance Reality Check",
+      "description": "Benchmarks and research proving exclusions stay within basis points when executed professionally.",
+      "path": "content/performance_reality_check.md"
+    },
+    {
+      "id": "legal_speech",
+      "title": "Legal & Speech Landscape",
+      "description": "Courts, statutes, and messaging to defuse antisemitism and legality pushback.",
+      "path": "content/legal_speech_landscape.md"
     }
   ],
   "key_points": [

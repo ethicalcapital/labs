@@ -1579,6 +1579,137 @@ Without these elements, studies should be recognized as advocacy documents rathe
 *This analysis is provided to support evidence-based policy discussion. Ethical Capital welcomes any attempt by JLens to provide the transparency necessary for replication.*
       `.trim(),
     },
+    {
+      id: "fiduciary_playbook",
+      title: "Fiduciary Playbook: Norway Model in a Box",
+      description:
+        "Gives trustees the guardrails, governance motions, and implementation checklist activists should ask for.",
+      path: "content/fiduciary_playbook.md",
+      markdown: `
+# Fiduciary Playbook: Norway Model in a Box
+
+## Why Boards Need This
+
+- Turns "divest" into a governance motion with tracking-error discipline.
+- Shows trustees how to deliver exclusions without breaching prudence.
+- Mirrors how NBIM, PFZW, and UC Regents structure conduct screens.
+
+## Core Decision Framework
+
+1. **Mandate & Guardrails**
+   - Adopt written conduct criteria referencing international law + credible evidence.
+   - Set a tracking-error budget (≤30 bps) and require factor/sector neutrality.
+   - Delegate execution to CIO/consultants while retaining policy oversight.
+2. **Phased Implementation**
+   - Halt new buys, log exposure; exit holdings over 30–60 days; certify reinvestment.
+3. **Reporting & Transparency**
+   - Publish rationale/evidence; quarterly dashboards; appeals process with time limits.
+
+## Implementation Checklist
+
+- Update IPS; direct managers to load exclusions + optimisation.
+- Consultant runs pre/post analytics (tracking error, factor tilts, liquidity).
+- Document phased trades and compliance attestations.
+- Schedule annual + event-driven reviews synced to AFSC/UN updates.
+
+## Evidence Trustees Can Cite
+
+- NBIM 2024: 0.3–0.5% tracking error, +0.44% cumulative contribution.
+- UC Regents 2020: fossil exit = "financial risk management".
+- EDHEC 2023: optimisation cuts tracking error 80–90% vs naive exclusion.
+- Ethical Capital Screening Policy: inputs → enablers → thumbprint.
+
+## Using in Briefs
+
+- Reference guardrails in openings and counters.
+- Convert checklist into Next Steps for boards and consultants.
+- Pair with performance + legal sheets for complete fiduciary binder.
+      `.trim(),
+    },
+    {
+      id: "performance_reality",
+      title: "Performance Reality Check",
+      description:
+        "Benchmarks and research proving exclusions stay within basis points when executed professionally.",
+      path: "content/performance_reality_check.md",
+      markdown: `
+# Performance Reality Check: What Actually Happens
+
+## Bottom Line
+
+- Professionally run exclusions track benchmarks within basis points.
+- Large institutions publish the proof; naïve studies model malpractice.
+
+## Institutional Scorecard
+
+- **NBIM (Norway)**: 180+ exclusions; +0.44% cumulative contribution; tracking error 0.3–0.5%.
+- **UC Regents**: fossil fuel exit labelled "financial risk management" with objectives met.
+- **PFZW / KLP / AkademikerPension**: settlement exclusions with neutral-to-positive impact.
+
+## Why Naïve Studies Fail
+
+- Retroactive static lists ignore real-time information.
+- "No other adjustments" = cash drag, sector imbalance, zero optimisation.
+- Claimed underperformance equals uncontrolled tracking error.
+
+## Execution That Works
+
+- TE guardrail ≤30 bps, factor/sector neutrality, immediate reinvestment.
+- 30–60 day phased trading, quarterly analytics, documented compliance.
+
+## Supporting Research
+
+- Trinks & Scholtens (2018); EDHEC (2023); Oxford Sustainable Finance.
+
+## Using in Briefs
+
+- Drop into counters for "returns" objections; cite scorecard in key points.
+- Pair with JLENS rebuttal for a full performance packet.
+      `.trim(),
+    },
+    {
+      id: "legal_speech",
+      title: "Legal & Speech Landscape",
+      description:
+        "Courts, statutes, and messaging to defuse antisemitism and legality pushback.",
+      path: "content/legal_speech_landscape.md",
+      markdown: `
+# Legal & Speech Landscape: Protected, Compliant, Defensible
+
+## Core Message
+
+- Conduct-based divestment is lawful, fiduciary-aligned, and protected speech.
+- Courts routinely strike down anti-BDS measures that punish expression.
+
+## Antisemitism Claims vs Policy Reality
+
+- Jerusalem Declaration: boycotts of state conduct are not antisemitic.
+- Jewish-led groups (JVP, IfNotNow) back conduct screens grounded in human rights.
+- Universal standard: any issuer meeting the conduct trigger faces exclusion.
+
+## Precedent to Cite
+
+- NAACP v. Claiborne Hardware (458 U.S. 886) – boycotts = protected speech.
+- Baldassi v. France (ECHR) – BDS activism protected expression.
+- Koontz, Amawi, Jordahl – courts enjoined anti-BDS contracting laws.
+
+## Policy Guardrails
+
+- Anchor in international humanitarian law + UN Guiding Principles.
+- Apply globally; include legal review + best-efforts language for public treasuries.
+- Document rationale, evidence, and appeals to show transparency.
+
+## Messaging Moves
+
+- "Risk management and rule of law"; "one standard everywhere"; "speech is protected".
+
+## Using in Briefs
+
+- Attach to counters for antisemitism/legality objections.
+- Reference guardrails in Next Steps for boards and treasurers.
+- Pair with fiduciary/performance sheets for a complete trust package.
+      `.trim(),
+    },
   ],
   openers: {
     generic:
