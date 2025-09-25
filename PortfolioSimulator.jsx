@@ -233,6 +233,12 @@
             // Chart refs
             const pathsChartRef = useRef(null);
             const pathsChartInstance = useRef(null);
+            const distributionChartRef = useRef(null);
+            const distributionChartInstance = useRef(null);
+            const depletionChartRef = useRef(null);
+            const depletionChartInstance = useRef(null);
+            const stressChartRef = useRef(null);
+            const stressChartInstance = useRef(null);
 
             // Load saved configuration on mount
             useEffect(() => {
@@ -241,7 +247,7 @@
                     try {
                         const config = JSON.parse(saved);
                         setPortfolio(config.portfolio ?? CONFIG.DEFAULT_PORTFOLIO);
-                        setCurrentIncome(config.currentIncome ?? 100000);
+                        setCurrentIncome(config.currentIncome ?? 80610);
                         setSavingsRate(config.savingsRate ?? 15);
                         setSavingsYears(config.savingsYears ?? 10);
                         setWithdrawalStartMode(config.withdrawalStartMode ?? 'estimate');
@@ -401,6 +407,78 @@
                     normalized
                 };
             }, [strategyMix, correlationMatrix, rebalanceFrequency]);
+
+            const buildValueHistogram = useCallback((values) => {
+                if (!values || values.length === 0) {
+                    return { labels: [], counts: [] };
+                }
+
+                const min = Math.min(...values);
+                const max = Math.max(...values);
+                if (min === max) {
+                    return {
+                        labels: [formatCurrency(min)],
+                        counts: [values.length]
+                    };
+                }
+
+                const binCount = Math.min(12, Math.max(6, Math.ceil(Math.sqrt(values.length))));
+                const range = max - min;
+                const binSize = range / binCount;
+                const labels = [];
+                const counts = new Array(binCount).fill(0);
+
+                for (let i = 0; i < binCount; i++) {
+                    const start = min + i * binSize;
+                    const end = i === binCount - 1 ? max : start + binSize;
+                    labels.push(`${formatCurrency(Math.round(start))} - ${formatCurrency(Math.round(end))}`);
+                }
+
+                values.forEach((value) => {
+                    let idx = Math.floor((value - min) / binSize);
+                    if (idx >= binCount) idx = binCount - 1;
+                    counts[idx] += 1;
+                });
+
+                return { labels, counts };
+            }, []);
+
+            const buildDepletionHistogram = useCallback((paths, totalSimulations) => {
+                if (!paths || paths.length === 0) {
+                    return { labels: [], counts: [] };
+                }
+
+                const counter = new Map();
+                let survived = 0;
+
+                paths.forEach((path) => {
+                    if (path.depleted && path.depletionYear) {
+                        const year = path.depletionYear;
+                        counter.set(year, (counter.get(year) ?? 0) + 1);
+                    } else {
+                        survived += 1;
+                    }
+                });
+
+                const sortedYears = Array.from(counter.keys()).sort((a, b) => a - b);
+                const labels = sortedYears.map((year) => `Year ${year}`);
+                const counts = sortedYears.map((year) => counter.get(year));
+
+                if (survived > 0) {
+                    labels.push('Never');
+                    counts.push(survived);
+                }
+
+                if (totalSimulations && labels.length > 0) {
+                    const remainder = totalSimulations - counts.reduce((acc, val) => acc + val, 0);
+                    if (remainder > 0) {
+                        const idx = labels.indexOf('Never');
+                        if (idx >= 0) counts[idx] += remainder;
+                    }
+                }
+
+                return { labels, counts };
+            }, []);
 
             // Generate market returns with realistic features
             const generateMarketReturns = useCallback((years, params) => {
@@ -657,7 +735,7 @@
                         return {
                             label: period.label,
                             annualAmount: period.annualAmount,
-                            duration: duration >= 0 ? duration : 0,
+                            duration: Math.max(0, duration),
                             startOffset: period.startYear - (baseSavings + 1)
                         };
                     });
@@ -673,6 +751,48 @@
                             label: item.label
                         };
                     });
+                };
+
+                const finalizeResults = (baseResults, estimationSummary = null) => {
+                    const histogram = buildValueHistogram(baseResults.finalValues);
+                    const depletionHistogram = buildDepletionHistogram(baseResults.allPaths, baseResults.simulationsRun);
+
+                    const stressResult = runSimulationForMix(strategyMix, {
+                        simulations: baseResults.simulationsRun,
+                        savingsYears: baseResults.savingsYearsUsed,
+                        withdrawalPeriods: baseResults.withdrawalScheduleUsed,
+                        shockDropPercent: 35,
+                        shockYear: 1
+                    });
+
+                    const baseMedianPath = baseResults.percentilePaths?.['50']?.path ?? [];
+                    const stressMedianPath = stressResult.percentilePaths?.['50']?.path ?? [];
+                    const labelCount = Math.max(baseMedianPath.length, stressMedianPath.length);
+                    const labels = Array.from({ length: labelCount }, (_, idx) => idx);
+                    const baseSeries = labels.map((_, idx) => baseMedianPath[idx] ?? null);
+                    const stressSeries = labels.map((_, idx) => stressMedianPath[idx] ?? null);
+
+                    const stressTest = {
+                        shockPercent: 35,
+                        shockYear: 1,
+                        labels,
+                        basePath: baseSeries,
+                        stressPath: stressSeries,
+                        baseSuccessRate: baseResults.successRate,
+                        stressSuccessRate: stressResult.successRate,
+                        baseMedianFinal: baseResults.medianFinal,
+                        stressMedianFinal: stressResult.medianFinal,
+                        successDelta: stressResult.successRate - baseResults.successRate,
+                        medianDelta: stressResult.medianFinal - baseResults.medianFinal
+                    };
+
+                    return {
+                        ...baseResults,
+                        estimation: estimationSummary,
+                        histogram,
+                        depletionHistogram,
+                        stressTest
+                    };
                 };
 
                 try {
@@ -725,15 +845,15 @@
                             }))
                         };
 
-                        setResults({ ...mainResults, estimation: estimationSummary });
+                        setResults(finalizeResults(mainResults, estimationSummary));
                     } else {
                         const mainResults = runSimulationForMix(strategyMix);
-                        setResults({ ...mainResults, estimation: null });
+                        setResults(finalizeResults(mainResults, null));
                     }
                 } finally {
                     setIsCalculating(false);
                 }
-            }, [withdrawalStartMode, simulations, savingsYears, withdrawalPeriods, strategyMix, runSimulationForMix]);
+            }, [withdrawalStartMode, simulations, savingsYears, withdrawalPeriods, strategyMix, runSimulationForMix, buildValueHistogram, buildDepletionHistogram]);
 
             const sendLabsFeedback = useCallback(async () => {
                 setFeedbackStatus('');
@@ -931,6 +1051,209 @@
                     });
                 }
             }, [results, showPercentiles, strategyMix]);
+
+            useEffect(() => {
+                if (!distributionChartRef.current) {
+                    return;
+                }
+
+                if (distributionChartInstance.current) {
+                    distributionChartInstance.current.destroy();
+                    distributionChartInstance.current = null;
+                }
+
+                if (!results || !results.histogram || results.histogram.labels.length === 0) {
+                    return;
+                }
+
+                const ctx = distributionChartRef.current.getContext('2d');
+                distributionChartInstance.current = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: results.histogram.labels,
+                        datasets: [{
+                            label: 'Final portfolio value distribution',
+                            data: results.histogram.counts,
+                            backgroundColor: 'rgba(59, 130, 246, 0.55)',
+                            borderColor: 'rgba(37, 99, 235, 0.9)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: (context) => `${context.parsed.y} simulations`
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                ticks: {
+                                    callback: (value, index) => results.histogram.labels[index]
+                                }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Number of simulations'
+                                }
+                            }
+                        }
+                    }
+                });
+
+                return () => {
+                    if (distributionChartInstance.current) {
+                        distributionChartInstance.current.destroy();
+                        distributionChartInstance.current = null;
+                    }
+                };
+            }, [results]);
+
+            useEffect(() => {
+                if (!depletionChartRef.current) {
+                    return;
+                }
+
+                if (depletionChartInstance.current) {
+                    depletionChartInstance.current.destroy();
+                    depletionChartInstance.current = null;
+                }
+
+                if (!results || !results.depletionHistogram || results.depletionHistogram.labels.length === 0) {
+                    return;
+                }
+
+                const ctx = depletionChartRef.current.getContext('2d');
+                depletionChartInstance.current = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: results.depletionHistogram.labels,
+                        datasets: [{
+                            label: 'Depletion outcomes',
+                            data: results.depletionHistogram.counts,
+                            backgroundColor: 'rgba(16, 185, 129, 0.55)',
+                            borderColor: 'rgba(5, 150, 105, 0.9)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: (context) => `${context.parsed.y} simulations`
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Year portfolio is depleted'
+                                }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Number of simulations'
+                                }
+                            }
+                        }
+                    }
+                });
+
+                return () => {
+                    if (depletionChartInstance.current) {
+                        depletionChartInstance.current.destroy();
+                        depletionChartInstance.current = null;
+                    }
+                };
+            }, [results]);
+
+            useEffect(() => {
+                if (!stressChartRef.current) {
+                    return;
+                }
+
+                if (stressChartInstance.current) {
+                    stressChartInstance.current.destroy();
+                    stressChartInstance.current = null;
+                }
+
+                if (!results || !results.stressTest || !results.stressTest.labels.length) {
+                    return;
+                }
+
+                const ctx = stressChartRef.current.getContext('2d');
+                stressChartInstance.current = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: results.stressTest.labels,
+                        datasets: [
+                            {
+                                label: 'Base median path',
+                                data: results.stressTest.basePath,
+                                borderColor: 'rgba(59, 130, 246, 0.9)',
+                                borderWidth: 2,
+                                fill: false,
+                                pointRadius: 0
+                            },
+                            {
+                                label: `After ${results.stressTest.shockPercent}% drop`,
+                                data: results.stressTest.stressPath,
+                                borderColor: 'rgba(239, 68, 68, 0.9)',
+                                borderWidth: 2,
+                                fill: false,
+                                pointRadius: 0
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: (context) => `${context.dataset.label}: ${formatCurrency(context.parsed.y)}`
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Years'
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'Median portfolio value'
+                                },
+                                ticks: {
+                                    callback: (value) => formatCurrency(value)
+                                }
+                            }
+                        }
+                    }
+                });
+
+                return () => {
+                    if (stressChartInstance.current) {
+                        stressChartInstance.current.destroy();
+                        stressChartInstance.current = null;
+                    }
+                };
+            }, [results]);
 
             // Withdrawal period management
             const addWithdrawalPeriod = useCallback(() => {
@@ -1985,6 +2308,43 @@
                                                 <canvas ref={pathsChartRef}></canvas>
                                             </div>
                                         </div>
+
+                                        {(results.histogram?.labels.length || 0) > 0 && (
+                                            <div className="grid gap-4 sm:grid-cols-1 lg:grid-cols-2">
+                                                <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
+                                                    <h3 className="text-md sm:text-lg font-semibold mb-3">Distribution of final portfolio values</h3>
+                                                    <p className="text-xs text-gray-500 mb-4">Shows how often the simulations finish in each value band.</p>
+                                                    <div style={{ height: '260px' }}>
+                                                        <canvas ref={distributionChartRef}></canvas>
+                                                    </div>
+                                                </div>
+                                                <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
+                                                    <h3 className="text-md sm:text-lg font-semibold mb-3">Timing of portfolio depletion</h3>
+                                                    <p className="text-xs text-gray-500 mb-4">If balances hit zero, we note the first year it happens; surviving paths land in "Never".</p>
+                                                    <div style={{ height: '260px' }}>
+                                                        <canvas ref={depletionChartRef}></canvas>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {results.stressTest && (
+                                            <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
+                                                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                                                    <div>
+                                                        <h3 className="text-md sm:text-lg font-semibold">Stress test: 35% market shock</h3>
+                                                        <p className="text-xs text-gray-500">Applies a one-time {results.stressTest.shockPercent}% drop to all assets in year {results.stressTest.shockYear} with the same savings and withdrawal plan.</p>
+                                                    </div>
+                                                    <div className="text-xs sm:text-sm text-gray-600">
+                                                        <div>Median change: {results.stressTest.medianDelta >= 0 ? '+' : ''}{formatCurrency(results.stressTest.medianDelta)}</div>
+                                                        <div>Success rate change: {results.stressTest.successDelta >= 0 ? '+' : ''}{results.stressTest.successDelta.toFixed(1)}%</div>
+                                                    </div>
+                                                </div>
+                                                <div style={{ height: '280px' }} className="mt-4">
+                                                    <canvas ref={stressChartRef}></canvas>
+                                                </div>
+                                            </div>
+                                        )}
                                     </>
                                 ) : (
                                     <div className="bg-white rounded-xl shadow-lg p-8 sm:p-12 text-center">
