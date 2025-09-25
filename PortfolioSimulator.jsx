@@ -11,6 +11,9 @@
             DEFAULT_YEARS: 30,
             MIN_YEARS: 5,
             MAX_YEARS: 50,
+            ESTIMATION_SIMULATIONS: 6000,
+            ESTIMATION_SUCCESS_THRESHOLD: 0.8,
+            ESTIMATION_MAX_LOOKAHEAD: 30,
             REBALANCING_COSTS: {
                 annual: 0.001,
                 quarterly: 0.003,
@@ -173,8 +176,9 @@
             const [currentIncome, setCurrentIncome] = useState(100000);
             const [savingsRate, setSavingsRate] = useState(15); // Percentage of income saved (can be negative)
             const [savingsYears, setSavingsYears] = useState(10); // Years until retirement/withdrawal starts
+            const [withdrawalStartMode, setWithdrawalStartMode] = useState('estimate');
             const [riskTolerance, setRiskTolerance] = useState('balanced');
-            
+
             // Account type breakdown for tax-aware withdrawals
             const [accountPreset, setAccountPreset] = useState('balanced');
             const [showAccountDetails, setShowAccountDetails] = useState(false);
@@ -197,6 +201,15 @@
             
             // Visual preferences
             const [visualMode, setVisualMode] = useState('paths'); // 'paths', 'buckets', 'waterfall'
+
+            // Labs feedback capture
+            const [feedbackUseCase, setFeedbackUseCase] = useState('planning');
+            const [feedbackOutcome, setFeedbackOutcome] = useState('exploring');
+            const [feedbackObjective, setFeedbackObjective] = useState('');
+            const [feedbackNotes, setFeedbackNotes] = useState('');
+            const [feedbackConsent, setFeedbackConsent] = useState(false);
+            const [feedbackStatus, setFeedbackStatus] = useState('');
+            const [isSendingFeedback, setIsSendingFeedback] = useState(false);
             
             // Progressive engagement tracking
             // Advanced settings
@@ -231,6 +244,7 @@
                         setCurrentIncome(config.currentIncome ?? 100000);
                         setSavingsRate(config.savingsRate ?? 15);
                         setSavingsYears(config.savingsYears ?? 10);
+                        setWithdrawalStartMode(config.withdrawalStartMode ?? 'estimate');
 
                         if (config.strategyMix) {
                             setStrategyMix({
@@ -340,15 +354,11 @@
                     showAccountDetails,
                     stressScenario,
                     inflationRate,
-                    simulations
+                    simulations,
+                    withdrawalStartMode
                 };
                 localStorage.setItem('portfolioConfig', JSON.stringify(config));
-            }, [portfolio, currentIncome, savingsRate, savingsYears, strategyMix, accountTypes, withdrawalPeriods, retirementTaxBracket, socialSecurityIncome, standardDeduction, includeTaxes, taxRate, showPercentiles, accountPreset, showAccountDetails, stressScenario, inflationRate, simulations]);
-
-            // Calculate simulation years based on withdrawal periods
-            const getSimulationYears = useCallback(() => {
-                return Math.max(...withdrawalPeriods.map(p => p.endYear), CONFIG.DEFAULT_YEARS);
-            }, [withdrawalPeriods]);
+            }, [portfolio, currentIncome, savingsRate, savingsYears, strategyMix, accountTypes, withdrawalPeriods, retirementTaxBracket, socialSecurityIncome, standardDeduction, includeTaxes, taxRate, showPercentiles, accountPreset, showAccountDetails, stressScenario, inflationRate, simulations, withdrawalStartMode]);
 
             // Calculate effective portfolio parameters with proper correlation
             const getEffectiveParameters = useCallback((mixOverride) => {
@@ -437,14 +447,19 @@
             }, [stressScenario]);
 
             // Get withdrawal for year with tax consideration
-            const getWithdrawalForYear = useCallback((year, portfolioValue) => {
-                for (const period of withdrawalPeriods) {
+            const getWithdrawalForYear = useCallback((year, portfolioValue, options = {}) => {
+                const schedule = Array.isArray(options.withdrawalPeriods) ? options.withdrawalPeriods : withdrawalPeriods;
+                const effectiveInflation = typeof options.inflationRate === 'number' ? options.inflationRate : inflationRate;
+                const includeTaxImpact = typeof options.includeTaxes === 'boolean' ? options.includeTaxes : includeTaxes;
+                const effectiveTaxRate = typeof options.taxRate === 'number' ? options.taxRate : taxRate;
+
+                for (const period of schedule) {
                     if (year >= period.startYear && year <= period.endYear) {
-                        const inflationAdjusted = period.annualAmount * Math.pow(1 + inflationRate / 100, year - 1);
+                        const inflationAdjusted = period.annualAmount * Math.pow(1 + effectiveInflation / 100, year - 1);
                         
                         // Apply tax if enabled
-                        if (includeTaxes) {
-                            const grossWithdrawal = inflationAdjusted / (1 - taxRate / 100);
+                        if (includeTaxImpact) {
+                            const grossWithdrawal = inflationAdjusted / (1 - effectiveTaxRate / 100);
                             return Math.min(grossWithdrawal, portfolioValue);
                         }
                         
@@ -454,61 +469,97 @@
                 return 0;
             }, [withdrawalPeriods, inflationRate, includeTaxes, taxRate]);
 
-            const getAnnualCashFlow = useCallback((year, portfolioValue) => {
-                if (year <= savingsYears) {
-                    const inflationMultiplier = Math.pow(1 + inflationRate / 100, year - 1);
-                    const incomeThisYear = currentIncome * inflationMultiplier;
-                    return incomeThisYear * (savingsRate / 100);
+            const getAnnualCashFlow = useCallback((year, portfolioValue, options = {}) => {
+                const activeSavingsYears = typeof options.savingsYears === 'number' ? options.savingsYears : savingsYears;
+                const effectiveInflation = typeof options.inflationRate === 'number' ? options.inflationRate : inflationRate;
+                const effectiveIncome = typeof options.currentIncome === 'number' ? options.currentIncome : currentIncome;
+                const effectiveSavingsRate = typeof options.savingsRate === 'number' ? options.savingsRate : savingsRate;
+                const context = {
+                    withdrawalPeriods: options.withdrawalPeriods,
+                    inflationRate: effectiveInflation,
+                    includeTaxes: options.includeTaxes,
+                    taxRate: options.taxRate
+                };
+
+                if (year <= activeSavingsYears) {
+                    const inflationMultiplier = Math.pow(1 + effectiveInflation / 100, year - 1);
+                    const incomeThisYear = effectiveIncome * inflationMultiplier;
+                    return incomeThisYear * (effectiveSavingsRate / 100);
                 }
 
-                const withdrawal = getWithdrawalForYear(year, portfolioValue);
+                const withdrawal = getWithdrawalForYear(year, portfolioValue, context);
                 return withdrawal > 0 ? -withdrawal : 0;
             }, [savingsYears, inflationRate, currentIncome, savingsRate, getWithdrawalForYear]);
 
             // Run simulation for specific mix
-            const runSimulationForMix = useCallback((mix) => {
+            const runSimulationForMix = useCallback((mix, options = {}) => {
                 const params = getEffectiveParameters(mix);
                 const normalizedMix = params.normalized;
-                
-                const years = getSimulationYears();
-                
+
+                const effectiveSimulations = typeof options.simulations === 'number' ? options.simulations : simulations;
+                const effectiveSavingsYears = typeof options.savingsYears === 'number' ? options.savingsYears : savingsYears;
+                const effectiveWithdrawalPeriods = Array.isArray(options.withdrawalPeriods) && options.withdrawalPeriods.length > 0
+                    ? options.withdrawalPeriods
+                    : withdrawalPeriods;
+                const effectiveInflationRate = typeof options.inflationRate === 'number' ? options.inflationRate : inflationRate;
+                const effectiveIncludeTaxes = typeof options.includeTaxes === 'boolean' ? options.includeTaxes : includeTaxes;
+                const effectiveTaxRate = typeof options.taxRate === 'number' ? options.taxRate : taxRate;
+                const effectiveIncome = typeof options.currentIncome === 'number' ? options.currentIncome : currentIncome;
+                const effectiveSavingsRate = typeof options.savingsRate === 'number' ? options.savingsRate : savingsRate;
+
+                const years = Math.max(
+                    CONFIG.DEFAULT_YEARS,
+                    effectiveSavingsYears + 1,
+                    ...(effectiveWithdrawalPeriods.length > 0 ? effectiveWithdrawalPeriods.map(p => p.endYear || 0) : [CONFIG.DEFAULT_YEARS])
+                );
+
+                const cashFlowOptions = {
+                    withdrawalPeriods: effectiveWithdrawalPeriods,
+                    inflationRate: effectiveInflationRate,
+                    includeTaxes: effectiveIncludeTaxes,
+                    taxRate: effectiveTaxRate,
+                    savingsYears: effectiveSavingsYears,
+                    currentIncome: effectiveIncome,
+                    savingsRate: effectiveSavingsRate
+                };
+
                 const allPaths = [];
                 const finalValues = [];
                 let successCount = 0;
                 let depletionYears = [];
-                
+
                 const rollingReturns = Array(years).fill(0).map(() => []);
-                
-                for (let sim = 0; sim < simulations; sim++) {
+
+                for (let sim = 0; sim < effectiveSimulations; sim++) {
                     const marketReturns = generateMarketReturns(years, params);
                     const portfolioPath = [portfolio];
                     const cashFlowPath = [];
                     let currentValue = portfolio;
                     let depleted = false;
                     let depletionYear = null;
-                    
+
                     for (let year = 1; year <= years; year++) {
-                        const cashFlow = getAnnualCashFlow(year, currentValue);
+                        const cashFlow = getAnnualCashFlow(year, currentValue, cashFlowOptions);
                         cashFlowPath.push(cashFlow);
-                        
+
                         // Apply cash flow (positive = savings, negative = withdrawal)
                         currentValue += cashFlow;
-                        
+
                         // Apply market return
                         const returnRate = marketReturns[year - 1] / 100;
                         currentValue *= (1 + returnRate);
-                        
+
                         rollingReturns[year - 1].push(returnRate);
-                        
+
                         if (currentValue <= 0 && !depleted) {
                             depleted = true;
                             depletionYear = year;
                             currentValue = 0;
                         }
-                        
+
                         portfolioPath.push(currentValue);
                     }
-                    
+
                     allPaths.push({
                         path: portfolioPath,
                         cashFlows: cashFlowPath,
@@ -517,12 +568,12 @@
                         depleted,
                         depletionYear
                     });
-                    
+
                     finalValues.push(currentValue);
                     if (!depleted) successCount++;
                     if (depletionYear) depletionYears.push(depletionYear);
                 }
-                
+
                 // Calculate year-by-year volatility
                 const realizedVolatility = rollingReturns.map(yearReturns => {
                     if (yearReturns.length === 0) return 0;
@@ -530,42 +581,42 @@
                     const variance = yearReturns.reduce((acc, r) => acc + Math.pow(r - mean, 2), 0) / yearReturns.length;
                     return Math.sqrt(variance) * 100;
                 });
-                
+
                 // Calculate percentiles
                 const sortedPaths = [...allPaths].sort((a, b) => b.finalValue - a.finalValue);
                 const percentileIndices = {
-                    95: Math.floor(simulations * 0.05),
-                    75: Math.floor(simulations * 0.25),
-                    50: Math.floor(simulations * 0.50),
-                    25: Math.floor(simulations * 0.75),
-                    5: Math.floor(simulations * 0.95)
+                    95: Math.floor(effectiveSimulations * 0.05),
+                    75: Math.floor(effectiveSimulations * 0.25),
+                    50: Math.floor(effectiveSimulations * 0.50),
+                    25: Math.floor(effectiveSimulations * 0.75),
+                    5: Math.floor(effectiveSimulations * 0.95)
                 };
-                
+
                 const percentilePaths = {};
                 Object.entries(percentileIndices).forEach(([p, idx]) => {
                     percentilePaths[p] = sortedPaths[Math.min(idx, sortedPaths.length - 1)];
                 });
-                
+
                 // Calculate outcome metrics
                 finalValues.sort((a, b) => a - b);
                 const percentile90 = finalValues[Math.floor(finalValues.length * 0.9)];
                 const percentile10 = finalValues[Math.floor(finalValues.length * 0.1)];
                 const outcomeRange = percentile90 - percentile10;
                 const relativePredictability = outcomeRange > 0 ? 1 - (outcomeRange / portfolio) : 1;
-                
+
                 // Calculate total cash flows (savings and withdrawals)
                 const totalSaved = allPaths[0]?.cashFlows
-                    .filter((cf, i) => i < savingsYears)
+                    .filter((cf, i) => i < effectiveSavingsYears)
                     .reduce((a, b) => a + Math.max(0, b), 0) || 0;
                 const totalWithdrawn = allPaths[0]?.cashFlows
-                    .filter((cf, i) => i >= savingsYears)
+                    .filter((cf, i) => i >= effectiveSavingsYears)
                     .reduce((a, b) => a + Math.abs(Math.min(0, b)), 0) || 0;
-                
+
                 return {
                     allPaths,
                     percentilePaths,
-                    successRate: (successCount / simulations) * 100,
-                    medianFinal: finalValues[Math.floor(finalValues.length / 2)],
+                    successRate: (successCount / effectiveSimulations) * 100,
+                    medianFinal: finalValues[Math.floor(finalValues.length / 2)] ?? 0,
                     percentile10,
                     percentile90,
                     outcomeRange,
@@ -581,9 +632,12 @@
                     mix: normalizedMix,
                     totalSaved,
                     totalWithdrawn,
-                    peakValue: Math.max(...allPaths.map(p => Math.max(...p.path)))
+                    peakValue: Math.max(...allPaths.map(p => Math.max(...p.path))),
+                    savingsYearsUsed: effectiveSavingsYears,
+                    withdrawalScheduleUsed: effectiveWithdrawalPeriods,
+                    simulationsRun: effectiveSimulations
                 };
-            }, [portfolio, simulations, savingsYears, getSimulationYears, generateMarketReturns, getAnnualCashFlow, getEffectiveParameters]);
+            }, [portfolio, simulations, savingsYears, withdrawalPeriods, inflationRate, includeTaxes, taxRate, currentIncome, savingsRate, generateMarketReturns, getAnnualCashFlow, getEffectiveParameters]);
 
             // Main simulation runner
             const runSimulation = useCallback(async () => {
@@ -597,15 +651,146 @@
                     }
                 });
 
+                const buildShiftedSchedule = (baseSavings, targetSavings) => {
+                    const baseOffsets = withdrawalPeriods.map(period => {
+                        const duration = (period.endYear ?? period.startYear) - period.startYear;
+                        return {
+                            label: period.label,
+                            annualAmount: period.annualAmount,
+                            duration: duration >= 0 ? duration : 0,
+                            startOffset: period.startYear - (baseSavings + 1)
+                        };
+                    });
+
+                    return baseOffsets.map(item => {
+                        const alignedStart = Math.max(targetSavings + 1 + item.startOffset, targetSavings + 1);
+                        const startYear = Math.max(1, alignedStart);
+                        const endYear = startYear + item.duration;
+                        return {
+                            startYear,
+                            endYear,
+                            annualAmount: item.annualAmount,
+                            label: item.label
+                        };
+                    });
+                };
+
                 try {
                     await waitForNextFrame();
 
-                    const mainResults = runSimulationForMix(strategyMix);
-                    setResults(mainResults);
+                    if (withdrawalStartMode === 'estimate') {
+                        const enhancedSimulations = Math.max(simulations, CONFIG.ESTIMATION_SIMULATIONS);
+                        const maxCandidate = Math.min(CONFIG.MAX_YEARS - 1, savingsYears + CONFIG.ESTIMATION_MAX_LOOKAHEAD);
+                        const candidates = [];
+                        let selected = null;
+
+                        for (let candidate = 0; candidate <= maxCandidate; candidate++) {
+                            const shiftedSchedule = buildShiftedSchedule(savingsYears, candidate);
+                            const candidateResult = runSimulationForMix(strategyMix, {
+                                simulations: enhancedSimulations,
+                                savingsYears: candidate,
+                                withdrawalPeriods: shiftedSchedule
+                            });
+
+                            candidates.push({
+                                startYear: candidate,
+                                successRate: candidateResult.successRate,
+                                result: candidateResult
+                            });
+
+                            if (!selected && candidateResult.successRate >= CONFIG.ESTIMATION_SUCCESS_THRESHOLD * 100) {
+                                selected = { ...candidates[candidates.length - 1] };
+                                break;
+                            }
+                        }
+
+                        if (!selected && candidates.length > 0) {
+                            selected = candidates[candidates.length - 1];
+                        }
+
+                        const mainResults = selected?.result ?? runSimulationForMix(strategyMix, {
+                            simulations: enhancedSimulations,
+                            savingsYears,
+                            withdrawalPeriods
+                        });
+
+                        const estimationSummary = {
+                            mode: 'estimate',
+                            successThreshold: CONFIG.ESTIMATION_SUCCESS_THRESHOLD * 100,
+                            runsPerCandidate: enhancedSimulations,
+                            recommendedStartYear: selected ? selected.startYear : null,
+                            testedStarts: candidates.map(item => ({
+                                startYear: item.startYear,
+                                successRate: Number(item.successRate.toFixed(1))
+                            }))
+                        };
+
+                        setResults({ ...mainResults, estimation: estimationSummary });
+                    } else {
+                        const mainResults = runSimulationForMix(strategyMix);
+                        setResults({ ...mainResults, estimation: null });
+                    }
                 } finally {
                     setIsCalculating(false);
                 }
-            }, [strategyMix, runSimulationForMix]);
+            }, [withdrawalStartMode, simulations, savingsYears, withdrawalPeriods, strategyMix, runSimulationForMix]);
+
+            const sendLabsFeedback = useCallback(async () => {
+                setFeedbackStatus('');
+
+                if (!feedbackConsent) {
+                    setFeedbackStatus('Please confirm consent to share anonymously.');
+                    return;
+                }
+
+                setIsSendingFeedback(true);
+
+                const payload = {
+                    consent: true,
+                    venue: 'portfolio_simulator',
+                    target: 'labs-simulator',
+                    entityType: 'individual',
+                    thumb: { mission: '', competition: '', regulatory: '' },
+                    objective: feedbackObjective.trim(),
+                    use_case: feedbackUseCase,
+                    outcome: feedbackOutcome,
+                    notes: (feedbackNotes || '').slice(0, 2000)
+                };
+
+                try {
+                    const resp = await fetch('/api/feedback', {
+                        method: 'POST',
+                        headers: { 'content-type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!resp.ok) {
+                        throw new Error('bad_status');
+                    }
+
+                    setFeedbackStatus('Thanks for helping us calibrate.');
+                    setFeedbackNotes('');
+                } catch (error) {
+                    console.warn('Simulator feedback submission failed, falling back to local download.', error);
+                    try {
+                        const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+                        const url = URL.createObjectURL(blob);
+                        const anchor = document.createElement('a');
+                        anchor.href = url;
+                        anchor.download = 'labs-simulator-feedback.json';
+                        document.body.appendChild(anchor);
+                        anchor.click();
+                        anchor.remove();
+                        URL.revokeObjectURL(url);
+                        setFeedbackStatus('Saved feedback file locally -- feel free to email it to labs@ethicic.com.');
+                    } catch (fallbackErr) {
+                        console.error('Simulator feedback fallback failed.', fallbackErr);
+                        setFeedbackStatus('Unable to share feedback right now. Please try again later.');
+                    }
+                } finally {
+                    setIsSendingFeedback(false);
+                }
+            }, [feedbackConsent, feedbackUseCase, feedbackOutcome, feedbackObjective, feedbackNotes]);
 
             // Update allocation from preset
             const applyPreset = useCallback((presetKey) => {
@@ -825,11 +1010,124 @@
                 </div>
             );
 
+            const simulationDisplayCount = withdrawalStartMode === 'estimate'
+                ? Math.max(simulations, CONFIG.ESTIMATION_SIMULATIONS)
+                : simulations;
+
+            const estimationSummary = results?.estimation ?? null;
+            const recommendedStartYear = (estimationSummary && typeof estimationSummary.recommendedStartYear === 'number')
+                ? estimationSummary.recommendedStartYear
+                : null;
+            const recommendedSuccessRate = recommendedStartYear !== null && Array.isArray(estimationSummary?.testedStarts)
+                ? estimationSummary.testedStarts.find(item => item.startYear === recommendedStartYear)?.successRate ?? null
+                : null;
+
             return (
                 <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-4 sm:py-8 px-4">
                     {showDisclaimer && <DisclaimerModal />}
                     
                     <div className="max-w-7xl mx-auto">
+                        {!showDisclaimer && (
+                            <div className="mb-6 rounded-xl border border-indigo-100 bg-indigo-50/90 p-4 sm:p-6 shadow-sm">
+                                <div className="flex flex-col gap-4">
+                                    <div>
+                                        <h2 className="text-base sm:text-lg font-semibold text-indigo-900">Help us prioritize simulator improvements</h2>
+                                        <p className="mt-1 text-xs sm:text-sm text-indigo-700">We store aggregated, anonymous signals only. Please avoid names, account numbers, or sensitive details.</p>
+                                    </div>
+                                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                                        <label className="text-xs sm:text-sm text-indigo-900">
+                                            <span className="mb-1 block font-medium">What are you exploring?</span>
+                                            <select
+                                                value={feedbackUseCase}
+                                                onChange={(e) => setFeedbackUseCase(e.target.value)}
+                                                className="w-full rounded-md border border-indigo-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-indigo-400 focus:outline-none"
+                                            >
+                                                <option value="planning">Baseline retirement readiness</option>
+                                                <option value="drawdown">Drawdown strategy comparisons</option>
+                                                <option value="cashflow">Cash flow stress-testing</option>
+                                                <option value="saving">How much to save before retiring</option>
+                                                <option value="curious">Just exploring possibilities</option>
+                                                <option value="other">Something else</option>
+                                            </select>
+                                        </label>
+                                        <label className="text-xs sm:text-sm text-indigo-900">
+                                            <span className="mb-1 block font-medium">How did this session feel?</span>
+                                            <select
+                                                value={feedbackOutcome}
+                                                onChange={(e) => setFeedbackOutcome(e.target.value)}
+                                                className="w-full rounded-md border border-indigo-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-indigo-400 focus:outline-none"
+                                            >
+                                                <option value="exploring">Still working through answers</option>
+                                                <option value="clarified">Unlocked the insight I needed</option>
+                                                <option value="blocked">I got stuck / missing features</option>
+                                                <option value="share">Ready to share results with someone</option>
+                                            </select>
+                                        </label>
+                                    </div>
+                                    <label className="text-xs sm:text-sm text-indigo-900">
+                                        <span className="mb-1 block font-medium">Key question (optional)</span>
+                                        <input
+                                            type="text"
+                                            value={feedbackObjective}
+                                            onChange={(e) => setFeedbackObjective(e.target.value)}
+                                            maxLength={180}
+                                            className="w-full rounded-md border border-indigo-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-indigo-400 focus:outline-none"
+                                            placeholder="eg. Could I retire at 55 if markets stay volatile?"
+                                        />
+                                    </label>
+                                    <label className="text-xs sm:text-sm text-indigo-900">
+                                        <span className="mb-1 block font-medium">What would make this more useful?</span>
+                                        <textarea
+                                            rows={3}
+                                            value={feedbackNotes}
+                                            onChange={(e) => setFeedbackNotes(e.target.value)}
+                                            maxLength={2000}
+                                            className="w-full rounded-md border border-indigo-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-indigo-400 focus:outline-none"
+                                            placeholder="Feature ideas, confusing steps, data you'd like to see, etc."
+                                        />
+                                    </label>
+                                    <label className="flex items-center gap-2 text-xs sm:text-sm text-indigo-900">
+                                        <input
+                                            type="checkbox"
+                                            checked={feedbackConsent}
+                                            onChange={(e) => setFeedbackConsent(e.target.checked)}
+                                            className="h-4 w-4 rounded border border-indigo-300"
+                                        />
+                                        I consent to share anonymized usage info with Ethical Capital Labs.
+                                    </label>
+                                    <div className="flex flex-wrap items-center gap-3 text-xs sm:text-sm text-indigo-800">
+                                        <button
+                                            type="button"
+                                            onClick={sendLabsFeedback}
+                                            disabled={isSendingFeedback}
+                                            className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-indigo-500 disabled:bg-indigo-400"
+                                        >
+                                            {isSendingFeedback ? 'Sending...' : 'Send anonymous signal'}
+                                        </button>
+                                        <span>{feedbackStatus}</span>
+                                        <div className="flex flex-wrap gap-3">
+                                            <a
+                                                href="https://github.com/ethicalcapital/labs/issues/new?labels=simulator"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="underline-offset-2 hover:underline"
+                                            >
+                                                Log an issue
+                                            </a>
+                                            <a
+                                                href="https://github.com/ethicalcapital/labs/discussions/new?category=ideas"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="underline-offset-2 hover:underline"
+                                            >
+                                                Start a discussion
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
                         {/* Header */}
                         <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 mb-6">
                             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -946,18 +1244,46 @@
                                                     Years Until Withdrawals Begin
                                                     <InfoTooltip text="After this many years the simulator shifts from saving to drawing down." />
                                                 </label>
-                                                <input
-                                                    type="number"
-                                                    value={savingsYears}
-                                                    onChange={(e) => setSavingsYears(Math.max(0, Number(e.target.value)))}
-                                                    className="mt-2 w-full border-gray-300 rounded-md shadow-sm p-2 border"
-                                                    min={0}
-                                                    max={60}
-                                                />
+                                                <div className="mt-3 space-y-2">
+                                                    <div className="flex flex-wrap gap-3 text-xs sm:text-sm">
+                                                        <label className="flex items-center gap-2">
+                                                            <input
+                                                                type="radio"
+                                                                name="withdrawal-start-mode"
+                                                                value="estimate"
+                                                                checked={withdrawalStartMode === 'estimate'}
+                                                                onChange={() => setWithdrawalStartMode('estimate')}
+                                                            />
+                                                            I'm not sure; estimate for me
+                                                        </label>
+                                                        <label className="flex items-center gap-2">
+                                                            <input
+                                                                type="radio"
+                                                                name="withdrawal-start-mode"
+                                                                value="known"
+                                                                checked={withdrawalStartMode === 'known'}
+                                                                onChange={() => setWithdrawalStartMode('known')}
+                                                            />
+                                                            I already know the timeline
+                                                        </label>
+                                                    </div>
+                                                    <input
+                                                        type="number"
+                                                        value={savingsYears}
+                                                        onChange={(e) => setSavingsYears(Math.max(0, Number(e.target.value)))}
+                                                        className="w-full border-gray-300 rounded-md shadow-sm p-2 border"
+                                                        min={0}
+                                                        max={60}
+                                                        disabled={withdrawalStartMode === 'estimate'}
+                                                        aria-describedby="withdrawal-mode-help"
+                                                    />
+                                                </div>
                                             </div>
-                                            <div className="bg-gray-50 rounded-lg p-3 text-xs text-gray-600">
+                                            <div className="bg-gray-50 rounded-lg p-3 text-xs text-gray-600" id="withdrawal-mode-help">
                                                 <p>
-                                                    Simple mode assumes withdrawals begin in year {savingsYears + 1}. Advanced mode lets you customize periods, tax treatment, and stress scenarios.
+                                                    {withdrawalStartMode === 'estimate'
+                                                        ? `Estimator mode will run ${Math.max(simulations, CONFIG.ESTIMATION_SIMULATIONS).toLocaleString()} trials to spot the earliest year you could begin withdrawals while staying above an ${Math.round(CONFIG.ESTIMATION_SUCCESS_THRESHOLD * 100)}% success rate.`
+                                                        : `Simple mode assumes withdrawals begin in year ${savingsYears + 1}. Advanced mode lets you customize periods, tax treatment, and stress scenarios.`}
                                                 </p>
                                             </div>
                                         </div>
@@ -1510,7 +1836,9 @@
                                     disabled={isCalculating}
                                     className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-3 px-4 rounded-lg hover:from-blue-700 hover:to-blue-800 disabled:from-gray-400 disabled:to-gray-500 font-medium transition-all shadow-lg"
                                 >
-                                    {isCalculating ? `Running ${simulations.toLocaleString()} Simulations...` : `Run ${simulations.toLocaleString()} Simulations`}
+                                    {isCalculating 
+                                        ? `Running ${simulationDisplayCount.toLocaleString()} Simulations...`
+                                        : `Run ${simulationDisplayCount.toLocaleString()} Simulations`}
                                 </button>
                             </section>
 
@@ -1700,7 +2028,39 @@
                                                         <div className="text-xs sm:text-sm text-purple-600">Peak Value</div>
                                                     </div>
                                                 )}
+                                                {estimationSummary?.mode === 'estimate' && (
+                                                    <div className="bg-gradient-to-br from-slate-50 to-slate-100 p-3 sm:p-4 rounded-lg border border-slate-200">
+                                                        <div className="text-xl sm:text-2xl font-bold text-slate-800">
+                                                            {recommendedStartYear === null
+                                                                ? 'Needs More Runway'
+                                                                : recommendedStartYear === 0
+                                                                    ? 'Ready Now'
+                                                                    : `${recommendedStartYear} yr${recommendedStartYear === 1 ? '' : 's'} runway`}
+                                                        </div>
+                                                        <div className="text-xs sm:text-sm text-slate-600">
+                                                            {recommendedStartYear === null
+                                                                ? `Even after extending the savings runway, the plan stayed below the ${Math.round(CONFIG.ESTIMATION_SUCCESS_THRESHOLD * 100)}% success threshold.`
+                                                                : `Earliest withdrawal start with >= ${Math.round(CONFIG.ESTIMATION_SUCCESS_THRESHOLD * 100)}% success. Confidence ${recommendedSuccessRate != null ? recommendedSuccessRate.toFixed(1) : 'N/A'}%.`}
+                                                        </div>
+                                                    </div>
+                                                )}
                                             </div>
+
+                                            {estimationSummary?.mode === 'estimate' && estimationSummary.testedStarts?.length > 0 && (
+                                                <div className="mt-4 rounded-lg border border-blue-100 bg-blue-50/60 p-4">
+                                                    <p className="text-xs sm:text-sm text-blue-900">
+                                                        We scanned multiple starting points to stay above the {Math.round(CONFIG.ESTIMATION_SUCCESS_THRESHOLD * 100)}% success threshold.
+                                                    </p>
+                                                    <div className="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs text-blue-900">
+                                                        {estimationSummary.testedStarts.slice(0, 6).map((item) => (
+                                                            <div key={item.startYear} className={`rounded-md border px-3 py-2 ${item.startYear === recommendedStartYear ? 'border-blue-500 bg-white/70 font-semibold' : 'border-blue-200 bg-white/40'}`}>
+                                                                <div>{item.startYear === 0 ? 'Start now' : `${item.startYear} yr${item.startYear === 1 ? '' : 's'} runway`}</div>
+                                                                <div className="text-[11px] text-blue-700">{item.successRate.toFixed(1)}% success</div>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
 
                                             {/* Key Insight */}
                                             <div className="p-3 sm:p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg">
