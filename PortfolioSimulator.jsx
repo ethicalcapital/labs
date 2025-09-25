@@ -2,7 +2,7 @@
 
         // Configuration Constants
         const CONFIG = {
-            DEFAULT_PORTFOLIO: 1000000,
+            DEFAULT_PORTFOLIO: 10000,
             MIN_PORTFOLIO: 10000,
             MAX_PORTFOLIO: 100000000,
             DEFAULT_SIMULATIONS: 2000,
@@ -188,6 +188,7 @@
             const [retirementTaxBracket, setRetirementTaxBracket] = useState(12); // Expected retirement bracket
             const [socialSecurityIncome, setSocialSecurityIncome] = useState(0);
             const [standardDeduction, setStandardDeduction] = useState(14600); // 2024 single filer
+            const taxRate = retirementTaxBracket;
             
             // Strategy allocation
             const [strategyMix, setStrategyMix] = useState({ 
@@ -222,8 +223,6 @@
                 growthDiversification: 0.8,
                 incomeDiversification: 0.7
             }), []);
-            const [includeTaxes, setIncludeTaxes] = useState(false);
-            const [taxRate, setTaxRate] = useState(25);
             const [stressScenario, setStressScenario] = useState(null);
             
             // Results
@@ -293,12 +292,8 @@
                         if (typeof config.standardDeduction === 'number') {
                             setStandardDeduction(config.standardDeduction);
                         }
-                        if (typeof config.includeTaxes === 'boolean') {
-                            setIncludeTaxes(config.includeTaxes);
-                        }
-                        if (typeof config.taxRate === 'number') {
-                            setTaxRate(config.taxRate);
-                        }
+                        // Tax modeling now runs a fixed comparison between tax-aware and naive drawdowns,
+                        // so we ignore any previously saved overrides for toggles.
                         if (typeof config.showPercentiles === 'boolean') {
                             setShowPercentiles(config.showPercentiles);
                         }
@@ -353,8 +348,6 @@
                     retirementTaxBracket,
                     socialSecurityIncome,
                     standardDeduction,
-                    includeTaxes,
-                    taxRate,
                     showPercentiles,
                     accountPreset,
                     showAccountDetails,
@@ -364,7 +357,7 @@
                     withdrawalStartMode
                 };
                 localStorage.setItem('portfolioConfig', JSON.stringify(config));
-            }, [portfolio, currentIncome, savingsRate, savingsYears, strategyMix, accountTypes, withdrawalPeriods, retirementTaxBracket, socialSecurityIncome, standardDeduction, includeTaxes, taxRate, showPercentiles, accountPreset, showAccountDetails, stressScenario, inflationRate, simulations, withdrawalStartMode]);
+            }, [portfolio, currentIncome, savingsRate, savingsYears, strategyMix, accountTypes, withdrawalPeriods, retirementTaxBracket, socialSecurityIncome, standardDeduction, showPercentiles, accountPreset, showAccountDetails, stressScenario, inflationRate, simulations, withdrawalStartMode]);
 
             // Calculate effective portfolio parameters with proper correlation
             const getEffectiveParameters = useCallback((mixOverride) => {
@@ -528,7 +521,7 @@
             const getWithdrawalForYear = useCallback((year, portfolioValue, options = {}) => {
                 const schedule = Array.isArray(options.withdrawalPeriods) ? options.withdrawalPeriods : withdrawalPeriods;
                 const effectiveInflation = typeof options.inflationRate === 'number' ? options.inflationRate : inflationRate;
-                const includeTaxImpact = typeof options.includeTaxes === 'boolean' ? options.includeTaxes : includeTaxes;
+                const includeTaxImpact = typeof options.includeTaxes === 'boolean' ? options.includeTaxes : true;
                 const effectiveTaxRate = typeof options.taxRate === 'number' ? options.taxRate : taxRate;
 
                 for (const period of schedule) {
@@ -545,7 +538,7 @@
                     }
                 }
                 return 0;
-            }, [withdrawalPeriods, inflationRate, includeTaxes, taxRate]);
+            }, [withdrawalPeriods, inflationRate, taxRate]);
 
             const getAnnualCashFlow = useCallback((year, portfolioValue, options = {}) => {
                 const activeSavingsYears = typeof options.savingsYears === 'number' ? options.savingsYears : savingsYears;
@@ -580,7 +573,7 @@
                     ? options.withdrawalPeriods
                     : withdrawalPeriods;
                 const effectiveInflationRate = typeof options.inflationRate === 'number' ? options.inflationRate : inflationRate;
-                const effectiveIncludeTaxes = typeof options.includeTaxes === 'boolean' ? options.includeTaxes : includeTaxes;
+                const effectiveIncludeTaxes = typeof options.includeTaxes === 'boolean' ? options.includeTaxes : true;
                 const effectiveTaxRate = typeof options.taxRate === 'number' ? options.taxRate : taxRate;
                 const effectiveIncome = typeof options.currentIncome === 'number' ? options.currentIncome : currentIncome;
                 const effectiveSavingsRate = typeof options.savingsRate === 'number' ? options.savingsRate : savingsRate;
@@ -715,7 +708,7 @@
                     withdrawalScheduleUsed: effectiveWithdrawalPeriods,
                     simulationsRun: effectiveSimulations
                 };
-            }, [portfolio, simulations, savingsYears, withdrawalPeriods, inflationRate, includeTaxes, taxRate, currentIncome, savingsRate, generateMarketReturns, getAnnualCashFlow, getEffectiveParameters]);
+            }, [portfolio, simulations, savingsYears, withdrawalPeriods, inflationRate, taxRate, currentIncome, savingsRate, generateMarketReturns, getAnnualCashFlow, getEffectiveParameters]);
 
             // Main simulation runner
             const runSimulation = useCallback(async () => {
@@ -786,12 +779,33 @@
                         medianDelta: stressResult.medianFinal - baseResults.medianFinal
                     };
 
+                    const noTaxResult = runSimulationForMix(strategyMix, {
+                        simulations: baseResults.simulationsRun,
+                        savingsYears: baseResults.savingsYearsUsed,
+                        withdrawalPeriods: baseResults.withdrawalScheduleUsed,
+                        includeTaxes: false,
+                        taxRate: 0
+                    });
+
+                    const taxSensitivity = {
+                        taxAwareSuccess: baseResults.successRate,
+                        simpleSuccess: noTaxResult.successRate,
+                        successDelta: baseResults.successRate - noTaxResult.successRate,
+                        taxAwareMedian: baseResults.medianFinal,
+                        simpleMedian: noTaxResult.medianFinal,
+                        medianDelta: baseResults.medianFinal - noTaxResult.medianFinal,
+                        taxAwareWithdrawn: baseResults.totalWithdrawn,
+                        simpleWithdrawn: noTaxResult.totalWithdrawn,
+                        withdrawDelta: baseResults.totalWithdrawn - noTaxResult.totalWithdrawn
+                    };
+
                     return {
                         ...baseResults,
                         estimation: estimationSummary,
                         histogram,
                         depletionHistogram,
-                        stressTest
+                        stressTest,
+                        taxSensitivity
                     };
                 };
 
@@ -1976,29 +1990,6 @@
                                                 </select>
                                             </div>
 
-                                            <div>
-                                                <label className="flex items-center">
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={includeTaxes}
-                                                        onChange={(e) => setIncludeTaxes(e.target.checked)}
-                                                        className="mr-2"
-                                                    />
-                                                    <span className="text-sm font-medium text-gray-700">
-                                                        Include Tax Impact
-                                                    </span>
-                                                </label>
-                                                {includeTaxes && (
-                                                    <input
-                                                        type="number"
-                                                        value={taxRate}
-                                                        onChange={(e) => setTaxRate(Number(e.target.value))}
-                                                        className="mt-2 block w-full border-gray-300 rounded-md shadow-sm p-2 border text-sm"
-                                                        placeholder="Tax Rate %"
-                                                    />
-                                                )}
-                                            </div>
-
                                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                                 <div>
                                                     <label className="block text-sm font-medium text-gray-700">
@@ -2342,6 +2333,35 @@
                                                 </div>
                                                 <div style={{ height: '280px' }} className="mt-4">
                                                     <canvas ref={stressChartRef}></canvas>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {results.taxSensitivity && (
+                                            <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
+                                                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                                                    <div>
+                                                        <h3 className="text-md sm:text-lg font-semibold">Tax-efficient drawdown impact</h3>
+                                                        <p className="text-xs text-gray-500">Compares optimized withdrawals (standard deduction + taxable-first ordering) against a simple pre-tax drawdown.</p>
+                                                    </div>
+                                                    <div className="grid grid-cols-2 gap-3 text-xs sm:text-sm text-gray-700">
+                                                        <div>
+                                                            <div className="font-semibold text-green-600">{results.taxSensitivity.successDelta >= 0 ? '+' : ''}{results.taxSensitivity.successDelta.toFixed(1)}%</div>
+                                                            <p className="text-[11px] uppercase tracking-wide text-gray-500">Success rate delta</p>
+                                                        </div>
+                                                        <div>
+                                                            <div className="font-semibold text-blue-600">{results.taxSensitivity.medianDelta >= 0 ? '+' : ''}{formatCurrency(results.taxSensitivity.medianDelta)}</div>
+                                                            <p className="text-[11px] uppercase tracking-wide text-gray-500">Median value delta</p>
+                                                        </div>
+                                                        <div>
+                                                            <div className="font-semibold text-amber-600">{results.taxSensitivity.withdrawDelta >= 0 ? '+' : ''}{formatCurrency(results.taxSensitivity.withdrawDelta)}</div>
+                                                            <p className="text-[11px] uppercase tracking-wide text-gray-500">Total withdrawals delta</p>
+                                                        </div>
+                                                        <div>
+                                                            <div className="font-semibold text-gray-700">Tax-aware: {formatCurrency(results.taxSensitivity.taxAwareWithdrawn)}</div>
+                                                            <p className="text-[11px] uppercase tracking-wide text-gray-500">Vs. simple: {formatCurrency(results.taxSensitivity.simpleWithdrawn)}</p>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         )}
