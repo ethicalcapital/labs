@@ -156,8 +156,50 @@ function buildBrief(data, context, thumb, knowledgeLevel) {
     || (data.identity_openers?.[context.entity]?.generic)
     || data.openers.generic;
 
-  const points = pick(data.key_points, 6);
-  const counters = pick(data.counters, 4);
+  const entityPointsList =
+    data.key_points_by_entity?.[context.entity] ||
+    (context.target === 'family_friends'
+      ? data.key_points_by_entity?.individual || []
+      : []);
+  const combinedPoints = [...entityPointsList, ...(data.key_points || [])];
+  const dedupPoints = [];
+  const seenPointTitles = new Set();
+  for (const point of combinedPoints) {
+    if (!point || !point.title) continue;
+    if (seenPointTitles.has(point.title)) continue;
+    seenPointTitles.add(point.title);
+    dedupPoints.push(point);
+  }
+  const points = pick(dedupPoints, 6);
+  const targetGroup = (() => {
+    if (
+      context.target === "family_friends" ||
+      context.entity === "individual"
+    ) {
+      return "family_friends";
+    }
+    if (
+      context.target === "cio" ||
+      context.target === "consultant" ||
+      context.target === "treasurer" ||
+      context.target === "trustee"
+    ) {
+      return "fiduciary";
+    }
+    return "regulated";
+  })();
+  const desiredClaims = data.counter_sets?.[targetGroup] || [];
+  const preferredCounters = desiredClaims
+    .map((claim) => data.counters.find((c) => c.claim === claim))
+    .filter(Boolean);
+  const remainingCounters = data.counters.filter(
+    (c) => !desiredClaims.includes(c.claim),
+  );
+  const combinedCounters = [...preferredCounters, ...remainingCounters];
+  const counters = pick(
+    combinedCounters,
+    Math.min(7, combinedCounters.length),
+  );
   const baseGuide = data.identity_guides?.[context.entity] || {};
   const approach = deriveApproach({
     ask: baseGuide.ask || '',
@@ -168,10 +210,53 @@ function buildBrief(data, context, thumb, knowledgeLevel) {
   }, thumb);
 
   const showCIO = context.target === 'cio' || context.target === 'consultant';
-  const showResolution = context.objective === 'resolution_support';
+  const showResolution =
+    context.target !== 'family_friends' &&
+    context.entity !== 'individual' &&
+    context.objective === 'resolution_support';
   const resolution = showResolution ? (data.model_resolution || '') : '';
-  const resolutionText = showResolution ? resolution.replaceAll('{localName}', context.localName || '[Jurisdiction]').trim() : '';
-  const steps = data.next_steps || [];
+  const resolutionText = showResolution
+    ? resolution.replaceAll('{localName}', context.localName || '[Jurisdiction]').trim()
+    : '';
+
+  const personalAudience =
+    context.target === 'family_friends' || context.entity === 'individual';
+  let entitySteps = [];
+  if (context.entity === 'individual') {
+    entitySteps = data.next_steps_by_entity?.individual || [];
+  } else if (context.target === 'family_friends') {
+    entitySteps =
+      data.next_steps_by_entity?.family_friends ||
+      data.next_steps_by_entity?.individual ||
+      [];
+  } else {
+    entitySteps = data.next_steps_by_entity?.[context.entity] || [];
+  }
+  const baseSteps = data.next_steps || [];
+  const seenSteps = new Set();
+  const steps = [...entitySteps, ...baseSteps].filter((step, idx) => {
+    const trimmed = (step || '').trim();
+    if (!trimmed) return false;
+    const isEntityStep = idx < entitySteps.length;
+    if (seenSteps.has(trimmed)) return false;
+    if (!isEntityStep && personalAudience) {
+      const lower = trimmed.toLowerCase();
+      const excludeKeywords = [
+        'holdings/exposure report',
+        'tracking error',
+        'public exclusions list',
+        'annual review',
+        'manager',
+        'adopt written',
+        'escalation process',
+      ];
+      if (excludeKeywords.some((k) => lower.includes(k))) {
+        return false;
+      }
+    }
+    seenSteps.add(trimmed);
+    return true;
+  });
   const policyAlignment = data.policy_alignment || {};
   const policyPrinciples = Array.isArray(policyAlignment.principles) ? policyAlignment.principles : [];
   const policyLink = policyAlignment.policy_link || null;
@@ -179,6 +264,26 @@ function buildBrief(data, context, thumb, knowledgeLevel) {
   const screeningData = data.screening_knowledge || {};
   const screeningPoints = Array.isArray(screeningData.points) ? screeningData.points : [];
   const screeningTitle = screeningData.title || 'Screening as Cumulative Knowledge';
+
+  let sourceAudience = 'regulated';
+  if (context.target === 'family_friends' || context.entity === 'individual') {
+    sourceAudience = 'family_friends';
+  } else if (
+    context.target === 'cio' ||
+    context.target === 'consultant' ||
+    context.target === 'treasurer' ||
+    context.target === 'trustee' ||
+    context.entity === 'public_pension' ||
+    context.entity === 'corporate_pension' ||
+    context.entity === 'endowment' ||
+    context.entity === 'foundation' ||
+    context.entity === 'insurance' ||
+    context.entity === 'central_bank'
+  ) {
+    sourceAudience = 'fiduciary';
+  }
+  const sourceSet = data.source_sets?.[sourceAudience] || data.sources || [];
+
   const governmentSnippet = context.entity === 'government' ? (data.government_policy_snippet || '') : '';
   const showGovernmentSnippet = Boolean(governmentSnippet);
   const entityLabel = ENTITY_LABELS[context.entity] || context.entity;
@@ -236,7 +341,7 @@ function buildBrief(data, context, thumb, knowledgeLevel) {
     knowledgeLevel,
     showPolicy,
     showScreening: screeningPoints.length > 0,
-    sources: Array.isArray(data.sources) ? data.sources : [],
+    sources: sourceSet,
     furtherReading: Array.isArray(data.further_reading) ? data.further_reading : [],
     thumbPreset: thumb.preset || 'custom',
   };

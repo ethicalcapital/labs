@@ -13,7 +13,8 @@ module.exports = [
       "public/assets/**",
       "public/simulator/app.js",
       "public/divestment/**",
-      "diagnostics/**"
+      "diagnostics/**",
+      "hooks/**/dist/**"
     ],
   },
   js.configs.recommended,

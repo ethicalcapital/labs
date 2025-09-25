@@ -1752,38 +1752,40 @@ function PortfolioSimulator() {
                         key={value}
                         type="button"
                         onClick={() => setPortfolio(value)}
-                        className={`px-3 py-1.5 rounded-full text-xs font-medium border transition ${
+                        className={`btn btn-xs sm:btn-sm transition ${
                           portfolio === value
-                            ? "bg-blue-600 text-white border-blue-600"
-                            : "bg-white text-gray-700 border-gray-300 hover:border-blue-400"
+                            ? "btn-primary text-white"
+                            : "btn-outline text-gray-700 border-gray-300"
                         }`}
                       >
                         {formatCurrency(value)}
                       </button>
                     ))}
                   </div>
-                  <div className="mt-3 relative">
-                    <span className="absolute left-3 top-2 text-gray-500">
-                      $
-                    </span>
-                    <input
-                      type="number"
-                      value={portfolio}
-                      onChange={(e) =>
-                        setPortfolio(
-                          Math.max(
-                            CONFIG.MIN_PORTFOLIO,
-                            Math.min(
-                              CONFIG.MAX_PORTFOLIO,
-                              Number(e.target.value),
+                  <div className="mt-3">
+                    <div className="join w-full">
+                      <span className="join-item px-3 text-sm text-gray-500 bg-base-200">
+                        $
+                      </span>
+                      <input
+                        type="number"
+                        value={portfolio}
+                        onChange={(e) =>
+                          setPortfolio(
+                            Math.max(
+                              CONFIG.MIN_PORTFOLIO,
+                              Math.min(
+                                CONFIG.MAX_PORTFOLIO,
+                                Number(e.target.value),
+                              ),
                             ),
-                          ),
-                        )
-                      }
-                      className="pl-8 block w-full border-gray-300 rounded-md shadow-sm p-2 border"
-                      min={CONFIG.MIN_PORTFOLIO}
-                      max={CONFIG.MAX_PORTFOLIO}
-                    />
+                          )
+                        }
+                        className="join-item input input-bordered input-primary w-full"
+                        min={CONFIG.MIN_PORTFOLIO}
+                        max={CONFIG.MAX_PORTFOLIO}
+                      />
+                    </div>
                     <p className="mt-1 text-xs text-gray-500">
                       Quick select an amount or enter a custom value.
                     </p>
@@ -1796,19 +1798,23 @@ function PortfolioSimulator() {
                       Annual Household Income
                       <InfoTooltip text="Defaults to the latest U.S. median household income ($83,730). Source: FRED series MEHOINUSA672N." />
                     </label>
-                    <div className="mt-2 relative">
-                      <span className="absolute left-3 top-2 text-gray-500">
-                        $
-                      </span>
-                      <input
-                        type="number"
-                        value={currentIncome}
-                        onChange={(e) =>
-                          setCurrentIncome(Math.max(0, Number(e.target.value)))
-                        }
-                        className="pl-8 block w-full border-gray-300 rounded-md shadow-sm p-2 border"
-                        min={0}
-                      />
+                    <div className="mt-2">
+                      <div className="join w-full">
+                        <span className="join-item px-3 text-sm text-gray-500 bg-base-200">
+                          $
+                        </span>
+                        <input
+                          type="number"
+                          value={currentIncome}
+                          onChange={(e) =>
+                            setCurrentIncome(
+                              Math.max(0, Number(e.target.value)),
+                            )
+                          }
+                          className="join-item input input-bordered input-primary w-full"
+                          min={0}
+                        />
+                      </div>
                       <p className="mt-1 text-xs text-gray-500">
                         Default uses the latest reported U.S. median household
                         income of {formatCurrency(83730)} from{" "}
@@ -1835,7 +1841,7 @@ function PortfolioSimulator() {
                       step="0.1"
                       value={savingsRate}
                       onChange={(e) => setSavingsRate(Number(e.target.value))}
-                      className="w-full"
+                      className="range range-primary w-full"
                     />
                     <div className="flex justify-between text-xs text-gray-500 mt-1">
                       <span>{savingsRate}%</span>
@@ -1896,7 +1902,7 @@ function PortfolioSimulator() {
                         onChange={(e) =>
                           setSavingsYears(Math.max(0, Number(e.target.value)))
                         }
-                        className="w-full border-gray-300 rounded-md shadow-sm p-2 border"
+                        className="input input-bordered w-full"
                         min={0}
                         max={60}
                         disabled={withdrawalStartMode === "estimate"}
@@ -2144,7 +2150,7 @@ function PortfolioSimulator() {
                           setShowAccountDetails(true);
                         }
                       }}
-                      className="block w-full border-gray-300 rounded-md shadow-sm p-2 border text-sm"
+                      className="input input-bordered w-full text-sm"
                     >
                       {Object.entries(ACCOUNT_TYPE_PRESETS).map(
                         ([key, preset]) => (
@@ -2461,7 +2467,7 @@ function PortfolioSimulator() {
                             ),
                           )
                         }
-                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2 border text-sm"
+                        className="mt-1 input input-bordered w-full text-sm"
                         min={CONFIG.MIN_SIMULATIONS}
                         max={CONFIG.MAX_SIMULATIONS}
                         step="500"
@@ -2478,7 +2484,7 @@ function PortfolioSimulator() {
                         onChange={(e) =>
                           setInflationRate(Number(e.target.value))
                         }
-                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2 border text-sm"
+                        className="mt-1 input input-bordered w-full text-sm"
                       />
                     </div>
                   </div>
@@ -2490,7 +2496,7 @@ function PortfolioSimulator() {
                     <select
                       value={rebalanceFrequency}
                       onChange={(e) => setRebalanceFrequency(e.target.value)}
-                      className="block w-full border-gray-300 rounded-md shadow-sm p-2 border text-sm"
+                      className="input input-bordered w-full text-sm"
                     >
                       <option value="annual">Annual (0.1% cost)</option>
                       <option value="quarterly">Quarterly (0.3% cost)</option>
@@ -2507,7 +2513,7 @@ function PortfolioSimulator() {
                       onChange={(e) =>
                         setStressScenario(e.target.value || null)
                       }
-                      className="block w-full border-gray-300 rounded-md shadow-sm p-2 border text-sm"
+                      className="input input-bordered w-full text-sm"
                     >
                       <option value="">None</option>
                       {Object.entries(STRESS_SCENARIOS).map(
@@ -2535,7 +2541,7 @@ function PortfolioSimulator() {
                             Math.max(0, Number(e.target.value)),
                           )
                         }
-                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2 border text-sm"
+                        className="mt-1 input input-bordered w-full text-sm"
                       />
                     </div>
                     <div>
@@ -2552,7 +2558,7 @@ function PortfolioSimulator() {
                             Math.max(0, Number(e.target.value)),
                           )
                         }
-                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2 border text-sm"
+                        className="mt-1 input input-bordered w-full text-sm"
                       />
                     </div>
                     <div>
@@ -2569,7 +2575,7 @@ function PortfolioSimulator() {
                             Math.max(0, Number(e.target.value)),
                           )
                         }
-                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2 border text-sm"
+                        className="mt-1 input input-bordered w-full text-sm"
                       />
                     </div>
                     <label className="flex items-center gap-2 text-sm font-medium text-gray-700 sm:pt-6">

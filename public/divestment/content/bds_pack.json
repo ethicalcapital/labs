@@ -92,6 +92,20 @@
       "risk": "Avoid undue concentration; maintain liquidity and policy compliance."
     }
   },
+  "one_pagers": [
+    {
+      "id": "jlens_board",
+      "title": "Divestment Financial Impact: A Balanced Assessment",
+      "description": "Board-facing summary that rebuts the $33.2B loss claim and reframes fiduciary risk.",
+      "path": "content/jlens_board.md"
+    },
+    {
+      "id": "jlens_technical",
+      "title": "Technical Review: JLens/ADL Divestment Impact Study",
+      "description": "Methodology critique for consultants and investment staff demanding replication standards.",
+      "path": "content/jlens_technical.md"
+    }
+  ],
   "key_points": [
     {
       "title": "Specialized intelligence catches what ESG ratings miss",

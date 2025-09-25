@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="labs">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -31,7 +31,7 @@
         <div class="labs-nav__links">
           <a class="labs-nav__link" href="/simulator/">Portfolio Time Travel</a>
           <a class="labs-nav__link" href="/divestment/"
-            >Divestment Brief Builder</a
+            >Dryvestment</a
           >
           <a
             class="labs-nav__link"
@@ -75,11 +75,12 @@
               <span class="labs-card__link">Open the simulator →</span>
             </a>
             <a class="labs-card labs-card--hero" href="/divestment/">
-              <span class="labs-card__title">Divestment Brief Builder</span>
+              <span class="labs-card__title">Dryvestment</span>
               <p class="labs-card__body">
-                Build identity-first divestment briefs tailored to venue,
-                decision maker, and regulatory context. Blend plain-language and
-                technical messaging, and export shareable outlines in seconds.
+                Dryvestment: Where values and valuations meet. Translate
+                activist conviction into institutional language, recasting moral
+                imperatives as material risk while tailoring identity-first
+                briefs to venue, decision maker, and regulatory context.
               </p>
               <span class="labs-card__link">Launch the builder →</span>
             </a>
@@ -98,6 +99,52 @@
               <span class="labs-card__link">Browse on GitHub →</span>
             </a>
           </div>
+        </div>
+        <div
+          class="labs-panel signup-panel"
+          data-email-signup
+          data-signup-list="ethicic"
+          data-signup-tags="labs,newsletter"
+          data-signup-source="labs-landing"
+          data-signup-success="Thanks for subscribing! Please confirm via the email we just sent."
+        >
+          <div class="signup-panel__copy">
+            <p class="signup-panel__eyebrow">Stay connected</p>
+            <h3 class="signup-panel__title">Get the Labs release notes</h3>
+            <p class="signup-panel__description">
+              Receive short notes when we open-source new prototypes, request
+              collaborators, or publish methodology updates.
+            </p>
+          </div>
+          <form class="signup-panel__form" novalidate>
+            <label
+              class="signup-panel__label text-xs font-semibold uppercase tracking-[0.18em] text-ecic-purple"
+              for="labs-signup-email"
+              >Email address</label
+            >
+            <div class="signup-panel__input-row">
+              <input
+                class="signup-panel__input input input-bordered input-primary w-full"
+                type="email"
+                id="labs-signup-email"
+                name="email"
+                placeholder="you@example.com"
+                autocomplete="email"
+                required
+              />
+              <button
+                class="signup-panel__submit btn btn-primary text-white"
+                type="submit"
+              >
+                Join the list
+              </button>
+            </div>
+            <p class="signup-panel__privacy">
+              We send concise updates at launch milestones and never share your
+              address.
+            </p>
+            <p class="signup-panel__status" data-signup-status></p>
+          </form>
         </div>
         <div class="labs-panel" aria-labelledby="labs-collab">
           <p class="labs-eyebrow" id="labs-collab">How to collaborate</p>
@@ -152,5 +199,7 @@
         </p>
       </div>
     </footer>
+
+    <script src="/assets/js/email-signup.js" defer></script>
   </body>
 </html>

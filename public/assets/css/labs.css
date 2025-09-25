@@ -307,6 +307,82 @@ p {
   text-decoration: underline;
 }
 
+.signup-panel {
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .signup-panel {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    align-items: center;
+  }
+}
+
+.signup-panel__copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.signup-panel__eyebrow {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  font-weight: 600;
+  color: var(--ecic-purple);
+  margin: 0;
+}
+
+.signup-panel__title {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  color: var(--text-dark);
+  font-weight: 600;
+}
+
+.signup-panel__description {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--text-medium);
+  line-height: 1.6;
+}
+
+.signup-panel__form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.signup-panel__input-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.signup-panel__input {
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+.signup-panel__submit {
+  flex: 0 0 auto;
+}
+
+.signup-panel__privacy {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text-medium);
+}
+
+.signup-panel__status {
+  min-height: 1.2rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin: 0;
+}
+
 .labs-footer {
   background: var(--ecic-purple);
   color: var(--footer-text);

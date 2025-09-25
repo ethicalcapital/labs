@@ -103,6 +103,50 @@ body {
   margin-bottom: 0.5rem;
 }
 
+.builder-pill-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.builder-pill {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.55rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid var(--border-gray);
+  background: rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.builder-pill:hover {
+  border-color: rgba(88, 28, 135, 0.45);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.builder-pill input[type='checkbox'] {
+  margin-top: 0.18rem;
+}
+
+.builder-pill__text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.builder-pill__title {
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.builder-pill__description {
+  font-size: 0.78rem;
+  color: var(--text-medium);
+}
+
 .builder-thumb-grid {
   display: grid;
   gap: 1.25rem;
@@ -236,6 +280,56 @@ body {
   color: var(--text-dark);
   font-family: var(--font-heading);
   font-weight: 600;
+}
+
+.one-pager-card {
+  border: 1px solid var(--border-gray);
+  border-radius: 16px;
+  padding: 1rem 1.25rem;
+  background: rgba(255, 255, 255, 0.88);
+  margin-bottom: 1rem;
+}
+
+.one-pager-card summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--text-dark);
+  font-family: var(--font-heading);
+  letter-spacing: 0.02em;
+}
+
+.one-pager-card__description {
+  font-size: 0.85rem;
+  color: var(--text-medium);
+  margin-top: 0.4rem;
+}
+
+.one-pager-card__body {
+  margin-top: 0.75rem;
+  display: grid;
+  gap: 0.65rem;
+  font-size: 0.93rem;
+  color: var(--text-medium);
+}
+
+.one-pager-card__body h2,
+.one-pager-card__body h3,
+.one-pager-card__body h4 {
+  color: var(--text-dark);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  margin: 0.25rem 0;
+}
+
+.one-pager-card__body ul {
+  padding-left: 1.2rem;
+  margin: 0;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.one-pager-card__body li {
+  line-height: 1.5;
 }
 
 .brief-content ol {

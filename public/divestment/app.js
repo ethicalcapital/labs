@@ -24,8 +24,11 @@
   const fbConsent = el("fb_consent");
   const fbSend = el("fb_send");
   const fbStatus = el("fb_status");
+  const onePagerFieldset = el("onePagerFieldset");
+  const onePagerOptions = el("onePagerOptions");
 
-  const state = { data: null, last: null };
+  const state = { data: null, last: null, onePagerCache: {} };
+  let onePagerInitialized = false;
 
   const missionValue = () =>
     thumbMission.value === "0" ? "purity" : "pragmatism";
@@ -133,6 +136,205 @@
     );
     state.data = window.__BDS_FALLBACK__;
     return state.data;
+  }
+
+  function escapeHtml(str) {
+    return String(str ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }
+
+  function formatInline(text) {
+    const escaped = escapeHtml(text);
+    return escaped
+      .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+      .replace(/\*(.+?)\*/g, "<em>$1</em>")
+      .replace(/`(.+?)`/g, "<code>$1</code>");
+  }
+
+  function markdownToHtml(markdown) {
+    const lines = String(markdown ?? "")
+      .replace(/\r\n/g, "\n")
+      .split("\n");
+    let html = "";
+    let inList = false;
+    let paragraph = "";
+
+    const closeList = () => {
+      if (inList) {
+        html += "</ul>";
+        inList = false;
+      }
+    };
+
+    const flushParagraph = () => {
+      if (paragraph.trim().length) {
+        html += `<p>${formatInline(paragraph.trim())}</p>`;
+        paragraph = "";
+      }
+    };
+
+    for (const rawLine of lines) {
+      const line = rawLine.trimEnd();
+      if (!line.trim()) {
+        flushParagraph();
+        closeList();
+        continue;
+      }
+      if (/^###\s+/.test(line)) {
+        flushParagraph();
+        closeList();
+        html += `<h4>${formatInline(line.replace(/^###\s+/, ""))}</h4>`;
+        continue;
+      }
+      if (/^##\s+/.test(line)) {
+        flushParagraph();
+        closeList();
+        html += `<h3>${formatInline(line.replace(/^##\s+/, ""))}</h3>`;
+        continue;
+      }
+      if (/^#\s+/.test(line)) {
+        flushParagraph();
+        closeList();
+        html += `<h2>${formatInline(line.replace(/^#\s+/, ""))}</h2>`;
+        continue;
+      }
+      if (/^-\s+/.test(line)) {
+        flushParagraph();
+        if (!inList) {
+          html += "<ul>";
+          inList = true;
+        }
+        html += `<li>${formatInline(line.replace(/^-\s+/, ""))}</li>`;
+        continue;
+      }
+      paragraph = paragraph ? `${paragraph} ${line.trim()}` : line.trim();
+    }
+
+    flushParagraph();
+    closeList();
+    return html;
+  }
+
+  function candidateAssetPaths(relativePath) {
+    if (!relativePath) return [];
+    const clean = String(relativePath).replace(/^\.?\//, "");
+    const options = new Set();
+    options.add(`./${clean}`);
+    options.add(`/divestment/${clean}`);
+    options.add(`/public/divestment/${clean}`);
+    return Array.from(options);
+  }
+
+  async function loadOnePagerContent(page) {
+    if (!page || !page.id) return null;
+    if (state.onePagerCache[page.id]) return state.onePagerCache[page.id];
+
+    let markdown = page.markdown ? String(page.markdown) : null;
+    if (!markdown && page.path) {
+      const paths = candidateAssetPaths(page.path);
+      for (const assetPath of paths) {
+        try {
+          const resp = await fetch(assetPath, { cache: "no-store" });
+          if (!resp.ok) continue;
+          markdown = await resp.text();
+          break;
+        } catch {
+          // try next path
+        }
+      }
+    }
+
+    if (!markdown) {
+      const fallbackMessage =
+        "Attachment unavailable — unable to load source document.";
+      const record = {
+        id: page.id,
+        title: page.title || page.id,
+        description: page.description || "",
+        markdown: `# ${page.title || page.id}\n\n${fallbackMessage}`,
+        html: `<p>${formatInline(fallbackMessage)}</p>`,
+        unavailable: true,
+      };
+      state.onePagerCache[page.id] = record;
+      return record;
+    }
+
+    const record = {
+      id: page.id,
+      title: page.title || page.id,
+      description: page.description || "",
+      markdown,
+      html: markdownToHtml(markdown),
+      unavailable: false,
+    };
+    state.onePagerCache[page.id] = record;
+    return record;
+  }
+
+  async function ensureOnePagerOptions() {
+    if (onePagerInitialized) return;
+    if (!onePagerFieldset || !onePagerOptions) {
+      onePagerInitialized = true;
+      return;
+    }
+    const data = await loadData();
+    const pages = Array.isArray(data.one_pagers) ? data.one_pagers : [];
+    if (!pages.length) {
+      onePagerFieldset.classList.add("hidden");
+      onePagerInitialized = true;
+      return;
+    }
+
+    onePagerFieldset.classList.remove("hidden");
+    onePagerOptions.innerHTML = "";
+    for (const page of pages) {
+      const label = document.createElement("label");
+      label.className = "builder-pill";
+
+      const input = document.createElement("input");
+      input.type = "checkbox";
+      input.value = page.id;
+      input.className = "one-pager-option";
+
+      const text = document.createElement("span");
+      text.className = "builder-pill__text";
+
+      const title = document.createElement("span");
+      title.className = "builder-pill__title";
+      title.textContent = page.title || page.id;
+      text.appendChild(title);
+
+      if (page.description) {
+        const desc = document.createElement("span");
+        desc.className = "builder-pill__description";
+        desc.textContent = page.description;
+        text.appendChild(desc);
+      }
+
+      label.appendChild(input);
+      label.appendChild(text);
+      onePagerOptions.appendChild(label);
+    }
+
+    onePagerInitialized = true;
+  }
+
+  function getSelectedOnePagerIds() {
+    if (!onePagerOptions) return [];
+    return Array.from(
+      onePagerOptions.querySelectorAll("input.one-pager-option:checked"),
+    ).map((input) => input.value);
+  }
+
+  function resetOnePagers() {
+    if (!onePagerOptions) return;
+    onePagerOptions
+      .querySelectorAll("input.one-pager-option")
+      .forEach((input) => {
+        input.checked = false;
+      });
   }
 
   function sanitize(text) {
@@ -334,6 +536,7 @@
       mission: missionValue(),
       competition: thumbCompetition.value,
       regulatory: thumbRegulatory.value,
+      preset: thumbPreset.value,
     };
 
     const knowledgeLevel = context.knowledge;
@@ -518,6 +721,23 @@
     }
     const sourceSet = data.source_sets?.[sourceAudience] || data.sources || [];
 
+    const selectedOnePagerIds = getSelectedOnePagerIds();
+    const attachments = [];
+    if (selectedOnePagerIds.length) {
+      const pageIndex = new Map(
+        (Array.isArray(data.one_pagers) ? data.one_pagers : []).map((page) => [
+          page.id,
+          page,
+        ]),
+      );
+      for (const id of selectedOnePagerIds) {
+        const page = pageIndex.get(id);
+        if (!page) continue;
+        const attachment = await loadOnePagerContent(page);
+        if (attachment) attachments.push(attachment);
+      }
+    }
+
     const governmentSnippet =
       context.entity === "government"
         ? data.government_policy_snippet || ""
@@ -536,6 +756,13 @@
     let html = "";
     html += `<h3 class="mt-0">${sanitize(headings.opening)}</h3>`;
     html += `<p>${sanitize(opening)}</p>`;
+
+    if (attachments.length) {
+      const attachTitles = attachments
+        .map((att) => sanitize(att.title))
+        .join(" · ");
+      html += `<p class="text-xs text-subtle">Attached one-pagers: ${attachTitles}</p>`;
+    }
 
     html += `<h3>${sanitize(headings.key)}</h3>`;
     html += "<ol>";
@@ -674,6 +901,19 @@
         "<ul>" + steps.map((s) => `<li>${sanitize(s)}</li>`).join("") + "</ul>";
     }
 
+    if (attachments.length) {
+      html += `<h3>Attached One-Pagers</h3>`;
+      for (const att of attachments) {
+        html += `<details class="one-pager-card" open>`;
+        html += `<summary>${sanitize(att.title)}</summary>`;
+        if (att.description) {
+          html += `<p class="one-pager-card__description">${sanitize(att.description)}</p>`;
+        }
+        html += `<div class="one-pager-card__body">${att.html}</div>`;
+        html += `</details>`;
+      }
+    }
+
     brief.innerHTML = html;
 
     state.last = {
@@ -733,6 +973,13 @@
       furtherReading: Array.isArray(data.further_reading)
         ? data.further_reading
         : [],
+      attachments: attachments.map((att) => ({
+        id: att.id,
+        title: att.title,
+        description: att.description,
+        markdown: att.markdown,
+        unavailable: att.unavailable,
+      })),
     };
 
     renderSources(sourceSet, data.further_reading || []);
@@ -764,6 +1011,13 @@
     }
     if (context.localName) {
       lines.push(`- Local Name: ${context.localName}`);
+    }
+    if (result.attachments && result.attachments.length) {
+      lines.push(
+        `- Attached One-Pagers: ${result.attachments
+          .map((att) => att.title)
+          .join(", ")}`,
+      );
     }
     lines.push("");
 
@@ -923,6 +1177,38 @@
       lines.push("");
     }
 
+    if (result.attachments && result.attachments.length) {
+      lines.push("## Attached One-Pagers");
+      lines.push("");
+      if (mode === "plain") {
+        result.attachments.forEach((att, idx) => {
+          const summary = att.description
+            ? `Included: ${att.title} — ${att.description}`
+            : `Included: ${att.title}`;
+          lines.push(`> ${summary}`);
+          lines.push("");
+          lines.push(att.markdown.trim());
+          lines.push("");
+          if (idx !== result.attachments.length - 1) {
+            lines.push("---");
+            lines.push("");
+          }
+        });
+      } else {
+        lines.push(
+          "Full attachments are included with the plain-language brief.",
+        );
+        lines.push("");
+        result.attachments.forEach((att) => {
+          const summary = att.description
+            ? `${att.title} — ${att.description}`
+            : att.title;
+          lines.push(`- ${summary}`);
+        });
+        lines.push("");
+      }
+    }
+
     const combinedSources = [
       ...(result.sources || []),
       ...(result.furtherReading || []),
@@ -974,6 +1260,7 @@
 
   applyEntityConstraints();
   applyThumbPreset(thumbPreset.value);
+  ensureOnePagerOptions().catch(() => {});
 
   buildBtn.addEventListener("click", buildBrief);
   resetBtn.addEventListener("click", () => {
@@ -992,6 +1279,7 @@
       '<p class="brief-placeholder">Configure the briefing context above, then select "Build brief."</p>';
     sourcesList.innerHTML = "";
     state.last = null;
+    resetOnePagers();
     applyEntityConstraints();
     applyThumbPreset(thumbPreset.value);
   });
@@ -1030,6 +1318,268 @@
 // Minimal embedded fallback to avoid fetch/CSP failures
 window.__BDS_FALLBACK__ = {
   version: "fallback-2025-09-25-1",
+  one_pagers: [
+    {
+      id: "jlens_board",
+      title: "Divestment Financial Impact: A Balanced Assessment",
+      description:
+        "Board-facing summary that rebuts the $33.2B loss claim and reframes fiduciary risk.",
+      path: "content/jlens_board.md",
+      markdown: `
+# Divestment Financial Impact: A Balanced Assessment
+
+## The Question Before Us
+
+Will BDS-related divestment materially harm endowment returns?
+
+## What the Research Shows
+
+### The JLens/ADL Analysis
+
+- **Claim:** $33.2 billion foregone returns over 10 years
+- **Method:** Excluded 38 companies from index, measured performance gap
+- **Finding:** 1.8% annual underperformance (11.1% vs 12.9% returns)
+
+### Methodological Considerations
+
+The JLens study acknowledges that BDS targeting "changes rapidly" but applies a 2024 exclusion list to the entire 2014-2024 period. This approach, while producing a clear numerical result, may not reflect the experience of investors making decisions in real time with available information.
+
+The study does not disclose its data sources or rebalancing methodology, making independent verification challenging. This limits our ability to assess whether the implementation tested reflects institutional best practices.
+
+### Institutional Experience
+
+**Norway's Sovereign Wealth Fund**
+
+- The world's largest sovereign fund ($1.4 trillion) excludes 180+ companies
+- Achieved 13.1% returns in 2024 while maintaining exclusions
+- Reports tracking error of only 0.3-0.5% relative to benchmark
+- Attributes +0.44% of cumulative returns to exclusion decisions
+
+**University Implementations**
+
+- UC System ($126B): Completed fossil fuel divestment as "financial risk management"
+- Oxford: Reduced fossil fuel exposure from 8.5% to 0.6%, maintained growth
+- Cambridge, Stanford, Georgetown: Implementing exclusions within risk parameters
+
+### Academic Consensus
+
+A review of peer-reviewed studies spanning 90 years of market data finds:
+
+- Divestment "does not significantly impair financial performance" (Trinks & Scholtens, 2018)
+- Professional optimization can reduce tracking error by 80-90% (EDHEC, 2023)
+- Impact typically measured in basis points, not percentage points
+
+## Key Insight: The JLens Implementation Would Be Malpractice
+
+The JLens study tests an implementation with tracking error of 1.64%—roughly equal to their claimed underperformance. This suggests they modeled incompetent execution rather than professional management.
+
+**No fiduciary could legally implement divestment this way:**
+
+**What JLens Appears to Have Tested:**
+
+- Remove stocks, make "no other adjustments"
+- Tracking error: ~1.64% (equals their claimed loss)
+- Potential cash drag: Up to 32% uninvested
+- Result: Would trigger beneficiary lawsuits
+
+**What Professional Managers Actually Do:**
+
+- Factor-neutral optimization and rebalancing
+- Tracking error: ~0.3-0.5% (Norway's actual result)
+- Full investment: All proceeds immediately redeployed
+- Result: Minimal performance impact
+
+**The study cannot be replicated** because JLens won't disclose:
+
+- Data sources
+- Rebalancing methodology
+- What "no other adjustments" means
+- How they weighted remaining holdings
+
+Non-replicable results are invalid in both academic and investment contexts.
+
+## Fiduciary Considerations
+
+As fiduciaries, boards should consider:
+
+1. **Risk Management:** Can exclusions be implemented within acceptable tracking error limits?
+2. **Professional Implementation:** Will portfolio management employ optimization techniques?
+3. **Stakeholder Alignment:** How do exclusions align with institutional mission and stakeholder expectations?
+4. **Performance Monitoring:** What governance ensures ongoing assessment of impact?
+
+## Conclusion
+
+The $33.2 billion projection is invalid because:
+
+1. The methodology cannot be replicated or verified
+2. The implementation tested would constitute fiduciary malpractice
+3. The tracking error (1.64%) essentially equals the claimed underperformance
+
+Real-world evidence from Norway ($1.4T), UC ($126B), and others demonstrates that professionally managed divestment has minimal impact when properly implemented.
+
+**For Fiduciaries:** Any trustee considering the JLens study should demand:
+
+- Complete methodology disclosure enabling replication
+- Evidence the approach meets professional standards
+- Comparison with actual institutional implementations
+
+Until then, the study should be disregarded as non-credible advocacy rather than research.
+      `.trim(),
+    },
+    {
+      id: "jlens_technical",
+      title: "Technical Review: JLens/ADL Divestment Impact Study",
+      description:
+        "Methodology critique for consultants and investment staff demanding replication standards.",
+      path: "content/jlens_technical.md",
+      markdown: `
+# Technical Review: JLens/ADL Divestment Impact Study
+
+## Executive Summary
+
+The JLens study estimates $33.2 billion in foregone returns from BDS-related divestment. While this analysis raises important questions about fiduciary duty, several methodological limitations significantly affect the reliability of its conclusions.
+
+## Key Methodological Concerns
+
+### 1. Temporal Inconsistency
+
+The study acknowledges (p. 8): *"This limitation highlights the need for ongoing monitoring and regular updates to any BDS-related company lists, as the landscape can change rapidly in response to geopolitical events, corporate actions, and evolving activist strategies."*
+
+However, the methodology applies a static 2024 exclusion list retroactively across the entire 2014-2024 period. Several organizations cited as sources for the exclusion list were not operational during the early years of the study period:
+
+- Don't Buy into Occupation Coalition: Formed January 2021
+- OHCHR Database: First published February 2020
+- Multiple company additions to boycott lists: Post-2020
+
+This would not reflect actual investor experience.
+
+### 2. Portfolio Construction Failures
+
+The study states: "38 companies in the BDS Top Targets List were excluded in the VettaFi Excl. BDS Top Targets index and no other adjustments were made to the index."
+
+This appears to indicate one or more malpractice-level errors:
+
+- **Cash drag:** Proceeds from excluded securities (32.3% of market cap) potentially not reinvested
+- **No rebalancing:** Failing to redistribute weights after removing major index constituents
+- **Sector concentration:** No adjustment for removing entire sector exposures (technology, defense)
+- **No optimization:** Tracking error of 1.64% annually—essentially equal to claimed underperformance
+- **Static implementation:** No quarterly rebalancing despite acknowledged "rapid changes"
+
+The study provides no transparency on:
+
+- What "no other adjustments" means in practice
+- The specific data provider for security returns
+- Whether dividends were proportionally reinvested
+
+**This lack of transparency invalidates the study's claims.** Non-replicable results have no standing in finance or academia.
+
+### 3. Implementation Would Constitute Fiduciary Malpractice
+
+The approach tested would expose any fiduciary to legal liability:
+
+- **Tracking error of 1.64% annually** is itself nearly the entire claimed underperformance
+- **No professional manager** would implement divestment without optimization
+- **Any trustee** approving this approach would face beneficiary lawsuits
+- **Any consultant** recommending this implementation would lose their license
+
+Professional portfolio management requires:
+
+- Factor-neutral optimization to minimize tracking error (<0.5% target)
+- Sector rebalancing to maintain diversification
+- Quarterly reallocation as exclusion lists evolve
+- Documentation of prudent process
+
+The JLens approach violates every principle of competent investment management.
+
+## Empirical Context
+
+### Institutional Evidence
+
+**Norway's Government Pension Fund Global (GPFG)**
+
+- Assets: $1.4 trillion
+- Exclusions: 180+ companies
+- Tracking error: 0.3-0.5%
+- Cumulative impact: +0.44% (positive contribution from exclusions)
+
+**University of California System**
+
+- Assets: $126 billion
+- Action: Complete fossil fuel divestment (May 2020)
+- Rationale: "Financial risk management decision"
+- Outcome: Objectives met without performance degradation
+
+### Academic Literature
+
+Multiple peer-reviewed studies provide context:
+
+- **Trinks & Scholtens (2018):** Analysis of 1927-2016 data finds divestment "does not significantly impair financial performance"
+- **Plantinga & Scholtens (2021):** 40-year study finds differences of "a few basis points"
+- **EDHEC (2023):** Professional optimization reduces tracking error by 80-90%
+
+## Technical Observations
+
+### Concentration Risk
+
+The excluded companies represent 32.3% of index market capitalization, heavily concentrated in technology sector leaders that drove 2014-2024 performance. This concentration in recently outperforming securities during a specific market regime raises questions about:
+
+- Sample period dependency
+- Generalizability to other time periods
+- Mean reversion possibilities
+
+### Benchmark Selection
+
+The use of VettaFi US Equity Large-Cap 500 Index rather than S&P 500 introduces:
+
+- Additional tracking variance
+- Reduced comparability with institutional benchmarks
+- Challenges in independent verification
+
+## Constructive Considerations
+
+1. **Point-in-Time Analysis:** Future research could benefit from using exclusion lists as they existed at each historical point, reflecting actual investor information sets.
+
+2. **Multiple Implementation Scenarios:** Comparing naive exclusion with professionally optimized approaches would provide a range of potential outcomes.
+
+3. **Transparency Enhancement:** Providing full methodological details would enable replication and strengthen confidence in findings.
+
+4. **Risk-Adjusted Metrics:** Including Sharpe ratios, information ratios, and tracking error analysis would contextualize absolute return differences.
+
+## Conclusion
+
+The JLens study's $33.2 billion estimate is invalid due to:
+
+1. **Fundamental non-replicability:** Without disclosing data sources, rebalancing methodology, or calculation details, this claim cannot be verified by any third party. In academic or investment contexts, non-replicable results are considered void.
+
+2. **Implementation that would constitute malpractice:** The approach tested—with tracking error of 1.64% annually (roughly equal to the claimed underperformance)—would expose any fiduciary to legal liability.
+
+The study provides several possible explanations for its extreme results, none defensible:
+
+- Made "no other adjustments" after removing one-third of market cap
+- Used no sector rebalancing after removing concentrated positions
+- Applied no optimization to minimize tracking error
+- Failed to reinvest proceeds from divested securities
+- Ignored quarterly rebalancing standards
+
+Any of these approaches would constitute professional negligence.
+
+## Minimum Standards for Credible Analysis
+
+Future analysis of divestment impacts should not be considered without:
+
+- **Point-in-time exclusion lists** reflecting realistic investor experience
+- **Full methodological transparency** enabling independent replication
+- **Multiple implementation scenarios** from naive to professionally optimized
+- **Multi-period analysis** avoiding cherry-picked market regimes
+
+Without these elements, studies should be recognized as advocacy documents rather than research.
+
+---
+
+*This analysis is provided to support evidence-based policy discussion. Ethical Capital welcomes any attempt by JLens to provide the transparency necessary for replication.*
+      `.trim(),
+    },
+  ],
   openers: {
     generic:
       "We can align investments with basic human rights using professional, benchmark-aware implementation. Large institutions already use narrowly scoped exclusions while maintaining diversification and risk controls.",
