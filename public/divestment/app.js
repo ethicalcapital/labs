@@ -14,8 +14,6 @@
   const copyAll = el('copyAll');
   const printBtn = el('printBtn');
   const sourcesList = el('sources');
-  const lookupQuery = el('lookupQuery');
-  const lookupBtn = el('lookupBtn');
   const fbUse = el('fb_usecase');
   const fbOutcome = el('fb_outcome');
   const fbNotes = el('fb_notes');
@@ -76,13 +74,6 @@
     const tmp = document.createElement('div');
     tmp.innerHTML = html;
     return tmp.innerText;
-  }
-
-  function updateLookupHref() {
-    const q = (lookupQuery.value || '').trim();
-    const url = new URL('https://investigate.afsc.org/search');
-    if (q) url.searchParams.set('search', q);
-    lookupBtn.href = url.toString();
   }
 
   async function sendFeedback() {
@@ -315,7 +306,6 @@
     objective.value = 'resolution_support';
     brief.innerHTML = '<p class="text-slate-400">Fill the setup at left, then click Build Brief.</p>';
     sourcesList.innerHTML = '';
-    updateLookupHref();
   });
 
   copyAll.addEventListener('click', () => {
@@ -329,9 +319,6 @@
   printBtn.addEventListener('click', () => window.print());
 
   fbSend?.addEventListener('click', sendFeedback);
-
-  lookupQuery?.addEventListener('input', updateLookupHref);
-  updateLookupHref();
 
   // Keyboard shortcuts: B build, P print (skip when typing in inputs)
   document.addEventListener('keydown', (e) => {
