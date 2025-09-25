@@ -27,14 +27,24 @@
 
   async function loadData() {
     if (state.data) return state.data;
-    try {
-      const resp = await fetch('/public/divestment/content/bds_pack.json', { cache: 'no-store' });
-      if (!resp.ok) throw new Error('bad status ' + resp.status);
-      state.data = await resp.json();
-    } catch (err) {
-      console.warn('Falling back to embedded content pack:', err);
-      state.data = window.__BDS_FALLBACK__;
+    // Try relative path first (works when builder is served at /divestment/)
+    const tryPaths = [
+      './content/bds_pack.json',
+      '/divestment/content/bds_pack.json',
+      '/public/divestment/content/bds_pack.json'
+    ];
+    for (const p of tryPaths) {
+      try {
+        const resp = await fetch(p, { cache: 'no-store' });
+        if (!resp.ok) throw new Error('bad status ' + resp.status);
+        state.data = await resp.json();
+        return state.data;
+      } catch (e) {
+        // try next
+      }
     }
+    console.warn('Falling back to embedded content pack: could not fetch content JSON');
+    state.data = window.__BDS_FALLBACK__;
     return state.data;
   }
 
