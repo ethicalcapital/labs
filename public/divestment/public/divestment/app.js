@@ -117,13 +117,17 @@
     // Start with base guide for the selected identity, then adjust by thumbprint.
     const res = { ...identityGuide };
 
-    // Mission drives screen type and framing
+    // Mission sets emphasis, but both screen types are in scope
+    const productDesc = 'Product-based (absolute) exclusions for categorical harms';
+    const conductDesc = 'Conduct/norms-based exclusions for risk mitigation';
     if (thumb.mission === 'purity') {
-      res.screen = 'Product-based (absolute) exclusions for moral clarity';
-      res.framing = 'Values-aligned policy that may accept a predictable tilt.';
+      res.screen_primary = productDesc;
+      res.screen_secondary = conductDesc;
+      res.framing = 'Lead with moral clarity while maintaining professional risk controls and transparency.';
     } else {
-      res.screen = 'Conduct/norms-based exclusions for risk mitigation';
-      res.framing = 'Risk-pragmatic policy preserving diversification and factor neutrality.';
+      res.screen_primary = conductDesc;
+      res.screen_secondary = productDesc;
+      res.framing = 'Lead with risk management and benchmark alignment while recognizing categorical harms where mission and regulation allow.';
     }
 
     // Competition pressure implies transparency/innovation emphasis
@@ -239,7 +243,12 @@
     if (approach.implementation) html += `<li><strong>Implementation</strong>: ${sanitize(approach.implementation)}</li>`;
     if (approach.reporting) html += `<li><strong>Reporting</strong>: ${sanitize(approach.reporting)}</li>`;
     if (approach.risk) html += `<li><strong>Risk & Controls</strong>: ${sanitize(approach.risk)}</li>`;
-    if (approach.screen) html += `<li><strong>Screen Type</strong>: ${sanitize(approach.screen)}</li>`;
+    if (approach.screen_primary || approach.screen_secondary) {
+      const parts = [];
+      if (approach.screen_primary) parts.push(sanitize(approach.screen_primary));
+      if (approach.screen_secondary) parts.push('also ' + sanitize(approach.screen_secondary));
+      html += `<li><strong>Screen Types (emphasis first)</strong>: ${parts.join('; ')}</li>`;
+    }
     if (approach.framing) html += `<li><strong>Framing</strong>: ${sanitize(approach.framing)}</li>`;
     html += '</ul>';
 
