@@ -14,22 +14,37 @@
       href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Raleway:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SJl7xN6bdpfKKp0xDT6vKrrf5gkP7FpC18JNpDutLCRa14Q6gttxyPjdvVSjGInxjeRGna43EIBayzG9erj3xg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
     <link rel="stylesheet" href="/assets/css/labs.css" />
     <link rel="stylesheet" href="/assets/css/tailwind.css" />
     <link rel="stylesheet" href="./divestment.css" />
   </head>
   <body>
     <div id="disclaimerOverlay" class="disclaimer-overlay" aria-hidden="true">
-      <div class="disclaimer-modal" role="dialog" aria-modal="true" aria-labelledby="disclaimerTitle">
+      <div
+        class="disclaimer-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="disclaimerTitle"
+      >
         <h2 id="disclaimerTitle">Before You Begin</h2>
         <p>
-          Dryvestment briefs are educational prototypes from Invest Vegan LLC DBA Ethical Capital.
-          They do not consider individual circumstances and are never investment advice.
+          Dryvestment briefs are educational prototypes from Invest Vegan LLC
+          DBA Ethical Capital. They do not consider individual circumstances and
+          are never investment advice.
         </p>
         <label class="disclaimer-checkbox">
           <input type="checkbox" id="disclaimerAccept" />
           <span>
-            I understand this tool is informational only, may rely on simplified assumptions, and I must consult qualified professionals for investment decisions.
+            I understand this tool is informational only, may rely on simplified
+            assumptions, and I must consult qualified professionals for
+            investment decisions.
           </span>
         </label>
         <button id="disclaimerContinue" class="btn btn-primary" disabled>
@@ -75,16 +90,20 @@
     <main class="labs-main">
       <section class="labs-section" aria-labelledby="dryvestment-hero">
         <div class="labs-panel labs-panel--intro">
-          <p class="labs-eyebrow labs-eyebrow--light">Dryvestment brief builder</p>
-          <h2 id="dryvestment-hero">Dryvestment: Where values and valuations meet</h2>
+          <p class="labs-eyebrow labs-eyebrow--light">
+            Dryvestment brief builder
+          </p>
+          <h2 id="dryvestment-hero">
+            Dryvestment: Where values and valuations meet
+          </h2>
           <p>
-            Dryvestment translates activist conviction into institutional language and recasts moral imperatives as material risk.
-            This experimental toolkit helps activists frame their case in
-            language a specific decision maker will respect. Configure venue,
-            investor identity, and thumbprint to surface aligned asks while
-            emphasizing that screening compounds knowledge about fragile
-            business models. Educational prototype only&mdash;never investment
-            advice.
+            Dryvestment translates activist conviction into institutional
+            language and recasts moral imperatives as material risk. This
+            experimental toolkit helps activists frame their case in language a
+            specific decision maker will respect. Configure venue, investor
+            identity, and thumbprint to surface aligned asks while emphasizing
+            that screening compounds knowledge about fragile business models.
+            Educational prototype only&mdash;never investment advice.
           </p>
           <div class="labs-button-row">
             <a class="labs-button labs-button--solid" href="#builder-panel"
@@ -103,7 +122,9 @@
         <div class="labs-panel builder-panel" id="builder-panel">
           <div class="builder-panel__top">
             <div class="builder-panel__header">
-              <h2 class="builder-panel__title">1) Configure the briefing context</h2>
+              <h2 class="builder-panel__title">
+                1) Configure the briefing context
+              </h2>
               <p class="builder-panel__description">
                 Select the setting, decision maker, and identity signals. Each
                 combination tunes language choices and documents which investor
@@ -129,48 +150,232 @@
           </div>
 
           <form id="builder" class="builder-form">
-            <label class="builder-field">
+            <div class="builder-field builder-choice-field">
               <span class="builder-field__label">Entity type</span>
-              <select id="invIdentity" class="builder-input select select-bordered w-full">
-                <option value="individual">Individual</option>
-                <option value="swf">Sovereign Wealth Fund</option>
-                <option value="public_pension">Public Pension Plan</option>
-                <option value="corporate_pension">Corporate Pension Plan</option>
-                <option value="endowment">Endowment</option>
-                <option value="foundation">Foundation</option>
-                <option value="insurance">Insurance General Account</option>
-                <option value="central_bank">Central Bank / Official Institution</option>
-                <option value="government">Government (City/County/State bond portfolios)</option>
-              </select>
-            </label>
+              <div
+                class="builder-choice-group"
+                data-choice-group="entity"
+                role="group"
+                aria-label="Entity type"
+              >
+                <input type="hidden" id="invIdentity" value="individual" />
+                <button
+                  type="button"
+                  class="choice-btn is-active"
+                  data-choice="individual"
+                  aria-pressed="true"
+                >
+                  <i class="fa-solid fa-user"></i><span>Individual</span>
+                </button>
+                <button
+                  type="button"
+                  class="choice-btn"
+                  data-choice="public_pension"
+                  aria-pressed="false"
+                >
+                  <i class="fa-solid fa-people-group"></i
+                  ><span>Public pension</span>
+                </button>
+                <button
+                  type="button"
+                  class="choice-btn"
+                  data-choice="endowment"
+                  aria-pressed="false"
+                >
+                  <i class="fa-solid fa-graduation-cap"></i
+                  ><span>Endowment</span>
+                </button>
+                <button
+                  type="button"
+                  class="choice-btn"
+                  data-choice="foundation"
+                  aria-pressed="false"
+                >
+                  <i class="fa-solid fa-hand-holding-heart"></i
+                  ><span>Foundation</span>
+                </button>
+                <button
+                  type="button"
+                  class="choice-btn"
+                  data-choice="government"
+                  aria-pressed="false"
+                >
+                  <i class="fa-solid fa-city"></i><span>Government</span>
+                </button>
+                <button
+                  type="button"
+                  class="choice-btn"
+                  data-choice="swf"
+                  aria-pressed="false"
+                >
+                  <i class="fa-solid fa-globe"></i
+                  ><span>Sovereign wealth fund</span>
+                </button>
+                <button
+                  type="button"
+                  class="choice-btn"
+                  data-choice="corporate_pension"
+                  aria-pressed="false"
+                >
+                  <i class="fa-solid fa-briefcase"></i
+                  ><span>Corporate pension</span>
+                </button>
+                <button
+                  type="button"
+                  class="choice-btn"
+                  data-choice="insurance"
+                  aria-pressed="false"
+                >
+                  <i class="fa-solid fa-shield-heart"></i><span>Insurance</span>
+                </button>
+                <button
+                  type="button"
+                  class="choice-btn"
+                  data-choice="central_bank"
+                  aria-pressed="false"
+                >
+                  <i class="fa-solid fa-landmark"></i><span>Central bank</span>
+                </button>
+              </div>
+            </div>
 
-            <label class="builder-field">
+            <div class="builder-field builder-choice-field">
               <span class="builder-field__label">Venue</span>
-              <select id="venue" class="builder-input select select-bordered w-full">
-                <option value="one_on_one">1:1 Conversation</option>
-                <option value="small_group">Small Group Meeting</option>
-                <option value="committee_hearing">Committee Hearing</option>
-                <option value="full_board_meeting">Full Board/Council Meeting</option>
-                <option value="public_testimony">Public Testimony / Town Hall</option>
-                <option value="written_memo">Written Memo / Email</option>
-              </select>
-            </label>
+              <div
+                class="builder-choice-group"
+                data-choice-group="venue"
+                role="group"
+                aria-label="Venue"
+              >
+                <input type="hidden" id="venue" value="one_on_one" />
+                <button
+                  type="button"
+                  class="choice-btn is-active"
+                  data-choice="one_on_one"
+                  aria-pressed="true"
+                >
+                  <i class="fa-solid fa-comments"></i
+                  ><span>1:1 conversation</span>
+                </button>
+                <button
+                  type="button"
+                  class="choice-btn"
+                  data-choice="small_group"
+                  aria-pressed="false"
+                >
+                  <i class="fa-solid fa-users"></i
+                  ><span>Small group meeting</span>
+                </button>
+                <button
+                  type="button"
+                  class="choice-btn"
+                  data-choice="committee_hearing"
+                  aria-pressed="false"
+                >
+                  <i class="fa-solid fa-person-chalkboard"></i
+                  ><span>Committee hearing</span>
+                </button>
+                <button
+                  type="button"
+                  class="choice-btn"
+                  data-choice="full_board_meeting"
+                  aria-pressed="false"
+                >
+                  <i class="fa-solid fa-chalkboard"></i
+                  ><span>Full board/council</span>
+                </button>
+                <button
+                  type="button"
+                  class="choice-btn"
+                  data-choice="public_testimony"
+                  aria-pressed="false"
+                >
+                  <i class="fa-solid fa-microphone"></i
+                  ><span>Public testimony</span>
+                </button>
+                <button
+                  type="button"
+                  class="choice-btn"
+                  data-choice="written_memo"
+                  aria-pressed="false"
+                >
+                  <i class="fa-solid fa-envelope"></i><span>Written memo</span>
+                </button>
+              </div>
+            </div>
 
-            <label class="builder-field">
+            <div class="builder-field builder-choice-field">
               <span class="builder-field__label">Target decision maker</span>
-              <select id="target" class="builder-input select select-bordered w-full">
-                <option value="family_friends">Family / Friends</option>
-                <option value="cio">CIO / Investment Officer</option>
-                <option value="consultant">Investment Consultant</option>
-                <option value="treasurer">Treasurer / Finance Director</option>
-                <option value="trustee">Board / Trustee</option>
-                <option value="council_member">Council / Committee Member</option>
-              </select>
-            </label>
+              <div
+                class="builder-choice-group"
+                data-choice-group="target"
+                role="group"
+                aria-label="Target decision maker"
+              >
+                <input type="hidden" id="target" value="family_friends" />
+                <button
+                  type="button"
+                  class="choice-btn is-active"
+                  data-choice="family_friends"
+                  aria-pressed="true"
+                >
+                  <i class="fa-solid fa-house-user"></i
+                  ><span>Family / friends</span>
+                </button>
+                <button
+                  type="button"
+                  class="choice-btn"
+                  data-choice="cio"
+                  aria-pressed="false"
+                >
+                  <i class="fa-solid fa-user-tie"></i
+                  ><span>CIO / investment officer</span>
+                </button>
+                <button
+                  type="button"
+                  class="choice-btn"
+                  data-choice="consultant"
+                  aria-pressed="false"
+                >
+                  <i class="fa-solid fa-user-gear"></i
+                  ><span>Investment consultant</span>
+                </button>
+                <button
+                  type="button"
+                  class="choice-btn"
+                  data-choice="treasurer"
+                  aria-pressed="false"
+                >
+                  <i class="fa-solid fa-calculator"></i
+                  ><span>Treasurer / finance</span>
+                </button>
+                <button
+                  type="button"
+                  class="choice-btn"
+                  data-choice="trustee"
+                  aria-pressed="false"
+                >
+                  <i class="fa-solid fa-scale-balanced"></i
+                  ><span>Trustee / board</span>
+                </button>
+                <button
+                  type="button"
+                  class="choice-btn"
+                  data-choice="council_member"
+                  aria-pressed="false"
+                >
+                  <i class="fa-solid fa-building-columns"></i
+                  ><span>Council / committee</span>
+                </button>
+              </div>
+            </div>
 
             <label class="builder-field">
               <span class="builder-field__label">Knowledge level</span>
-              <select id="knowledge" class="builder-input select select-bordered w-full">
+              <select
+                id="knowledge"
+                class="builder-input select select-bordered w-full"
+              >
                 <option value="plain">Plain English</option>
                 <option value="technical">Technical / Nerd</option>
               </select>
@@ -181,16 +386,25 @@
               <div class="builder-thumb-grid">
                 <label class="builder-field">
                   <span class="builder-field__label">Profile</span>
-                  <select id="thumb_preset" class="builder-input select select-bordered w-full">
+                  <select
+                    id="thumb_preset"
+                    class="builder-input select select-bordered w-full"
+                  >
                     <option value="custom">Custom</option>
-                    <option value="mission_nonprofit">Mission-driven nonprofit</option>
+                    <option value="mission_nonprofit">
+                      Mission-driven nonprofit
+                    </option>
                     <option value="public_pension">Public pension</option>
-                    <option value="university_endowment">University endowment</option>
+                    <option value="university_endowment">
+                      University endowment
+                    </option>
                   </select>
                 </label>
                 <div id="thumb_custom" class="builder-thumb-grid">
                   <div>
-                    <span class="builder-field__label">Mission / ethics emphasis</span>
+                    <span class="builder-field__label"
+                      >Mission / ethics emphasis</span
+                    >
                     <div class="builder-slider-row">
                       <span>Purity</span>
                       <input
@@ -206,16 +420,26 @@
                     </div>
                   </div>
                   <label class="builder-field">
-                    <span class="builder-field__label">Pressure from competition</span>
-                    <select id="thumb_competition" class="builder-input select select-bordered w-full">
+                    <span class="builder-field__label"
+                      >Pressure from competition</span
+                    >
+                    <select
+                      id="thumb_competition"
+                      class="builder-input select select-bordered w-full"
+                    >
                       <option value="low">Low</option>
                       <option value="medium">Medium</option>
                       <option value="high">High</option>
                     </select>
                   </label>
                   <label class="builder-field">
-                    <span class="builder-field__label">Regulatory constraints</span>
-                    <select id="thumb_regulatory" class="builder-input select select-bordered w-full">
+                    <span class="builder-field__label"
+                      >Regulatory constraints</span
+                    >
+                    <select
+                      id="thumb_regulatory"
+                      class="builder-input select select-bordered w-full"
+                    >
                       <option value="low">Low</option>
                       <option value="medium">Medium</option>
                       <option value="high">High</option>
@@ -226,7 +450,9 @@
             </fieldset>
 
             <label class="builder-field">
-              <span class="builder-field__label">Local name (appears in template)</span>
+              <span class="builder-field__label"
+                >Local name (appears in template)</span
+              >
               <input
                 id="localName"
                 type="text"
@@ -237,8 +463,13 @@
 
             <label class="builder-field">
               <span class="builder-field__label">Objective</span>
-              <select id="objective" class="builder-input select select-bordered w-full">
-                <option value="resolution_support">Support Divestment Resolution</option>
+              <select
+                id="objective"
+                class="builder-input select select-bordered w-full"
+              >
+                <option value="resolution_support">
+                  Support Divestment Resolution
+                </option>
                 <option value="fact_sheet">Neutral Fact Sheet</option>
                 <option value="testimony">Public Testimony</option>
               </select>
@@ -286,12 +517,19 @@
             <div class="builder-feedback-grid">
               <label class="builder-field">
                 <span class="builder-field__label">Use case</span>
-                <select id="fb_usecase" class="builder-input select select-bordered w-full">
+                <select
+                  id="fb_usecase"
+                  class="builder-input select select-bordered w-full"
+                >
                   <option value="one_on_one">1:1 Conversation</option>
                   <option value="small_group">Small Group Meeting</option>
                   <option value="committee_hearing">Committee Hearing</option>
-                  <option value="full_board_meeting">Full Board/Council Meeting</option>
-                  <option value="public_testimony">Public Testimony / Town Hall</option>
+                  <option value="full_board_meeting">
+                    Full Board/Council Meeting
+                  </option>
+                  <option value="public_testimony">
+                    Public Testimony / Town Hall
+                  </option>
                   <option value="written_memo">Written Memo / Email</option>
                   <option value="social">Social / Friends & Family</option>
                   <option value="other">Other</option>
@@ -299,7 +537,10 @@
               </label>
               <label class="builder-field">
                 <span class="builder-field__label">Outcome (optional)</span>
-                <select id="fb_outcome" class="builder-input select select-bordered w-full">
+                <select
+                  id="fb_outcome"
+                  class="builder-input select select-bordered w-full"
+                >
                   <option value="na">N/A</option>
                   <option value="constructive">Constructive</option>
                   <option value="neutral">Neutral</option>
@@ -307,7 +548,9 @@
                 </select>
               </label>
               <label class="builder-field builder-span-all">
-                <span class="builder-field__label">Notes (no personal info)</span>
+                <span class="builder-field__label"
+                  >Notes (no personal info)</span
+                >
                 <textarea
                   id="fb_notes"
                   rows="3"
@@ -342,8 +585,8 @@
               This tool is educational only. It creates hypothetical
               illustrative materials and links to public sources. It is not
               investment advice. Assumptions may not reflect your situation.
-              Invest Vegan LLC DBA Ethical Capital accepts editorial responsibility for this
-              content and welcomes corrections.
+              Invest Vegan LLC DBA Ethical Capital accepts editorial
+              responsibility for this content and welcomes corrections.
             </p>
             <p>
               Subscribe for updates:
@@ -362,10 +605,7 @@
           <div class="brief-panel__header">
             <h2 class="brief-panel__title">2) Brief</h2>
             <div class="brief-actions no-print">
-              <button
-                id="copyText"
-                class="builder-button btn btn-outline"
-              >
+              <button id="copyText" class="builder-button btn btn-outline">
                 Copy text
               </button>
               <button
@@ -390,8 +630,8 @@
           <h3 class="methodology-panel__title">Methodology & sources</h3>
           <ul id="sources" class="methodology-panel__list"></ul>
           <p class="methodology-panel__footnote">
-            Prepared by Invest Vegan LLC DBA Ethical Capital. Educational toolkit only&mdash;never
-            investment advice. Subscribe:
+            Prepared by Invest Vegan LLC DBA Ethical Capital. Educational
+            toolkit only&mdash;never investment advice. Subscribe:
             <a
               class="subscribe-link"
               href="https://buttondown.com/ethicic"
@@ -407,27 +647,42 @@
     <footer class="labs-footer">
       <div class="labs-footer__inner">
         <p>
-          <strong>Invest Vegan LLC DBA Ethical Capital</strong> · Utah Registered
-          Investment Adviser
+          <strong>Invest Vegan LLC DBA Ethical Capital</strong> · Utah
+          Registered Investment Adviser
         </p>
         <p>
-          <a href="https://ethicic.com/content/legal/disclosures.html">Disclosures</a>
+          <a href="https://ethicic.com/content/legal/disclosures.html"
+            >Disclosures</a
+          >
           ·
-          <a href="https://ethicic.com/content/legal/privacy-policy.html">Privacy Policy</a>
+          <a href="https://ethicic.com/content/legal/privacy-policy.html"
+            >Privacy Policy</a
+          >
           ·
-          <a href="https://ethicic.com/content/legal/terms-of-use.html">Terms of Use</a>
+          <a href="https://ethicic.com/content/legal/terms-of-use.html"
+            >Terms of Use</a
+          >
         </p>
         <p>90 N 400 E, Provo, UT 84606 · +1 347 625 9000 · hello@ethicic.com</p>
         <div class="labs-footer__disclaimer-block">
           <p class="labs-footer__disclaimer">
             Ethical Capital Labs experiments are educational prototypes. They do
-            not account for your individual circumstances, do not gather personal
-            data, and do not constitute investment advice.
+            not account for your individual circumstances, do not gather
+            personal data, and do not constitute investment advice.
           </p>
           <ul class="labs-footer__disclaimer-list">
-            <li>Assumptions and default inputs are illustrative; adjust them before relying on outputs.</li>
-            <li>Calculations run locally in your browser; we do not store personal data.</li>
-            <li>Work with qualified professionals before acting on insights—past performance never guarantees future results.</li>
+            <li>
+              Assumptions and default inputs are illustrative; adjust them
+              before relying on outputs.
+            </li>
+            <li>
+              Calculations run locally in your browser; we do not store personal
+              data.
+            </li>
+            <li>
+              Work with qualified professionals before acting on insights—past
+              performance never guarantees future results.
+            </li>
           </ul>
         </div>
       </div>

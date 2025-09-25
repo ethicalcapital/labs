@@ -84,6 +84,10 @@
     return false;
   }
 
+  let entityChoice;
+  let venueChoice;
+  let targetChoice;
+
   const state = { data: null, last: null, onePagerCache: {} };
   let onePagerInitialized = false;
 
@@ -107,15 +111,6 @@
     trustee: "Board / Trustee",
     council_member: "Council / Committee Member",
   };
-
-  const TARGET_OPTIONS_ALL = [
-    { value: "family_friends", label: TARGET_LABELS.family_friends },
-    { value: "cio", label: TARGET_LABELS.cio },
-    { value: "consultant", label: TARGET_LABELS.consultant },
-    { value: "treasurer", label: TARGET_LABELS.treasurer },
-    { value: "trustee", label: TARGET_LABELS.trustee },
-    { value: "council_member", label: TARGET_LABELS.council_member },
-  ];
 
   const ENTITY_LABELS = {
     swf: "Sovereign Wealth Fund",
@@ -406,6 +401,70 @@
       .replace(/\n/g, " ");
   }
 
+  function createChoiceController(groupName, inputId) {
+    const groupEl = document.querySelector(
+      `[data-choice-group="${groupName}"]`,
+    );
+    const hiddenInput = el(inputId);
+    if (!groupEl || !hiddenInput) return null;
+
+    const buttons = Array.from(groupEl.querySelectorAll("[data-choice]"));
+
+    const controller = {
+      groupEl,
+      buttons,
+      input: hiddenInput,
+      onChange: null,
+      get value() {
+        return hiddenInput.value;
+      },
+      set(value, options = {}) {
+        const { silent = false } = options;
+        const btn = buttons.find((b) => b.dataset.choice === value);
+        if (!btn) return;
+        if (btn.disabled || btn.getAttribute("aria-disabled") === "true") {
+          return;
+        }
+        const previous = hiddenInput.value;
+        hiddenInput.value = value;
+        buttons.forEach((button) => {
+          const active = button.dataset.choice === value;
+          button.classList.toggle("is-active", active);
+          button.setAttribute("aria-pressed", active ? "true" : "false");
+        });
+        if (controller.onChange && !silent && value !== previous) {
+          controller.onChange(value);
+        }
+      },
+      setDisabled(choiceValue, disabled) {
+        const btn = buttons.find((b) => b.dataset.choice === choiceValue);
+        if (!btn) return;
+        btn.disabled = disabled;
+        btn.setAttribute("aria-disabled", disabled ? "true" : "false");
+        btn.classList.toggle("is-disabled", disabled);
+        if (disabled && controller.value === choiceValue) {
+          btn.classList.remove("is-active");
+          btn.setAttribute("aria-pressed", "false");
+        }
+      },
+    };
+
+    buttons.forEach((button) => {
+      button.addEventListener("click", () => {
+        if (button.disabled || button.getAttribute("aria-disabled") === "true")
+          return;
+        controller.set(button.dataset.choice);
+      });
+    });
+
+    const initialValue = hiddenInput.value || buttons[0]?.dataset.choice || "";
+    if (initialValue) {
+      controller.set(initialValue, { silent: true });
+    }
+
+    return controller;
+  }
+
   function renderSources(dynamicSources, fallbackSources, furtherReading) {
     sourcesList.innerHTML = "";
 
@@ -444,34 +503,28 @@
     }
   }
 
-  function setTargetOptions(allowedValues) {
-    const current = target.value;
-    target.innerHTML = "";
-    allowedValues.forEach((value) => {
-      const optionData = TARGET_OPTIONS_ALL.find((opt) => opt.value === value);
-      if (!optionData) return;
-      const option = document.createElement("option");
-      option.value = optionData.value;
-      option.textContent = optionData.label;
-      target.appendChild(option);
-    });
-    if (!allowedValues.includes(current)) {
-      target.value = allowedValues[0];
-    } else {
-      target.value = current;
-    }
-    target.disabled = allowedValues.length === 1;
-  }
-
   function applyEntityConstraints() {
-    if (invIdentity.value === "individual") {
-      setTargetOptions(["family_friends"]);
+    if (!entityChoice || !targetChoice) return;
+    const entityVal = entityChoice.value;
+    if (entityVal === "individual") {
+      targetChoice.buttons.forEach((btn) => {
+        const allow = btn.dataset.choice === "family_friends";
+        targetChoice.setDisabled(btn.dataset.choice, !allow);
+      });
+      if (targetChoice.value !== "family_friends") {
+        targetChoice.set("family_friends", { silent: true });
+      }
     } else {
-      setTargetOptions(
-        TARGET_OPTIONS_ALL.filter((opt) => opt.value !== "family_friends").map(
-          (opt) => opt.value,
-        ),
-      );
+      targetChoice.buttons.forEach((btn) => {
+        const disable = btn.dataset.choice === "family_friends";
+        targetChoice.setDisabled(btn.dataset.choice, disable);
+      });
+      if (targetChoice.value === "family_friends") {
+        const firstEnabled = targetChoice.buttons.find((btn) => !btn.disabled);
+        if (firstEnabled) {
+          targetChoice.set(firstEnabled.dataset.choice, { silent: true });
+        }
+      }
     }
   }
 
@@ -1363,20 +1416,40 @@
   thumbCompetition.addEventListener("change", ensureCustomPreset);
   thumbRegulatory.addEventListener("change", ensureCustomPreset);
 
-  invIdentity.addEventListener("change", () => applyEntityConstraints());
-
-  applyEntityConstraints();
   applyThumbPreset(thumbPreset.value);
   ensureOnePagerOptions().catch(() => {});
+
+  entityChoice = createChoiceController("entity", "invIdentity");
+  venueChoice = createChoiceController("venue", "venue");
+  targetChoice = createChoiceController("target", "target");
+
+  if (entityChoice) {
+    entityChoice.onChange = () => {
+      applyEntityConstraints();
+    };
+  }
+
+  if (targetChoice) {
+    targetChoice.onChange = (value) => {
+      if (value === "family_friends") {
+        entityChoice?.set("individual");
+      } else if (entityChoice && entityChoice.value === "individual") {
+        entityChoice.set("public_pension");
+      }
+      applyEntityConstraints();
+    };
+  }
+
+  applyEntityConstraints();
 
   buildBtn.addEventListener("click", () => {
     if (!ensureDisclaimerAccepted()) return;
     buildBrief();
   });
   resetBtn.addEventListener("click", () => {
-    venue.value = "one_on_one";
-    target.value = "family_friends";
-    invIdentity.value = "individual";
+    entityChoice?.set("individual");
+    venueChoice?.set("one_on_one");
+    targetChoice?.set("family_friends");
     knowledge.value = "plain";
     thumbPreset.value = "custom";
     thumbCustom.classList.remove("hidden");
@@ -1392,15 +1465,6 @@
     resetOnePagers();
     applyEntityConstraints();
     applyThumbPreset(thumbPreset.value);
-  });
-
-  target.addEventListener("change", () => {
-    if (target.value === "family_friends") {
-      invIdentity.value = "individual";
-    } else if (invIdentity.value === "individual") {
-      invIdentity.value = "public_pension";
-    }
-    applyEntityConstraints();
   });
 
   copyTextBtn.addEventListener("click", () => {
