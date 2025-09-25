@@ -200,9 +200,6 @@
             // Withdrawal configuration - now starts after accumulation phase
             const [withdrawalPeriods, setWithdrawalPeriods] = useState(() => DEFAULT_WITHDRAWAL_PERIODS.map(period => ({ ...period })));
             
-            // Visual preferences
-            const [visualMode, setVisualMode] = useState('paths'); // 'paths', 'buckets', 'waterfall'
-
             // Labs feedback capture
             const [feedbackUseCase, setFeedbackUseCase] = useState('planning');
             const [feedbackOutcome, setFeedbackOutcome] = useState('exploring');
@@ -675,13 +672,28 @@
                 const outcomeRange = percentile90 - percentile10;
                 const relativePredictability = outcomeRange > 0 ? 1 - (outcomeRange / portfolio) : 1;
 
-                // Calculate total cash flows (savings and withdrawals)
-                const totalSaved = allPaths[0]?.cashFlows
-                    .filter((cf, i) => i < effectiveSavingsYears)
-                    .reduce((a, b) => a + Math.max(0, b), 0) || 0;
-                const totalWithdrawn = allPaths[0]?.cashFlows
-                    .filter((cf, i) => i >= effectiveSavingsYears)
-                    .reduce((a, b) => a + Math.abs(Math.min(0, b)), 0) || 0;
+                let aggregateSaved = 0;
+                let aggregateWithdrawn = 0;
+                const peakValues = [];
+
+                allPaths.forEach((path) => {
+                    const savedThisPath = path.cashFlows
+                        .filter((cf, i) => i < effectiveSavingsYears)
+                        .reduce((acc, cf) => acc + Math.max(0, cf), 0);
+                    const withdrawnThisPath = path.cashFlows
+                        .filter((cf, i) => i >= effectiveSavingsYears)
+                        .reduce((acc, cf) => acc + Math.abs(Math.min(0, cf)), 0);
+                    aggregateSaved += savedThisPath;
+                    aggregateWithdrawn += withdrawnThisPath;
+                    peakValues.push(Math.max(...path.path));
+                });
+
+                const averageSaved = allPaths.length > 0 ? aggregateSaved / allPaths.length : 0;
+                const averageWithdrawn = allPaths.length > 0 ? aggregateWithdrawn / allPaths.length : 0;
+
+                peakValues.sort((a, b) => a - b);
+                const medianPeak = peakValues.length > 0 ? peakValues[Math.floor(peakValues.length / 2)] : 0;
+                const peak90 = peakValues.length > 0 ? peakValues[Math.floor(peakValues.length * 0.9)] : 0;
 
                 return {
                     allPaths,
@@ -701,9 +713,10 @@
                     effectiveReturn: params.expectedReturn,
                     effectiveVolatility: params.volatility,
                     mix: normalizedMix,
-                    totalSaved,
-                    totalWithdrawn,
-                    peakValue: Math.max(...allPaths.map(p => Math.max(...p.path))),
+                    averageSaved,
+                    averageWithdrawn,
+                    medianPeak,
+                    peak90,
                     savingsYearsUsed: effectiveSavingsYears,
                     withdrawalScheduleUsed: effectiveWithdrawalPeriods,
                     simulationsRun: effectiveSimulations
@@ -2073,261 +2086,98 @@
                                 <h2 id="simulator-results" className="sr-only">Simulation Results</h2>
                                 {results ? (
                                     <>
-                                        {/* Visual Mode Toggle */}
-                                        <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 mb-6">
-                                            <div className="flex justify-between items-center mb-4">
-                                                <h3 className="text-lg font-semibold">Visualization Style</h3>
-                                                <div className="flex gap-2">
-                                                    <button
-                                                        onClick={() => setVisualMode('paths')}
-                                                        className={`px-3 py-1 rounded text-sm ${visualMode === 'paths' ? 'bg-blue-600 text-white' : 'bg-gray-100'}`}
-                                                    >
-                                                        Paths
-                                                    </button>
-                                                    <button
-                                                        onClick={() => setVisualMode('buckets')}
-                                                        className={`px-3 py-1 rounded text-sm ${visualMode === 'buckets' ? 'bg-blue-600 text-white' : 'bg-gray-100'}`}
-                                                    >
-                                                        Buckets
-                                                    </button>
-                                                    <button
-                                                        onClick={() => setVisualMode('waterfall')}
-                                                        className={`px-3 py-1 rounded text-sm ${visualMode === 'waterfall' ? 'bg-blue-600 text-white' : 'bg-gray-100'}`}
-                                                    >
-                                                        Tax Flow
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            
-                                            {/* Bucket Visualization */}
-                                            {visualMode === 'buckets' && (
-                                                <div className="space-y-4">
-                                                    <div className="grid grid-cols-3 gap-4">
-                                                        <div className="text-center">
-                                                            <div className="h-32 bg-gradient-to-t from-green-600 to-green-400 rounded-lg relative overflow-hidden">
-                                                                <div className="absolute bottom-0 w-full bg-green-700 transition-all duration-500"
-                                                                     style={{ height: `${accountTypes.taxable}%` }}>
-                                                                </div>
-                                                                <div className="absolute inset-0 flex items-center justify-center text-white font-bold">
-                                                                    {accountTypes.taxable}%
-                                                                </div>
-                                                            </div>
-                                                            <p className="text-xs mt-2 font-medium text-green-700">Taxable</p>
-                                                            <p className="text-xs text-gray-500">Lower tax on gains</p>
-                                                        </div>
-                                                        
-                                                        <div className="text-center">
-                                                            <div className="h-32 bg-gradient-to-t from-amber-600 to-amber-400 rounded-lg relative overflow-hidden">
-                                                                <div className="absolute bottom-0 w-full bg-amber-700 transition-all duration-500"
-                                                                     style={{ height: `${accountTypes.taxDeferred}%` }}>
-                                                                </div>
-                                                                <div className="absolute inset-0 flex items-center justify-center text-white font-bold">
-                                                                    {accountTypes.taxDeferred}%
-                                                                </div>
-                                                            </div>
-                                                            <p className="text-xs mt-2 font-medium text-amber-700">Tax-Deferred</p>
-                                                            <p className="text-xs text-gray-500">"Tax dirt" - pay later</p>
-                                                        </div>
-                                                        
-                                                        <div className="text-center">
-                                                            <div className="h-32 bg-gradient-to-t from-blue-600 to-blue-400 rounded-lg relative overflow-hidden">
-                                                                <div className="absolute bottom-0 w-full bg-blue-700 transition-all duration-500"
-                                                                     style={{ height: `${accountTypes.roth}%` }}>
-                                                                </div>
-                                                                <div className="absolute inset-0 flex items-center justify-center text-white font-bold">
-                                                                    {accountTypes.roth}%
-                                                                </div>
-                                                            </div>
-                                                            <p className="text-xs mt-2 font-medium text-blue-700">Roth</p>
-                                                            <p className="text-xs text-gray-500">"Tax-free sky"</p>
-                                                        </div>
-                                                    </div>
-                                                    
-                                                    <div className="p-3 bg-gray-50 rounded-lg">
-                                                        <p className="text-xs text-gray-600">
-                                                            <strong>Smart Withdrawal Sequence:</strong> Fill standard deduction ({standardDeduction.toLocaleString()}) with tax-deferred first, 
-                                                            then tap taxable accounts, preserving tax-free Roth growth. This TDD strategy can save 24-49% in lifetime taxes.
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            )}
-                                            
-                                            {/* Tax Waterfall */}
-                                            {visualMode === 'waterfall' && results && (
-                                                <div className="space-y-3">
-                                                    <div className="relative">
-                                                        <div className="flex items-center justify-between mb-2">
-                                                            <span className="text-sm font-medium">Withdrawal Sources (Year 15)</span>
-                                                            <span className="text-sm text-gray-500">Tax Impact</span>
-                                                        </div>
-                                                        
-                                                        <div className="space-y-2">
-                                                            <div className="flex items-center">
-                                                                <div className="w-24 text-xs">Std Deduction</div>
-                                                                <div className="flex-1 h-8 bg-green-100 rounded flex items-center px-2">
-                                                                    <span className="text-xs">$14,600 tax-free</span>
-                                                                </div>
-                                                                <div className="w-16 text-right text-xs text-green-600">$0</div>
-                                                            </div>
-                                                            
-                                                            <div className="flex items-center">
-                                                                <div className="w-24 text-xs">Tax-Deferred</div>
-                                                                <div className="flex-1 h-8 bg-amber-100 rounded flex items-center px-2">
-                                                                    <span className="text-xs">$25,400 @ {retirementTaxBracket}%</span>
-                                                                </div>
-                                                                <div className="w-16 text-right text-xs text-amber-600">
-                                                                    ${(25400 * retirementTaxBracket / 100).toFixed(0)}
-                                                                </div>
-                                                            </div>
-                                                            
-                                                            <div className="flex items-center">
-                                                                <div className="w-24 text-xs">Taxable</div>
-                                                                <div className="flex-1 h-8 bg-blue-100 rounded flex items-center px-2">
-                                                                    <span className="text-xs">$20,000 @ 15% LTCG</span>
-                                                                </div>
-                                                                <div className="w-16 text-right text-xs text-blue-600">$3,000</div>
-                                                            </div>
-                                                            
-                                                            {socialSecurityIncome > 0 && (
-                                                                <div className="flex items-center">
-                                                                    <div className="w-24 text-xs">Soc Security</div>
-                                                                    <div className="flex-1 h-8 bg-purple-100 rounded flex items-center px-2">
-                                                                        <span className="text-xs">${socialSecurityIncome.toLocaleString()} (85% taxable)</span>
-                                                                    </div>
-                                                                    <div className="w-16 text-right text-xs text-purple-600">
-                                                                        ${(socialSecurityIncome * 0.85 * retirementTaxBracket / 100).toFixed(0)}
-                                                                    </div>
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                        
-                                                        <div className="mt-3 pt-3 border-t flex justify-between">
-                                                            <span className="text-sm font-medium">Total Withdrawal</span>
-                                                            <span className="text-sm font-bold">${(60000).toLocaleString()}</span>
-                                                        </div>
-                                                        <div className="flex justify-between">
-                                                            <span className="text-sm text-gray-600">Effective Tax</span>
-                                                            <span className="text-sm text-red-600">
-                                                                ${((25400 * retirementTaxBracket / 100) + 3000).toLocaleString()} 
-                                                                ({(((25400 * retirementTaxBracket / 100) + 3000) / 60000 * 100).toFixed(1)}%)
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            )}
-                                        </div>
-                                        <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
-                                            <h2 className="text-lg sm:text-xl font-semibold mb-4">Results Overview</h2>
-                                            
-                                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6">
+                                        <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 mb-6 space-y-4">
+                                            <h3 className="text-lg font-semibold">Performance snapshot</h3>
+                                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
                                                 <div className="bg-gradient-to-br from-green-50 to-green-100 p-3 sm:p-4 rounded-lg">
-                                                    <div className="text-xl sm:text-2xl font-bold text-green-700">
-                                                        {results.successRate.toFixed(1)}%
-                                                    </div>
-                                                    <div className="text-xs sm:text-sm text-green-600">Success Rate</div>
+                                                    <div className="text-xl sm:text-2xl font-bold text-green-700">{results.successRate.toFixed(1)}%</div>
+                                                    <div className="text-xs sm:text-sm text-green-600">Success rate</div>
                                                 </div>
                                                 <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-3 sm:p-4 rounded-lg">
-                                                    <div className="text-xl sm:text-2xl font-bold text-blue-700">
-                                                        ${(results.medianFinal / 1000000).toFixed(2)}M
-                                                    </div>
-                                                    <div className="text-xs sm:text-sm text-blue-600">Median Final</div>
+                                                    <div className="text-xl sm:text-2xl font-bold text-blue-700">{formatCurrency(results.medianFinal)}</div>
+                                                    <div className="text-xs sm:text-sm text-blue-600">Median ending value</div>
                                                 </div>
-                                                {results.totalSaved > 0 && (
-                                                    <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 p-3 sm:p-4 rounded-lg">
-                                                        <div className="text-xl sm:text-2xl font-bold text-indigo-700">
-                                                            ${(results.totalSaved / 1000000).toFixed(1)}M
-                                                        </div>
-                                                        <div className="text-xs sm:text-sm text-indigo-600">Total Saved</div>
-                                                    </div>
-                                                )}
+                                                <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 p-3 sm:p-4 rounded-lg">
+                                                    <div className="text-xl sm:text-2xl font-bold text-indigo-700">{formatCurrency(results.averageSaved)}</div>
+                                                    <div className="text-xs sm:text-sm text-indigo-600">Avg. capital added</div>
+                                                </div>
                                                 <div className="bg-gradient-to-br from-amber-50 to-amber-100 p-3 sm:p-4 rounded-lg">
-                                                    <div className="text-xl sm:text-2xl font-bold text-amber-700">
-                                                        ${(results.totalWithdrawn / 1000000).toFixed(1)}M
-                                                    </div>
-                                                    <div className="text-xs sm:text-sm text-amber-600">Total Withdrawn</div>
+                                                    <div className="text-xl sm:text-2xl font-bold text-amber-700">{formatCurrency(results.averageWithdrawn)}</div>
+                                                    <div className="text-xs sm:text-sm text-amber-600">Avg. withdrawals funded</div>
                                                 </div>
-                                                {results.peakValue && (
-                                                    <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-3 sm:p-4 rounded-lg">
-                                                        <div className="text-xl sm:text-2xl font-bold text-purple-700">
-                                                            ${(results.peakValue / 1000000).toFixed(1)}M
-                                                        </div>
-                                                        <div className="text-xs sm:text-sm text-purple-600">Peak Value</div>
-                                                    </div>
-                                                )}
-                                                {estimationSummary?.mode === 'estimate' && (
-                                                    <div className="bg-gradient-to-br from-slate-50 to-slate-100 p-3 sm:p-4 rounded-lg border border-slate-200">
-                                                        <div className="text-xl sm:text-2xl font-bold text-slate-800">
-                                                            {recommendedStartYear === null
-                                                                ? 'Needs More Runway'
-                                                                : recommendedStartYear === 0
-                                                                    ? 'Ready Now'
-                                                                    : `${recommendedStartYear} yr${recommendedStartYear === 1 ? '' : 's'} runway`}
-                                                        </div>
-                                                        <div className="text-xs sm:text-sm text-slate-600">
-                                                            {recommendedStartYear === null
-                                                                ? `Even after extending the savings runway, the plan stayed below the ${Math.round(CONFIG.ESTIMATION_SUCCESS_THRESHOLD * 100)}% success threshold.`
-                                                                : `Earliest withdrawal start with >= ${Math.round(CONFIG.ESTIMATION_SUCCESS_THRESHOLD * 100)}% success. Confidence ${recommendedSuccessRate != null ? recommendedSuccessRate.toFixed(1) : 'N/A'}%.`}
-                                                        </div>
-                                                    </div>
-                                                )}
+                                                <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-3 sm:p-4 rounded-lg md:col-span-2">
+                                                    <div className="text-xl sm:text-2xl font-bold text-purple-700">{formatCurrency(results.medianPeak)}</div>
+                                                    <div className="text-xs sm:text-sm text-purple-600">Median peak balance (90th percentile: {formatCurrency(results.peak90)})</div>
+                                                </div>
                                             </div>
 
-                                            {estimationSummary?.mode === 'estimate' && estimationSummary.testedStarts?.length > 0 && (
-                                                <div className="mt-4 rounded-lg border border-blue-100 bg-blue-50/60 p-4">
-                                                    <p className="text-xs sm:text-sm text-blue-900">
-                                                        We scanned multiple starting points to stay above the {Math.round(CONFIG.ESTIMATION_SUCCESS_THRESHOLD * 100)}% success threshold.
-                                                    </p>
-                                                    <div className="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs text-blue-900">
-                                                        {estimationSummary.testedStarts.slice(0, 6).map((item) => (
-                                                            <div key={item.startYear} className={`rounded-md border px-3 py-2 ${item.startYear === recommendedStartYear ? 'border-blue-500 bg-white/70 font-semibold' : 'border-blue-200 bg-white/40'}`}>
-                                                                <div>{item.startYear === 0 ? 'Start now' : `${item.startYear} yr${item.startYear === 1 ? '' : 's'} runway`}</div>
-                                                                <div className="text-[11px] text-blue-700">{item.successRate.toFixed(1)}% success</div>
-                                                            </div>
-                                                        ))}
+                                            {estimationSummary?.mode === 'estimate' && (
+                                                <div className="bg-gradient-to-br from-slate-50 to-slate-100 p-3 sm:p-4 rounded-lg border border-slate-200">
+                                                    <div className="text-xl sm:text-2xl font-bold text-slate-800">
+                                                        {recommendedStartYear === null
+                                                            ? 'Needs more runway'
+                                                            : recommendedStartYear === 0
+                                                                ? 'Ready now'
+                                                                : `${recommendedStartYear} yr${recommendedStartYear === 1 ? '' : 's'} runway`}
+                                                    </div>
+                                                    <div className="text-xs sm:text-sm text-slate-600">
+                                                        {recommendedStartYear === null
+                                                            ? `Even after extending the savings runway, the plan stayed below the ${Math.round(CONFIG.ESTIMATION_SUCCESS_THRESHOLD * 100)}% success threshold.`
+                                                            : `Earliest withdrawal start with >= ${Math.round(CONFIG.ESTIMATION_SUCCESS_THRESHOLD * 100)}% success. Confidence ${recommendedSuccessRate != null ? recommendedSuccessRate.toFixed(1) : 'N/A'}%.`}
                                                     </div>
                                                 </div>
                                             )}
+                                        </div>
 
-                                            {/* Key Insight */}
-                                            <div className="p-3 sm:p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg">
-                                                <h3 className="font-semibold text-blue-900 mb-2 text-sm sm:text-base">Analysis</h3>
-                                                <p className="text-xs sm:text-sm text-blue-800 leading-relaxed">
-                                                    {savingsYears > 0 
-                                                        ? `With ${savingsYears} years of saving at ${savingsRate}% (${(currentIncome * savingsRate / 100 / 1000).toFixed(0)}k/year), your portfolio could grow significantly before retirement. ` 
-                                                        : ''}
-                                                    {strategyMix.growth >= 80 
-                                                        ? `Your ${strategyMix.growth}% Growth allocation maximizes returns (${results.effectiveReturn.toFixed(1)}%) during accumulation but adds volatility.`
-                                                        : strategyMix.growth >= 50
-                                                        ? `Your balanced ${strategyMix.growth}% Growth allocation provides ${results.effectiveReturn.toFixed(1)}% returns with ${results.effectiveVolatility.toFixed(1)}% volatility.`
-                                                        : `Conservative ${strategyMix.growth}% Growth allocation emphasizes stability with ${results.effectiveVolatility.toFixed(1)}% volatility.`}
-                                                    {savingsRate < 0 && ` Warning: Negative savings rate means you're depleting capital even before retirement.`}
-                                                    {stressScenario && ` (Including ${STRESS_SCENARIOS[stressScenario].name} scenario)`}
-                                                </p>
+                                        <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 mb-6 space-y-4">
+                                            <h3 className="text-lg font-semibold">Account structure & withdrawal playbook</h3>
+                                            <div className="grid grid-cols-3 gap-4">
+                                                <div className="text-center">
+                                                    <div className="h-32 bg-gradient-to-t from-green-600 to-green-400 rounded-lg relative overflow-hidden">
+                                                        <div className="absolute bottom-0 w-full bg-green-700 transition-all duration-500" style={{ height: `${accountTypes.taxable}%` }}></div>
+                                                        <div className="absolute inset-0 flex items-center justify-center text-white font-bold">{accountTypes.taxable}%</div>
+                                                    </div>
+                                                    <p className="text-xs mt-2 font-medium text-green-700">Taxable</p>
+                                                    <p className="text-xs text-gray-500">Flexible, long-term gains</p>
+                                                </div>
+                                                <div className="text-center">
+                                                    <div className="h-32 bg-gradient-to-t from-amber-600 to-amber-400 rounded-lg relative overflow-hidden">
+                                                        <div className="absolute bottom-0 w-full bg-amber-700 transition-all duration-500" style={{ height: `${accountTypes.taxDeferred}%` }}></div>
+                                                        <div className="absolute inset-0 flex items-center justify-center text-white font-bold">{accountTypes.taxDeferred}%</div>
+                                                    </div>
+                                                    <p className="text-xs mt-2 font-medium text-amber-700">Tax-deferred</p>
+                                                    <p className="text-xs text-gray-500">Ordinary income on exit</p>
+                                                </div>
+                                                <div className="text-center">
+                                                    <div className="h-32 bg-gradient-to-t from-blue-600 to-blue-400 rounded-lg relative overflow-hidden">
+                                                        <div className="absolute bottom-0 w-full bg-blue-700 transition-all duration-500" style={{ height: `${accountTypes.roth}%` }}></div>
+                                                        <div className="absolute inset-0 flex items-center justify-center text-white font-bold">{accountTypes.roth}%</div>
+                                                    </div>
+                                                    <p className="text-xs mt-2 font-medium text-blue-700">Roth</p>
+                                                    <p className="text-xs text-gray-500">Keep for longest horizon</p>
+                                                </div>
+                                            </div>
+                                            <div className="p-3 bg-gray-50 rounded-lg text-xs text-gray-600">
+                                                <strong>Withdrawal order:</strong> fill the ${standardDeduction.toLocaleString()} deduction with tax-deferred dollars, then harvest taxable accounts, preserve Roth balances for longevity.
                                             </div>
                                         </div>
 
-                                        {/* Main Chart */}
                                         <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
-                                            <div style={{ height: '400px' }}>
-                                                <canvas ref={pathsChartRef}></canvas>
-                                            </div>
+                                            <h3 className="text-lg font-semibold mb-3">Portfolio paths</h3>
+                                            <div style={{ height: '400px' }}><canvas ref={pathsChartRef}></canvas></div>
                                         </div>
 
                                         {(results.histogram?.labels.length || 0) > 0 && (
                                             <div className="grid gap-4 sm:grid-cols-1 lg:grid-cols-2">
                                                 <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
                                                     <h3 className="text-md sm:text-lg font-semibold mb-3">Distribution of final portfolio values</h3>
-                                                    <p className="text-xs text-gray-500 mb-4">Shows how often the simulations finish in each value band.</p>
-                                                    <div style={{ height: '260px' }}>
-                                                        <canvas ref={distributionChartRef}></canvas>
-                                                    </div>
+                                                    <p className="text-xs text-gray-500 mb-4">Each bar shows how many ending balances land in the band.</p>
+                                                    <div style={{ height: '260px' }}><canvas ref={distributionChartRef}></canvas></div>
                                                 </div>
                                                 <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
                                                     <h3 className="text-md sm:text-lg font-semibold mb-3">Timing of portfolio depletion</h3>
-                                                    <p className="text-xs text-gray-500 mb-4">If balances hit zero, we note the first year it happens; surviving paths land in "Never".</p>
-                                                    <div style={{ height: '260px' }}>
-                                                        <canvas ref={depletionChartRef}></canvas>
-                                                    </div>
+                                                    <p className="text-xs text-gray-500 mb-4">“Never” indicates balances stay positive through the entire horizon.</p>
+                                                    <div style={{ height: '260px' }}><canvas ref={depletionChartRef}></canvas></div>
                                                 </div>
                                             </div>
                                         )}
@@ -2337,16 +2187,14 @@
                                                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                                                     <div>
                                                         <h3 className="text-md sm:text-lg font-semibold">Stress test: 35% market shock</h3>
-                                                        <p className="text-xs text-gray-500">Applies a one-time {results.stressTest.shockPercent}% drop to all assets in year {results.stressTest.shockYear} with the same savings and withdrawal plan.</p>
+                                                        <p className="text-xs text-gray-500">Applies a one-time {results.stressTest.shockPercent}% drop across all assets in year {results.stressTest.shockYear} while keeping contributions and withdrawals identical.</p>
                                                     </div>
                                                     <div className="text-xs sm:text-sm text-gray-600">
                                                         <div>Median change: {results.stressTest.medianDelta >= 0 ? '+' : ''}{formatCurrency(results.stressTest.medianDelta)}</div>
                                                         <div>Success rate change: {results.stressTest.successDelta >= 0 ? '+' : ''}{results.stressTest.successDelta.toFixed(1)}%</div>
                                                     </div>
                                                 </div>
-                                                <div style={{ height: '280px' }} className="mt-4">
-                                                    <canvas ref={stressChartRef}></canvas>
-                                                </div>
+                                                <div style={{ height: '280px' }} className="mt-4"><canvas ref={stressChartRef}></canvas></div>
                                             </div>
                                         )}
 
@@ -2355,26 +2203,47 @@
                                                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                                                     <div>
                                                         <h3 className="text-md sm:text-lg font-semibold">Tax-efficient drawdown impact</h3>
-                                                        <p className="text-xs text-gray-500">Compares optimized withdrawals (standard deduction + taxable-first ordering) against a simple pre-tax drawdown.</p>
+                                                        <p className="text-xs text-gray-500">Optimized withdrawals compared with a naive pre-tax strategy.</p>
                                                     </div>
                                                     <div className="grid grid-cols-2 gap-3 text-xs sm:text-sm text-gray-700">
-                                                        <div>
-                                                            <div className="font-semibold text-green-600">{results.taxSensitivity.successDelta >= 0 ? '+' : ''}{results.taxSensitivity.successDelta.toFixed(1)}%</div>
-                                                            <p className="text-[11px] uppercase tracking-wide text-gray-500">Success rate delta</p>
-                                                        </div>
-                                                        <div>
-                                                            <div className="font-semibold text-blue-600">{results.taxSensitivity.medianDelta >= 0 ? '+' : ''}{formatCurrency(results.taxSensitivity.medianDelta)}</div>
-                                                            <p className="text-[11px] uppercase tracking-wide text-gray-500">Median value delta</p>
-                                                        </div>
-                                                        <div>
-                                                            <div className="font-semibold text-amber-600">{results.taxSensitivity.withdrawDelta >= 0 ? '+' : ''}{formatCurrency(results.taxSensitivity.withdrawDelta)}</div>
-                                                            <p className="text-[11px] uppercase tracking-wide text-gray-500">Total withdrawals delta</p>
-                                                        </div>
-                                                        <div>
-                                                            <div className="font-semibold text-gray-700">Tax-aware: {formatCurrency(results.taxSensitivity.taxAwareWithdrawn)}</div>
-                                                            <p className="text-[11px] uppercase tracking-wide text-gray-500">Vs. simple: {formatCurrency(results.taxSensitivity.simpleWithdrawn)}</p>
-                                                        </div>
+                                                        <div><div className="font-semibold text-green-600">{results.taxSensitivity.successDelta >= 0 ? '+' : ''}{results.taxSensitivity.successDelta.toFixed(1)}%</div><p className="text-[11px] uppercase tracking-wide text-gray-500">Success rate delta</p></div>
+                                                        <div><div className="font-semibold text-blue-600">{results.taxSensitivity.medianDelta >= 0 ? '+' : ''}{formatCurrency(results.taxSensitivity.medianDelta)}</div><p className="text-[11px] uppercase tracking-wide text-gray-500">Median value delta</p></div>
+                                                        <div><div className="font-semibold text-amber-600">{results.taxSensitivity.withdrawDelta >= 0 ? '+' : ''}{formatCurrency(results.taxSensitivity.withdrawDelta)}</div><p className="text-[11px] uppercase tracking-wide text-gray-500">Avg. withdrawals delta</p></div>
+                                                        <div><div className="font-semibold text-gray-700">Tax-aware: {formatCurrency(results.taxSensitivity.taxAwareWithdrawn)}</div><p className="text-[11px] uppercase tracking-wide text-gray-500">Vs. simple: {formatCurrency(results.taxSensitivity.simpleWithdrawn)}</p></div>
                                                     </div>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
+                                            <h3 className="text-lg font-semibold mb-3">How these estimates are built</h3>
+                                            <div className="grid gap-3 text-xs sm:text-sm text-gray-700">
+                                                <p><strong>{results.simulationsRun.toLocaleString()}</strong> Monte Carlo paths combine your strategy mix ({results.mix.growth.toFixed(0)}% growth / {results.mix.income.toFixed(0)}% income / {results.mix.diversification.toFixed(0)}% diversification) with {results.effectiveReturn.toFixed(1)}% expected return and {results.effectiveVolatility.toFixed(1)}% volatility after rebalancing costs.</p>
+                                                <p>Each simulation tracks saving ({results.savingsYearsUsed} years at {savingsRate}%), your withdrawal schedule, inflation, optional macro stress events, and fat-tailed shocks.</p>
+                                                <p>We record every cash flow and balance, compute medians/percentiles, and compare tax-aware vs. naive drawdowns to show the benefit of sequencing withdrawals.</p>
+                                            </div>
+                                        </div>
+
+                                        <div className="p-3 sm:p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg">
+                                            <h3 className="font-semibold text-blue-900 mb-2 text-sm sm:text-base">Narrative takeaway</h3>
+                                            <p className="text-xs sm:text-sm text-blue-800 leading-relaxed">
+                                                {savingsYears > 0 ? `With ${savingsYears} years of saving at ${savingsRate}% (${(currentIncome * savingsRate / 100 / 1000).toFixed(1)}k/year), your portfolio builds runway before retirement. ` : ''}
+                                                {strategyMix.growth >= 80 ? `Your ${strategyMix.growth}% growth tilt targets ${results.effectiveReturn.toFixed(1)}% expected returns but carries higher volatility.` : strategyMix.growth >= 50 ? `Your balanced ${strategyMix.growth}% allocation targets ${results.effectiveReturn.toFixed(1)}% returns with ${results.effectiveVolatility.toFixed(1)}% volatility.` : `A conservative ${strategyMix.growth}% mix prioritizes stability with ${results.effectiveVolatility.toFixed(1)}% volatility.`}
+                                                {savingsRate < 0 && ` Warning: a negative saving rate means you're depleting capital even before retirement.`}
+                                                {stressScenario && ` Stress scenario applied: ${STRESS_SCENARIOS[stressScenario].name}.`}
+                                            </p>
+                                        </div>
+
+                                        {estimationSummary?.mode === 'estimate' && estimationSummary.testedStarts?.length > 0 && (
+                                            <div className="mt-4 rounded-lg border border-blue-100 bg-blue-50/60 p-4">
+                                                <p className="text-xs sm:text-sm text-blue-900">We scanned multiple starting points to stay above the {Math.round(CONFIG.ESTIMATION_SUCCESS_THRESHOLD * 100)}% success threshold.</p>
+                                                <div className="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs text-blue-900">
+                                                    {estimationSummary.testedStarts.slice(0, 6).map((item) => (
+                                                        <div key={item.startYear} className={`rounded-md border px-3 py-2 ${item.startYear === recommendedStartYear ? 'border-blue-500 bg-white/70 font-semibold' : 'border-blue-200 bg-white/40'}`}>
+                                                            <div>{item.startYear === 0 ? 'Start now' : `${item.startYear} yr${item.startYear === 1 ? '' : 's'} runway`}</div>
+                                                            <div className="text-[11px] text-blue-700">{item.successRate.toFixed(1)}% success</div>
+                                                        </div>
+                                                    ))}
                                                 </div>
                                             </div>
                                         )}
@@ -2385,14 +2254,11 @@
                                             <svg className="mx-auto h-12 sm:h-16 w-12 sm:w-16 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                                             </svg>
-                                            <h3 className="text-lg sm:text-xl font-medium text-gray-900 mb-2">Ready to Simulate</h3>
-                                            <p className="text-sm sm:text-base text-gray-500 mb-4">
-                                                Configure your portfolio strategy and run {simulations.toLocaleString()} simulations
-                                            </p>
+                                            <h3 className="text-lg sm:text-xl font-medium text-gray-900 mb-2">Ready to simulate</h3>
+                                            <p className="text-sm sm:text-base text-gray-500 mb-4">Configure your portfolio strategy and run {simulations.toLocaleString()} simulations</p>
                                         </div>
                                     </div>
                                 )}
-                            
                             </section>
                         </div>
 
