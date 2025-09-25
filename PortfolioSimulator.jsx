@@ -173,7 +173,7 @@
             
             // Core inputs with validation
             const [portfolio, setPortfolio] = useState(CONFIG.DEFAULT_PORTFOLIO);
-            const [currentIncome, setCurrentIncome] = useState(100000);
+            const [currentIncome, setCurrentIncome] = useState(80610);
             const [savingsRate, setSavingsRate] = useState(15); // Percentage of income saved (can be negative)
             const [savingsYears, setSavingsYears] = useState(10); // Years until retirement/withdrawal starts
             const [withdrawalStartMode, setWithdrawalStartMode] = useState('estimate');
