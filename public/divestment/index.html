@@ -41,7 +41,7 @@
     </header>
 
     <main class="px-6 pb-16 sm:px-10">
-      <div class="mx-auto grid max-w-5xl gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
+      <section class="mx-auto max-w-5xl space-y-6">
         <!-- Builder -->
         <section class="panel rounded-3xl p-6 sm:p-8">
           <h2 class="text-lg font-semibold text-white">1) Setup</h2>
@@ -61,12 +61,12 @@
             <label class="block">
               <span class="mb-1 block text-sm text-slate-300">Target Decision Maker</span>
               <select id="target" class="w-full rounded-md border border-slate-600/60 bg-slate-900/50 px-3 py-2 text-sm">
+                <option value="family_friends">Family / Friends</option>
                 <option value="cio">CIO / Investment Officer</option>
                 <option value="consultant">Investment Consultant</option>
                 <option value="treasurer">Treasurer / Finance Director</option>
                 <option value="trustee">Board / Trustee</option>
                 <option value="council_member">Council / Committee Member</option>
-                <option value="family_friends">Family / Friends</option>
               </select>
             </label>
 
@@ -81,6 +81,14 @@
                 <option value="insurance">Insurance General Account</option>
                 <option value="central_bank">Central Bank / Official Institution</option>
                 <option value="government">Government (City/County/State bond portfolios)</option>
+              </select>
+            </label>
+
+            <label class="block">
+              <span class="mb-1 block text-sm text-slate-300">Knowledge Level</span>
+              <select id="knowledge" class="w-full rounded-md border border-slate-600/60 bg-slate-900/50 px-3 py-2 text-sm">
+                <option value="plain">Plain English</option>
+                <option value="technical">Technical / Nerd</option>
               </select>
             </label>
 
@@ -131,7 +139,7 @@
             <div class="mt-2 flex flex-wrap items-center gap-3">
               <button id="buildBtn" type="button" class="rounded-md bg-sky-500 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-sky-400">Build Brief</button>
               <button id="resetBtn" type="button" class="rounded-md border border-slate-600/60 px-4 py-2 text-sm text-slate-200 hover:border-slate-400">Reset</button>
-              <span class="text-xs text-slate-400">Tip: Press <span class="kbd">B</span> to rebuild, <span class="kbd">P</span> to print</span>
+              <span class="text-xs text-slate-400">Tip: Press <span class="kbd">B</span> to rebuild.</span>
             </div>
           </form>
 
@@ -187,9 +195,10 @@
         <section class="panel rounded-3xl p-0">
           <div class="flex items-center justify-between border-b border-slate-700/40 px-6 py-4">
             <h2 class="text-lg font-semibold text-white">2) Brief</h2>
-            <div class="no-print flex gap-2">
+            <div class="no-print flex flex-wrap gap-2">
               <button id="copyAll" class="rounded-md border border-slate-600/60 px-3 py-2 text-sm text-slate-200 hover:border-slate-400">Copy All</button>
-              <button id="printBtn" class="rounded-md bg-emerald-500 px-3 py-2 text-sm font-semibold text-white hover:bg-emerald-400">Print / Save PDF</button>
+              <button id="downloadPlain" class="rounded-md bg-emerald-500 px-3 py-2 text-sm font-semibold text-white hover:bg-emerald-400">Download Markdown (Plain)</button>
+              <button id="downloadTechnical" class="rounded-md bg-sky-500 px-3 py-2 text-sm font-semibold text-white hover:bg-sky-400">Download Markdown (Nerd)</button>
             </div>
           </div>
 
@@ -197,7 +206,7 @@
             <p class="text-slate-400">Fill the setup at left, then click Build Brief.</p>
           </article>
         </section>
-      </div>
+      </section>
 
       <section class="mx-auto mt-6 max-w-5xl rounded-3xl border border-slate-700/40 p-6 sm:p-8">
         <h3 class="text-sm font-semibold uppercase tracking-[0.3em] text-slate-400">Methodology & Sources</h3>

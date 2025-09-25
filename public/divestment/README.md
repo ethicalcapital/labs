@@ -5,8 +5,8 @@ Purpose
 
 Use
 - Folder is served at /divestment/ on the site (legacy /public/divestment/ redirects).
-- Choose Audience, Target decision maker, Investor Identity, Thumbprint, Local Name, and Objective.
-- Click “Build Brief” → “Print / Save PDF” or “Copy All”.
+- Choose Venue, Target decision maker, Investor Identity, Knowledge Level, Thumbprint, Local Name, and Objective.
+- Click “Build Brief” → “Download Markdown” (Plain or Nerd) or “Copy All”.
 
 Structure
 - index.html: UI + print styles.

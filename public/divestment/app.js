@@ -3,6 +3,7 @@
   const venue = el('venue');
   const target = el('target');
   const invIdentity = el('invIdentity');
+  const knowledge = el('knowledge');
   const thumbMission = el('thumb_mission');
   const thumbCompetition = el('thumb_competition');
   const thumbRegulatory = el('thumb_regulatory');
@@ -12,7 +13,8 @@
   const buildBtn = el('buildBtn');
   const resetBtn = el('resetBtn');
   const copyAll = el('copyAll');
-  const printBtn = el('printBtn');
+  const downloadPlain = el('downloadPlain');
+  const downloadTechnical = el('downloadTechnical');
   const sourcesList = el('sources');
   const fbUse = el('fb_usecase');
   const fbOutcome = el('fb_outcome');
@@ -21,7 +23,52 @@
   const fbSend = el('fb_send');
   const fbStatus = el('fb_status');
 
-  const state = { data: null };
+  const state = { data: null, last: null };
+
+  const VENUE_LABELS = {
+    one_on_one: '1:1 conversation',
+    small_group: 'Small group meeting',
+    committee_hearing: 'Committee hearing',
+    full_board_meeting: 'Full board/council meeting',
+    public_testimony: 'Public testimony / town hall',
+    written_memo: 'Written memo / email'
+  };
+
+  const TARGET_LABELS = {
+    family_friends: 'Family / Friends',
+    cio: 'CIO / Investment Officer',
+    consultant: 'Investment Consultant',
+    treasurer: 'Treasurer / Finance Director',
+    trustee: 'Board / Trustee',
+    council_member: 'Council / Committee Member'
+  };
+
+  const ENTITY_LABELS = {
+    swf: 'Sovereign Wealth Fund',
+    public_pension: 'Public Pension Plan',
+    corporate_pension: 'Corporate Pension Plan',
+    endowment: 'Endowment',
+    foundation: 'Foundation',
+    insurance: 'Insurance General Account',
+    central_bank: 'Central Bank / Official Institution',
+    government: 'Government Investor'
+  };
+
+  const KNOWLEDGE_LABELS = {
+    plain: 'Plain English',
+    technical: 'Technical / Nerd'
+  };
+
+  const MISSION_LABELS = {
+    purity: 'Values-driven (Purity)',
+    pragmatism: 'Risk-pragmatism (Conduct)'
+  };
+
+  const PRESSURE_LABELS = {
+    low: 'Low',
+    medium: 'Medium',
+    high: 'High'
+  };
 
   async function loadData() {
     if (state.data) return state.data;
@@ -87,6 +134,7 @@
       venue: venue.value,
       target: target.value,
       entityType: invIdentity.value,
+      knowledge: knowledge.value,
       thumb: { mission: thumbMission.value, competition: thumbCompetition.value, regulatory: thumbRegulatory.value },
       objective: objective.value,
       use_case: fbUse.value,
@@ -147,28 +195,52 @@
 
   async function buildBrief() {
     const data = await loadData();
-    const v = venue.value;
-    const tg = target.value;
-    const id = invIdentity.value;
-    const ln = (localName.value || '').trim();
-    const obj = objective.value;
+    const context = {
+      venue: venue.value,
+      target: target.value,
+      entity: invIdentity.value,
+      knowledge: knowledge.value,
+      localName: (localName.value || '').trim(),
+      objective: objective.value
+    };
+
     const thumb = {
       mission: thumbMission.value,
       competition: thumbCompetition.value,
       regulatory: thumbRegulatory.value,
     };
 
-    // Opening: audience + identity aware
-    const opening = (data.identity_openers?.[id]?.[v]) || (data.identity_openers?.[id]?.generic) || data.openers.generic;
+    const knowledgeLevel = context.knowledge;
+    const headings = knowledgeLevel === 'plain'
+      ? {
+          opening: 'Opening',
+          key: 'Key Points to Share',
+          counters: 'Likely Pushback & Responses',
+          guide: 'Investor Identity Map',
+          guideIntro: 'Use this identity map to match decision-maker constraints before proposing next steps.',
+          approach: 'Implementation Snapshot',
+          policy: 'Policy Alignment',
+          screening: 'Screening Intelligence'
+        }
+      : {
+          opening: 'Opening',
+          key: 'Key Points',
+          counters: 'Counterarguments & Responses',
+          guide: 'Investor Identity Guide',
+          guideIntro: 'Identity should shape the response. A two-person plan executes differently than NBIM.',
+          approach: 'Recommended Approach',
+          policy: 'Policy Alignment',
+          screening: data.screening_knowledge?.title || 'Screening as Cumulative Knowledge'
+        };
 
-    // Key points (fixed count)
+    const opening = (data.identity_openers?.[context.entity]?.[context.venue])
+      || (data.identity_openers?.[context.entity]?.generic)
+      || data.openers.generic;
+
     const points = pick(data.key_points, 6);
-
-    // Counters (fixed count)
     const counters = pick(data.counters, 4);
 
-    // Identity guide
-    const baseGuide = data.identity_guides?.[id] || {};
+    const baseGuide = data.identity_guides?.[context.entity] || {};
     const approach = deriveApproach({
       ask: baseGuide.ask || '',
       implementation: baseGuide.implementation || '',
@@ -177,23 +249,39 @@
       callout: baseGuide.callout || '',
     }, thumb);
 
-    // CIO callout if target suggests
-    const showCIO = (tg === 'cio' || tg === 'consultant');
-
-    // Model resolution
-    const showResolution = obj === 'resolution_support';
+    const showCIO = (context.target === 'cio' || context.target === 'consultant');
+    const showResolution = context.objective === 'resolution_support';
     const resolution = showResolution ? (data.model_resolution || '') : '';
-    const resolutionText = resolution.replaceAll('{localName}', ln || '[Jurisdiction]').trim();
-
-    // Next steps
+    const resolutionText = showResolution ? resolution.replaceAll('{localName}', context.localName || '[Jurisdiction]').trim() : '';
     const steps = data.next_steps || [];
 
-    // Render brief
+    const policyAlignment = data.policy_alignment || {};
+    const policyPrinciples = Array.isArray(policyAlignment.principles) ? policyAlignment.principles : [];
+    const policyLink = policyAlignment.policy_link || null;
+    const showPolicy = knowledgeLevel === 'technical' && policyPrinciples.length > 0;
+
+    const screeningData = data.screening_knowledge || {};
+    const screeningPoints = Array.isArray(screeningData.points) ? screeningData.points : [];
+    const screeningTitle = screeningData.title || 'Screening as Cumulative Knowledge';
+    const showScreening = knowledgeLevel === 'technical' && screeningPoints.length > 0;
+
+    const governmentSnippet = context.entity === 'government' ? (data.government_policy_snippet || '') : '';
+    const showGovernmentSnippet = Boolean(governmentSnippet);
+
+    const entityLabel = ENTITY_LABELS[context.entity] || context.entity;
+    const guideBullets = [
+      `Inputs: Capital, People, Processes, Information — scaled to ${entityLabel}.`,
+      'Enablers: Governance (decision rights, criteria), Culture (transparency, discipline), Technology (optimization, reporting).',
+      `Thumbprint: Mission/Ethics ${MISSION_LABELS[thumb.mission] || thumb.mission}, Competition ${PRESSURE_LABELS[thumb.competition] || thumb.competition}, Regulatory ${PRESSURE_LABELS[thumb.regulatory] || thumb.regulatory}.`
+    ];
+
+    const formatMultiline = (value) => sanitize(value).replace(/\n/g, '<br>');
+
     let html = '';
-    html += `<h3 class="mt-0">Opening</h3>`;
+    html += `<h3 class="mt-0">${sanitize(headings.opening)}</h3>`;
     html += `<p>${sanitize(opening)}</p>`;
 
-    html += `<h3>Key Points</h3>`;
+    html += `<h3>${sanitize(headings.key)}</h3>`;
     html += '<ol>';
     for (const p of points) {
       html += `<li><strong>${sanitize(p.title)}</strong><br>${sanitize(p.body)}`;
@@ -205,7 +293,7 @@
     }
     html += '</ol>';
 
-    html += `<h3>Counterarguments & Responses</h3>`;
+    html += `<h3>${sanitize(headings.counters)}</h3>`;
     for (const c of counters) {
       html += `<p><span class="text-slate-400">Claim:</span> <em>${sanitize(c.claim)}</em><br><span class="text-slate-400">Response:</span> ${sanitize(c.response)}`;
       if (c.citations && c.citations.length) {
@@ -215,62 +303,52 @@
       html += `</p>`;
     }
 
-    html += `<h3>Investor Identity Guide</h3>`;
-    html += `<p class="text-slate-300">Identity should shape the response. A two‑person plan executes differently than NBIM.</p>`;
-    html += '<ul>';
-    html += `<li><strong>Inputs</strong>: Capital, People, Processes, Information — scaled to the selected identity.</li>`;
-    html += `<li><strong>Enablers</strong>: Governance (decision rights, criteria), Culture (transparency, discipline), Technology (optimization, reporting).</li>`;
-    html += `<li><strong>Thumbprint</strong>: Mission/Ethics (${thumb.mission === 'purity' ? 'Values‑driven (Purity)' : 'Risk‑pragmatism (Conduct)'}), Competition (${thumb.competition}), Regulatory (${thumb.regulatory}).</li>`;
-    html += '</ul>';
+    html += `<h3>${sanitize(headings.guide)}</h3>`;
+    html += `<p class="text-slate-300">${sanitize(headings.guideIntro)}</p>`;
+    html += '<ul>' + guideBullets.map(b => `<li>${sanitize(b)}</li>`).join('') + '</ul>';
 
-    // Policy alignment (borrowed from Ethical Capital Screening Policy)
-    if (data.policy_alignment && data.policy_alignment.principles && data.policy_alignment.principles.length) {
-      html += `<h3>Policy Alignment</h3>`;
-      html += '<ul>' + data.policy_alignment.principles.map(p => `<li>${sanitize(p)}</li>`).join('') + '</ul>';
-      if (data.policy_alignment.policy_link) {
-        const pl = data.policy_alignment.policy_link;
-        html += `<p class="text-xs text-slate-400">Reference: <a class="text-sky-300 hover:underline" href="${pl.url}" target="_blank" rel="noopener">${sanitize(pl.label)}</a></p>`;
+    if (showPolicy) {
+      html += `<h3>${sanitize(headings.policy)}</h3>`;
+      html += '<ul>' + policyPrinciples.map(p => `<li>${sanitize(p)}</li>`).join('') + '</ul>';
+      if (policyLink) {
+        html += `<p class="text-xs text-slate-400">Reference: <a class="text-sky-300 hover:underline" href="${policyLink.url}" target="_blank" rel="noopener">${sanitize(policyLink.label || policyLink.url)}</a></p>`;
       }
     }
 
-    // Government policy snippet
-    if (id === 'government' && data.government_policy_snippet) {
+    if (showGovernmentSnippet) {
       html += `<h3>Government Policy Snippet (Approved Issuers)</h3>`;
-      html += `<pre class="whitespace-pre-wrap leading-relaxed">${sanitize(data.government_policy_snippet)}</pre>`;
+      html += `<pre class="whitespace-pre-wrap leading-relaxed">${sanitize(governmentSnippet)}</pre>`;
     }
 
-    html += `<h4>Recommended Approach</h4>`;
+    html += `<h3>${sanitize(headings.approach)}</h3>`;
     html += '<ul>';
     if (approach.ask) html += `<li><strong>Ask</strong>: ${sanitize(approach.ask)}</li>`;
-    if (approach.implementation) html += `<li><strong>Implementation</strong>: ${sanitize(approach.implementation)}</li>`;
-    if (approach.reporting) html += `<li><strong>Reporting</strong>: ${sanitize(approach.reporting)}</li>`;
-    if (approach.risk) html += `<li><strong>Risk & Controls</strong>: ${sanitize(approach.risk)}</li>`;
-    if (approach.screen_primary || approach.screen_secondary) {
-      const parts = [];
-      if (approach.screen_primary) parts.push(sanitize(approach.screen_primary));
-      if (approach.screen_secondary) parts.push('also ' + sanitize(approach.screen_secondary));
-      html += `<li><strong>Screen Types (emphasis first)</strong>: ${parts.join('; ')}</li>`;
-    }
+    if (approach.implementation) html += `<li><strong>Implementation</strong>: ${formatMultiline(approach.implementation)}</li>`;
+    if (approach.reporting) html += `<li><strong>Reporting</strong>: ${formatMultiline(approach.reporting)}</li>`;
+    if (approach.risk) html += `<li><strong>Risk & Controls</strong>: ${formatMultiline(approach.risk)}</li>`;
+    const screenParts = [];
+    if (approach.screen_primary) screenParts.push(sanitize(approach.screen_primary));
+    if (approach.screen_secondary) screenParts.push('also ' + sanitize(approach.screen_secondary));
+    if (screenParts.length) html += `<li><strong>Screen Types (emphasis first)</strong>: ${screenParts.join('; ')}</li>`;
     if (approach.framing) html += `<li><strong>Framing</strong>: ${sanitize(approach.framing)}</li>`;
     html += '</ul>';
 
-    // Screening as cumulative knowledge (neutral, non-promotional framing)
-    if (data.screening_knowledge && Array.isArray(data.screening_knowledge.points)) {
-      html += `<h3>${sanitize(data.screening_knowledge.title || 'Screening as Cumulative Knowledge')}</h3>`;
+    if (showScreening) {
+      html += `<h3>${sanitize(headings.screening)}</h3>`;
       html += '<ul>';
-      for (const p of data.screening_knowledge.points) {
-        html += `<li><strong>${sanitize(p.title)}</strong>: ${sanitize(p.body)}`;
-        if (p.citations && p.citations.length) {
-          const c = p.citations.map(ci => `<a class=\"text-sky-300 hover:underline\" href=\"${ci.url}\" target=\"_blank\" rel=\"noopener\">${sanitize(ci.label)}</a>`).join(' · ');
-          html += `<div class=\"mt-1 text-xs text-slate-400\">Sources: ${c}</div>`;
+      for (const point of screeningPoints) {
+        html += `<li><strong>${sanitize(point.title)}</strong>: ${sanitize(point.body)}`;
+        if (point.citations && point.citations.length) {
+          const c = point.citations.map(ci => `<a class="text-sky-300 hover:underline" href="${ci.url}" target="_blank" rel="noopener">${sanitize(ci.label)}</a>`).join(' · ');
+          html += `<div class="mt-1 text-xs text-slate-400">Sources: ${c}</div>`;
         }
-        html += `</li>`;
+        html += '</li>';
       }
       html += '</ul>';
     }
 
     if (showCIO && data.cio_note) {
-      html += `<h4>For CIOs / Consultants</h4>`;
+      html += `<h3>For CIOs / Consultants</h3>`;
       html += `<p>${sanitize(data.cio_note)}</p>`;
       if (data.cio_links && data.cio_links.length) {
         const l = data.cio_links.map(ci => `<a class="text-sky-300 hover:underline" href="${ci.url}" target="_blank" rel="noopener">${sanitize(ci.label)}</a>`).join(' · ');
@@ -290,15 +368,226 @@
 
     brief.innerHTML = html;
 
-    // Sources and Further Reading
+    state.last = {
+      context,
+      thumb,
+      opening,
+      points: points.map(p => ({
+        title: p.title,
+        body: p.body,
+        citations: Array.isArray(p.citations) ? p.citations.map(ci => ({ label: ci.label, url: ci.url })) : []
+      })),
+      counters: counters.map(c => ({
+        claim: c.claim,
+        response: c.response,
+        citations: Array.isArray(c.citations) ? c.citations.map(ci => ({ label: ci.label, url: ci.url })) : []
+      })),
+      guideIntro: headings.guideIntro,
+      guideBullets,
+      approach: {
+        ask: approach.ask || '',
+        implementation: approach.implementation || '',
+        reporting: approach.reporting || '',
+        risk: approach.risk || '',
+        screen_primary: approach.screen_primary || '',
+        screen_secondary: approach.screen_secondary || '',
+        framing: approach.framing || ''
+      },
+      policyPrinciples,
+      policyLink,
+      screeningPoints: screeningPoints.map(p => ({
+        title: p.title,
+        body: p.body,
+        citations: Array.isArray(p.citations) ? p.citations.map(ci => ({ label: ci.label, url: ci.url })) : []
+      })),
+      screeningTitle,
+      showPolicy,
+      showScreening,
+      governmentSnippet,
+      showGovernmentSnippet,
+      showCIO,
+      cioNote: showCIO ? (data.cio_note || '') : '',
+      cioLinks: showCIO && Array.isArray(data.cio_links) ? data.cio_links : [],
+      showResolution,
+      resolutionText,
+      steps: steps.slice(),
+      knowledgeLevel,
+      headings,
+      sources: Array.isArray(data.sources) ? data.sources : [],
+      furtherReading: Array.isArray(data.further_reading) ? data.further_reading : []
+    };
+
     renderSources(data.sources || [], data.further_reading || []);
+  }
+
+  function buildMarkdown(mode) {
+    if (!state.last) return null;
+    const result = state.last;
+    const context = result.context;
+    const knowledgeLabel = KNOWLEDGE_LABELS[mode] || (mode === 'technical' ? 'Technical / Nerd' : 'Plain English');
+    const lines = [];
+    lines.push(`# Divestment Brief (${knowledgeLabel})`);
+    lines.push('');
+    lines.push(`- Venue: ${VENUE_LABELS[context.venue] || context.venue}`);
+    lines.push(`- Target: ${TARGET_LABELS[context.target] || context.target}`);
+    lines.push(`- Entity Type: ${ENTITY_LABELS[context.entity] || context.entity}`);
+    lines.push(`- Knowledge Level: ${knowledgeLabel}`);
+    lines.push(`- Thumbprint: Mission/Ethics ${MISSION_LABELS[result.thumb.mission] || result.thumb.mission}; Competition ${PRESSURE_LABELS[result.thumb.competition] || result.thumb.competition}; Regulatory ${PRESSURE_LABELS[result.thumb.regulatory] || result.thumb.regulatory}`);
+    if (context.localName) {
+      lines.push(`- Local Name: ${context.localName}`);
+    }
+    lines.push('');
+
+    lines.push('## Opening');
+    lines.push('');
+    lines.push(result.opening);
+    lines.push('');
+
+    lines.push(`## ${mode === 'technical' ? 'Key Points' : 'Key Points to Share'}`);
+    lines.push('');
+    for (const p of result.points) {
+      lines.push(`- **${p.title}.** ${p.body}`);
+      if (p.citations && p.citations.length) {
+        lines.push(`  - Sources: ${p.citations.map(ci => `${ci.label} (${ci.url})`).join('; ')}`);
+      }
+    }
+    lines.push('');
+
+    lines.push(`## ${mode === 'technical' ? 'Counterarguments & Responses' : 'Likely Pushback & Responses'}`);
+    lines.push('');
+    for (const c of result.counters) {
+      lines.push(`- **Claim:** ${c.claim}`);
+      lines.push(`  - **Response:** ${c.response}`);
+      if (c.citations && c.citations.length) {
+        lines.push(`  - Sources: ${c.citations.map(ci => `${ci.label} (${ci.url})`).join('; ')}`);
+      }
+    }
+    lines.push('');
+
+    lines.push(`## ${mode === 'technical' ? 'Investor Identity Guide' : 'Investor Identity Map'}`);
+    lines.push('');
+    lines.push(result.guideIntro);
+    lines.push('');
+    for (const bullet of result.guideBullets) {
+      lines.push(`- ${bullet}`);
+    }
+    lines.push('');
+
+    lines.push(`## ${mode === 'technical' ? 'Recommended Approach' : 'Implementation Snapshot'}`);
+    lines.push('');
+    const approach = result.approach;
+    if (approach.ask) lines.push(`- Ask: ${approach.ask}`);
+    if (approach.implementation) lines.push(`- Implementation: ${approach.implementation.replace(/\n/g, '; ')}`);
+    if (approach.reporting) lines.push(`- Reporting: ${approach.reporting.replace(/\n/g, '; ')}`);
+    if (approach.risk) lines.push(`- Risk & Controls: ${approach.risk.replace(/\n/g, '; ')}`);
+    const screenDesc = [
+      approach.screen_primary ? approach.screen_primary : '',
+      approach.screen_secondary ? `also ${approach.screen_secondary}` : ''
+    ].filter(Boolean).join('; ');
+    if (screenDesc) lines.push(`- Screen Types (emphasis first): ${screenDesc}`);
+    if (approach.framing) lines.push(`- Framing: ${approach.framing}`);
+    lines.push('');
+
+    if ((mode === 'technical' && result.policyPrinciples.length) || result.policyPrinciples.length && mode === 'technical') {
+      lines.push('## Policy Alignment');
+      lines.push('');
+      for (const principle of result.policyPrinciples) {
+        lines.push(`- ${principle}`);
+      }
+      if (result.policyLink) {
+        lines.push(`- Reference: ${result.policyLink.label || result.policyLink.url} (${result.policyLink.url})`);
+      }
+      lines.push('');
+    }
+
+    if (result.showGovernmentSnippet && result.governmentSnippet) {
+      lines.push('## Approved Issuers Template');
+      lines.push('');
+      lines.push('```');
+      lines.push(result.governmentSnippet);
+      lines.push('```');
+      lines.push('');
+    }
+
+    if (mode === 'technical' && result.showScreening && result.screeningPoints.length) {
+      lines.push(`## ${result.screeningTitle}`);
+      lines.push('');
+      for (const point of result.screeningPoints) {
+        lines.push(`- **${point.title}.** ${point.body}`);
+        if (point.citations && point.citations.length) {
+          lines.push(`  - Sources: ${point.citations.map(ci => `${ci.label} (${ci.url})`).join('; ')}`);
+        }
+      }
+      lines.push('');
+    }
+
+    if (result.showCIO && mode === 'technical' && result.cioNote) {
+      lines.push('## Notes for CIO / Consultant');
+      lines.push('');
+      lines.push(result.cioNote);
+      if (result.cioLinks && result.cioLinks.length) {
+        lines.push('');
+        lines.push(`References: ${result.cioLinks.map(ci => `${ci.label} (${ci.url})`).join('; ')}`);
+      }
+      lines.push('');
+    }
+
+    if (result.showResolution && result.resolutionText) {
+      lines.push('## Model Resolution');
+      lines.push('');
+      lines.push('```');
+      lines.push(result.resolutionText);
+      lines.push('```');
+      lines.push('');
+    }
+
+    if (result.steps && result.steps.length) {
+      lines.push('## Next Steps');
+      lines.push('');
+      for (const step of result.steps) {
+        lines.push(`- ${step}`);
+      }
+      lines.push('');
+    }
+
+    const combinedSources = [...(result.sources || []), ...(result.furtherReading || [])];
+    if (combinedSources.length) {
+      lines.push('## Sources & Further Reading');
+      lines.push('');
+      for (const src of combinedSources) {
+        lines.push(`- ${src.label} (${src.url})`);
+      }
+      lines.push('');
+    }
+
+    lines.push('---');
+    lines.push('');
+    lines.push('_Prepared by Ethical Capital Labs. Educational toolkit only — not investment advice._');
+    lines.push('');
+
+    return lines.join('\n');
+  }
+
+  function downloadMarkdown(mode) {
+    const markdown = buildMarkdown(mode);
+    if (!markdown) return;
+    const blob = new Blob([markdown], { type: 'text/markdown' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = mode === 'technical' ? 'divestment-brief-technical.md' : 'divestment-brief-plain.md';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
   }
 
   buildBtn.addEventListener('click', buildBrief);
   resetBtn.addEventListener('click', () => {
     venue.value = 'one_on_one';
-    target.value = 'cio';
+    target.value = 'family_friends';
     invIdentity.value = 'public_pension';
+    knowledge.value = 'plain';
     thumbMission.value = 'pragmatism';
     thumbCompetition.value = 'low';
     thumbRegulatory.value = 'medium';
@@ -306,6 +595,7 @@
     objective.value = 'resolution_support';
     brief.innerHTML = '<p class="text-slate-400">Fill the setup at left, then click Build Brief.</p>';
     sourcesList.innerHTML = '';
+    state.last = null;
   });
 
   copyAll.addEventListener('click', () => {
@@ -316,15 +606,15 @@
     });
   });
 
-  printBtn.addEventListener('click', () => window.print());
+  downloadPlain?.addEventListener('click', () => downloadMarkdown('plain'));
+  downloadTechnical?.addEventListener('click', () => downloadMarkdown('technical'));
 
   fbSend?.addEventListener('click', sendFeedback);
 
-  // Keyboard shortcuts: B build, P print (skip when typing in inputs)
+  // Keyboard shortcut: B build (skip when typing in inputs)
   document.addEventListener('keydown', (e) => {
     if (e.target && ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
     if (e.key.toLowerCase() === 'b') buildBrief();
-    if (e.key.toLowerCase() === 'p') window.print();
   });
 })();
 
