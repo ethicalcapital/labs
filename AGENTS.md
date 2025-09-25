@@ -35,6 +35,19 @@ Research shows users retain 95% of information from interactive experiences vs 1
 - **Progressive Complexity**: Simple mode for basics, advanced mode for deeper exploration
 - **Real-Time Feedback**: Immediate visualization of how changes affect outcomes
 
+### Brand Alignment
+
+Labs follows the same brand system defined for the primary site in
+`~/ethicic-site/_brand.yml`. All projects should:
+- Use the shared font stack (`Outfit` for headings, `Raleway` for body copy)
+- Rely on the design tokens in `public/assets/css/labs.css` for colors, spacing,
+  panel styles, and buttons instead of ad-hoc Tailwind classes
+- Preserve the top navigation layout (logo, key experiment links, GitHub, “Visit
+  Ethical Capital”) so movement between labs and the main site feels seamless
+- Include the canonical footer disclaimer block with links to Disclosures,
+  Privacy Policy, and Terms of Use. Copy the markup in `public/index.html` to
+  avoid divergence.
+
 ### Experimental Approach
 
 Labs tools are experiments in financial education. We:
@@ -67,6 +80,8 @@ Every tool clearly states:
 - Progressive enhancement
 - No required authentication
 - Privacy-preserving (no tracking)
+- Use `public/assets/css/labs.css` for shared tokens/components. Extend it when
+  adding new UI patterns so future experiments start from the same vocabulary.
 
 ## Research Foundation
 

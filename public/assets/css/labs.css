@@ -1,0 +1,332 @@
+:root {
+  --ecic-purple: #581c87;
+  --ecic-purple-light: #6b46c1;
+  --ecic-teal: #14b8a6;
+  --ecic-teal-light: #2dd4bf;
+  --ecic-amber: #f59e0b;
+  --ecic-red: #ef4444;
+  --surface-white: #ffffff;
+  --surface-light: #f9fafb;
+  --surface-hero: linear-gradient(135deg, rgba(88, 28, 135, 0.95), rgba(20, 184, 166, 0.85));
+  --border-gray: #e5e7eb;
+  --text-dark: #111827;
+  --text-medium: #4b5563;
+  --footer-text: #f3f4f6;
+  --font-sans: 'Raleway', 'Segoe UI', Arial, sans-serif;
+  --font-heading: 'Outfit', 'Raleway', 'Segoe UI', Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-light);
+  color: var(--text-medium);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+a:focus-visible,
+button:focus-visible {
+  outline: 3px solid var(--ecic-teal-light);
+  outline-offset: 3px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0 0 1rem;
+  font-family: var(--font-heading);
+  color: var(--text-dark);
+  font-weight: 600;
+}
+
+p {
+  margin: 0 0 1rem;
+  line-height: 1.6;
+}
+
+.labs-header {
+  background: var(--surface-white);
+  border-bottom: 1px solid var(--border-gray);
+}
+
+.labs-nav {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.labs-nav__logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.labs-nav__logo img {
+  width: 44px;
+  height: auto;
+}
+
+.labs-nav__links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.labs-nav__link {
+  font-weight: 500;
+  font-size: 0.95rem;
+  padding: 0.4rem 0.85rem;
+  border-radius: 999px;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.labs-nav__link:hover {
+  background: rgba(88, 28, 135, 0.12);
+  color: var(--ecic-purple);
+  text-decoration: none;
+}
+
+.labs-nav__cta {
+  background: var(--ecic-purple);
+  color: #fff;
+  border-radius: 999px;
+  padding: 0.45rem 1.1rem;
+  font-weight: 600;
+  transition: background 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+}
+
+.labs-nav__cta:hover {
+  background: var(--ecic-purple-light);
+  text-decoration: none;
+}
+
+.labs-main {
+  flex: 1;
+}
+
+.labs-section {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 1rem 3rem;
+}
+
+.labs-panel {
+  background: var(--surface-white);
+  border: 1px solid var(--border-gray);
+  border-radius: 20px;
+  padding: 2.5rem;
+  box-shadow: 0 20px 40px rgba(88, 28, 135, 0.08);
+}
+
+.labs-panel + .labs-panel {
+  margin-top: 2rem;
+}
+
+.labs-panel--intro {
+  background: var(--surface-hero);
+  color: #fff;
+  border: none;
+  box-shadow: 0 28px 60px rgba(88, 28, 135, 0.28);
+}
+
+.labs-panel--intro p {
+  color: rgba(250, 250, 255, 0.9);
+}
+
+.labs-panel--intro .labs-button {
+  color: var(--text-dark);
+}
+
+.labs-eyebrow {
+  font-size: 0.78rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--ecic-teal);
+}
+
+.labs-eyebrow--light {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.labs-button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.labs-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 0.55rem 1.3rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  border: 1px solid transparent;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.labs-button:hover {
+  transform: translateY(-1px);
+  text-decoration: none;
+}
+
+.labs-button--solid {
+  background: #fff;
+  color: var(--text-dark);
+}
+
+.labs-button--solid:hover {
+  box-shadow: 0 16px 24px rgba(17, 24, 39, 0.12);
+}
+
+.labs-button--ghost {
+  border-color: rgba(255, 255, 255, 0.6);
+  color: #fff;
+  background: transparent;
+}
+
+.labs-button--ghost:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.labs-button--outline {
+  border-color: var(--border-gray);
+  color: var(--text-dark);
+  background: var(--surface-white);
+}
+
+.labs-button--outline:hover {
+  border-color: var(--ecic-purple);
+  color: var(--ecic-purple);
+}
+
+.labs-grid {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.labs-card {
+  background: var(--surface-white);
+  border: 1px solid var(--border-gray);
+  border-radius: 16px;
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.labs-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 32px rgba(17, 24, 39, 0.08);
+  text-decoration: none;
+}
+
+.labs-card__title {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.labs-card__body {
+  font-size: 0.95rem;
+  color: var(--text-medium);
+  line-height: 1.5;
+}
+
+.labs-card__link {
+  margin-top: auto;
+  font-weight: 600;
+  font-size: 0.93rem;
+  color: var(--ecic-purple);
+}
+
+.labs-card__link:hover {
+  text-decoration: underline;
+}
+
+.labs-footer {
+  background: var(--ecic-purple);
+  color: var(--footer-text);
+  padding: 3rem 1rem;
+  margin-top: auto;
+}
+
+.labs-footer__inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.labs-footer__inner p {
+  margin: 0.5rem 0;
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+
+.labs-footer__inner a {
+  color: var(--footer-text);
+}
+
+@media (max-width: 720px) {
+  .labs-panel {
+    padding: 2rem;
+  }
+
+  .labs-nav {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .labs-nav__links {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .labs-button-row {
+    width: 100%;
+  }
+
+  .labs-button {
+    width: 100%;
+    justify-content: center;
+  }
+}

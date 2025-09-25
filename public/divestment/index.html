@@ -6,145 +6,167 @@
     <title>Divestment Explorer · Ethical Capital Labs</title>
     <meta
       name="description"
-      content="Open-source divestment research sandbox from Ethical Capital Labs."
+      content="Open-source divestment research workspace from Ethical Capital Labs."
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Raleway:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
-    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
-    <style>
-      :root {
-        color-scheme: dark;
-      }
-      body {
-        font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont,
-          'Segoe UI', sans-serif;
-        background: #05070f;
-        color: #e7ebf5;
-      }
-      .panel {
-        background: rgba(15, 23, 42, 0.55);
-        border: 1px solid rgba(148, 163, 184, 0.1);
-        backdrop-filter: blur(12px);
-      }
-    </style>
+    <link rel="stylesheet" href="/assets/css/labs.css" />
   </head>
-  <body class="min-h-screen">
-    <header class="px-6 py-6 sm:px-10">
-      <div class="mx-auto flex max-w-4xl flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <p class="text-xs uppercase tracking-[0.35em] text-slate-400">Ethical Capital Labs</p>
-          <h1 class="mt-1 text-2xl font-semibold text-white">Divestment Explorer</h1>
-        </div>
-        <div class="flex flex-wrap gap-3">
+  <body>
+    <header class="labs-header">
+      <nav class="labs-nav" aria-label="Primary">
+        <a class="labs-nav__logo" href="/">
+          <img
+            src="/assets/brand/logos/ecic-logo.svg"
+            alt="Invest Vegan LLC DBA Ethical Capital"
+            width="44"
+            height="44"
+          />
+          <span>Labs</span>
+        </a>
+        <div class="labs-nav__links">
+          <a class="labs-nav__link" href="/simulator/">Portfolio Simulator</a>
+          <a class="labs-nav__link" href="/divestment/">Divestment Explorer</a>
           <a
-            href="/"
-            class="rounded-full border border-slate-500/70 px-5 py-2 text-sm font-medium text-slate-200 transition hover:border-slate-300 hover:text-white"
-          >
-            Back to Labs
-          </a>
-          <a
-            href="https://github.com/ethicalcapital/labs/tree/main/public/divestment"
-            class="rounded-full border border-slate-500/70 px-5 py-2 text-sm font-medium text-slate-200 transition hover:border-slate-300 hover:text-white"
+            class="labs-nav__link"
+            href="https://github.com/ethicalcapital/labs"
             rel="noopener noreferrer"
+            target="_blank"
           >
-            View Source on GitHub
+            GitHub
+          </a>
+          <a
+            class="labs-nav__cta"
+            href="https://ethicic.com"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Visit Ethical Capital
           </a>
         </div>
-      </div>
+      </nav>
     </header>
 
-    <main class="px-6 pb-16 sm:px-10">
-      <section class="mx-auto max-w-4xl space-y-8">
-        <div class="panel rounded-3xl p-8 sm:p-10">
-          <h2 class="text-xl font-semibold text-white sm:text-2xl">
-            Open data for values-led divestment screening
-          </h2>
-          <p class="mt-4 text-sm text-slate-300">
-            This workspace collects public data, documentation, and prototype
-            tooling that support ethical divestment decisions. Everything here is
-            exploratory. Expect rough edges, incomplete coverage, and evolving
-            methodology.
+    <main class="labs-main">
+      <section class="labs-section" aria-labelledby="divestment-hero">
+        <div class="labs-panel labs-panel--intro">
+          <p class="labs-eyebrow labs-eyebrow--light">Divestment explorer</p>
+          <h2 id="divestment-hero">Public research for values-aligned screens</h2>
+          <p>
+            This workspace assembles open datasets, working papers, and
+            prototype tooling to evaluate corporate conduct for exclusionary
+            mandates. The goal is transparency first: anyone can inspect the
+            assumptions, improve the classifications, or reuse the data.
           </p>
-        </div>
-
-        <div class="panel rounded-3xl p-8 sm:p-10">
-          <h3 class="text-sm font-semibold uppercase tracking-[0.3em] text-slate-400">
-            Get involved
-          </h3>
-          <div class="mt-6 grid gap-4 sm:grid-cols-2">
+          <div class="labs-button-row">
             <a
+              class="labs-button labs-button--solid"
               href="https://github.com/ethicalcapital/labs/tree/main/public/divestment"
-              class="rounded-xl border border-slate-500/70 px-4 py-5 text-left transition hover:border-slate-300 hover:text-white"
               rel="noopener noreferrer"
+              target="_blank"
             >
-              <span class="text-base font-semibold text-white">Browse datasets &amp; scripts</span>
-              <p class="mt-2 text-xs text-slate-300">
-                Review source files, data notes, and processing scripts. Fork the
-                repo or open a PR if you have improvements.
-              </p>
+              Browse source and data
             </a>
             <a
-              href="https://github.com/ethicalcapital/labs/issues/new/choose"
-              class="rounded-xl border border-slate-500/70 px-4 py-5 text-left transition hover:border-slate-300 hover:text-white"
-              rel="noopener noreferrer"
-            >
-              <span class="text-base font-semibold text-white">Log a dataset issue</span>
-              <p class="mt-2 text-xs text-slate-300">
-                Spot inaccuracies or missing companies? File an issue so we can
-                correct the record and share updates openly.
-              </p>
-            </a>
-            <a
+              class="labs-button labs-button--ghost"
               href="https://github.com/ethicalcapital/labs/discussions"
-              class="rounded-xl border border-slate-500/70 px-4 py-5 text-left transition hover:border-slate-300 hover:text-white"
               rel="noopener noreferrer"
+              target="_blank"
             >
-              <span class="text-base font-semibold text-white">Join the discussion</span>
-              <p class="mt-2 text-xs text-slate-300">
-                Use GitHub Discussions for methodology debates, data requests, or
-                to suggest new visualizations.
-              </p>
-            </a>
-            <a
-              href="mailto:hello@ethicic.com"
-              class="rounded-xl border border-slate-500/70 px-4 py-5 text-left transition hover:border-slate-300 hover:text-white"
-            >
-              <span class="text-base font-semibold text-white">Share private feedback</span>
-              <p class="mt-2 text-xs text-slate-300">
-                Need to share sensitive corrections? Email the team and we will
-                coordinate a responsible update.
-              </p>
+              Join the public discussion
             </a>
           </div>
         </div>
 
-        <div class="panel rounded-3xl p-8 sm:p-10">
-          <h3 class="text-sm font-semibold uppercase tracking-[0.3em] text-slate-400">
-            Disclaimers
-          </h3>
-          <p class="mt-4 text-xs text-slate-400">
-            The divestment explorer is experimental research. Data sources may be
-            incomplete or outdated; classifications reflect best-effort
-            interpretations and are not investment recommendations. Always verify
-            data through primary sources and consult qualified professionals
-            before making allocation decisions.
+        <div class="labs-panel" aria-labelledby="divestment-components">
+          <p class="labs-eyebrow" id="divestment-components">What’s inside</p>
+          <div class="labs-grid">
+            <a
+              class="labs-card"
+              href="https://github.com/ethicalcapital/labs/tree/main/public/divestment/content"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <span class="labs-card__title">Datasets &amp; taxonomies</span>
+              <p class="labs-card__body">
+                JSON and CSV resources cataloging corporate behaviour, conflict
+                involvement, and boycott participation. Every field links back
+                to a primary source or research note.
+              </p>
+              <span class="labs-card__link">Open content folder →</span>
+            </a>
+            <a
+              class="labs-card"
+              href="https://github.com/ethicalcapital/labs/issues/new?labels=divestment"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <span class="labs-card__title">Report a correction</span>
+              <p class="labs-card__body">
+                Submit updated intelligence, company reclassifications, or data
+                quality concerns. We track every change so users can audit the
+                provenance.
+              </p>
+              <span class="labs-card__link">File an issue →</span>
+            </a>
+            <a
+              class="labs-card"
+              href="https://github.com/ethicalcapital/labs/tree/main/public/divestment"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <span class="labs-card__title">Processing scripts</span>
+              <p class="labs-card__body">
+                Python and TypeScript utilities for syncing third-party source
+                lists, normalizing tickers, and generating visual summaries.
+                Fork the tooling to extend your own research stack.
+              </p>
+              <span class="labs-card__link">Review scripts →</span>
+            </a>
+            <a class="labs-card" href="mailto:hello@ethicic.com">
+              <span class="labs-card__title">Private collaboration</span>
+              <p class="labs-card__body">
+                Sensitive data, embargoed research, or institutional
+                partnerships are best coordinated via email. Reach out and we
+                will respond promptly.
+              </p>
+              <span class="labs-card__link">Email Ethical Capital →</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="labs-panel" aria-labelledby="divestment-disclaimer">
+          <p class="labs-eyebrow" id="divestment-disclaimer">Disclaimers</p>
+          <p>
+            The divestment explorer is an experimental research workspace. Data
+            may be incomplete, lag updates from primary sources, or contain
+            subjective classifications. Inclusion or exclusion of a company does
+            not constitute a recommendation to buy or sell securities. Always
+            verify data independently and consult a qualified professional before
+            making investment decisions. Past performance does not guarantee
+            future results.
           </p>
         </div>
       </section>
     </main>
 
-    <footer class="px-6 pb-10 pt-12 sm:px-10">
-      <div class="mx-auto max-w-4xl border-t border-slate-700/40 pt-8 text-sm text-slate-500">
-        <p>&copy; <span id="year"></span> Ethical Capital Labs — open-source experiments only.</p>
+    <footer class="labs-footer">
+      <div class="labs-footer__inner">
+        <p><strong>Invest Vegan LLC DBA Ethical Capital</strong> · Utah Registered Investment Adviser</p>
+        <p>
+          <a href="https://ethicic.com/content/legal/disclosures.html">Disclosures</a>
+          ·
+          <a href="https://ethicic.com/content/legal/privacy-policy.html">Privacy Policy</a>
+          ·
+          <a href="https://ethicic.com/content/legal/terms-of-use.html">Terms of Use</a>
+        </p>
+        <p>90 N 400 E, Provo, UT 84606 · +1 347 625 9000 · hello@ethicic.com</p>
+        <p><em>This website is for informational purposes only and does not constitute investment advice. Past performance does not guarantee future results.</em></p>
       </div>
     </footer>
-
-    <script>
-      document.getElementById('year').textContent = new Date().getFullYear();
-    </script>
   </body>
 </html>
