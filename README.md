@@ -17,9 +17,9 @@ npm run lint
 npm run build
 ```
 
-`npm run build` copies everything from `public/` into `dist/`, matching the
-Cloudflare Pages configuration (build command `npm run build`, output directory
-`dist`).
+`npm run build` transpiles `PortfolioSimulator.jsx` into `public/simulator/app.js`
+and then copies everything from `public/` into `dist/`, matching the Cloudflare
+Pages configuration (build command `npm run build`, output directory `dist`).
 
 ## Deployment notes
 

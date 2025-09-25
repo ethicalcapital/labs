@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "build": "rm -rf dist && mkdir -p dist && cp -R public/. dist",
+    "build:simulator": "babel PortfolioSimulator.jsx --no-babelrc --presets @babel/preset-react --out-file public/simulator/app.js",
+    "build": "npm run build:simulator && rm -rf dist && mkdir -p dist && cp -R public/. dist",
     "lint": "eslint \"**/*.jsx\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -12,6 +13,7 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@babel/cli": "^7.27.2",
     "@babel/core": "^7.28.4",
     "@babel/eslint-parser": "^7.28.4",
     "@babel/preset-react": "^7.27.1",
