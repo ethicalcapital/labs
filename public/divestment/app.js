@@ -26,6 +26,63 @@
   const fbStatus = el("fb_status");
   const onePagerFieldset = el("onePagerFieldset");
   const onePagerOptions = el("onePagerOptions");
+  const disclaimerOverlay = el("disclaimerOverlay");
+  const disclaimerCheckbox = el("disclaimerAccept");
+  const disclaimerContinue = el("disclaimerContinue");
+
+  const DISCLAIMER_STORAGE_KEY = "dryvestmentDisclaimerAccepted";
+  let disclaimerAccepted = false;
+
+  function setDisclaimerState(accepted) {
+    disclaimerAccepted = accepted;
+    if (!disclaimerOverlay) return;
+    if (accepted) {
+      disclaimerOverlay.classList.add("hidden");
+      disclaimerOverlay.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("disclaimer-locked");
+    } else {
+      disclaimerOverlay.classList.remove("hidden");
+      disclaimerOverlay.setAttribute("aria-hidden", "false");
+      document.body.classList.add("disclaimer-locked");
+    }
+  }
+
+  const storedDisclaimer = (() => {
+    try {
+      return (
+        typeof sessionStorage !== "undefined" &&
+        sessionStorage.getItem(DISCLAIMER_STORAGE_KEY) === "1"
+      );
+    } catch {
+      return false;
+    }
+  })();
+
+  setDisclaimerState(storedDisclaimer);
+
+  if (disclaimerCheckbox && disclaimerContinue) {
+    disclaimerContinue.disabled = !disclaimerCheckbox.checked;
+    disclaimerCheckbox.addEventListener("change", () => {
+      const checked = disclaimerCheckbox.checked;
+      disclaimerContinue.disabled = !checked;
+      disclaimerContinue.classList.toggle("btn-disabled", !checked);
+    });
+    disclaimerContinue.addEventListener("click", () => {
+      if (!disclaimerCheckbox.checked) return;
+      setDisclaimerState(true);
+      try {
+        sessionStorage.setItem(DISCLAIMER_STORAGE_KEY, "1");
+      } catch {
+        // ignore storage failures
+      }
+    });
+  }
+
+  function ensureDisclaimerAccepted() {
+    if (disclaimerAccepted) return true;
+    setDisclaimerState(false);
+    return false;
+  }
 
   const state = { data: null, last: null, onePagerCache: {} };
   let onePagerInitialized = false;
@@ -644,26 +701,6 @@
       Math.min(7, combinedCounters.length),
     );
 
-    const dynamicSourceMap = new Map();
-    const addCitationList = (citations) => {
-      if (!Array.isArray(citations)) return;
-      for (const citation of citations) {
-        if (!citation || !citation.url) continue;
-        const key = citation.url.toLowerCase();
-        if (dynamicSourceMap.has(key)) continue;
-        dynamicSourceMap.set(key, {
-          label: citation.label || citation.url,
-          url: citation.url,
-        });
-      }
-    };
-
-    points.forEach((p) => addCitationList(p.citations));
-    counters.forEach((c) => addCitationList(c.citations));
-    screeningPoints.forEach((p) => addCitationList(p.citations));
-
-    const dynamicSources = Array.from(dynamicSourceMap.values());
-
     const baseGuide = data.identity_guides?.[context.entity] || {};
     const approach = deriveApproach(
       {
@@ -742,6 +779,26 @@
     const screeningTitle =
       screeningData.title || "Screening as Cumulative Knowledge";
     const showScreening = screeningPoints.length > 0;
+
+    const dynamicSourceMap = new Map();
+    const addCitationList = (citations) => {
+      if (!Array.isArray(citations)) return;
+      for (const citation of citations) {
+        if (!citation || !citation.url) continue;
+        const key = citation.url.toLowerCase();
+        if (dynamicSourceMap.has(key)) continue;
+        dynamicSourceMap.set(key, {
+          label: citation.label || citation.url,
+          url: citation.url,
+        });
+      }
+    };
+
+    points.forEach((p) => addCitationList(p.citations));
+    counters.forEach((c) => addCitationList(c.citations));
+    screeningPoints.forEach((p) => addCitationList(p.citations));
+
+    const dynamicSources = Array.from(dynamicSourceMap.values());
 
     let sourceAudience = "regulated";
     if (
@@ -1312,7 +1369,10 @@
   applyThumbPreset(thumbPreset.value);
   ensureOnePagerOptions().catch(() => {});
 
-  buildBtn.addEventListener("click", buildBrief);
+  buildBtn.addEventListener("click", () => {
+    if (!ensureDisclaimerAccepted()) return;
+    buildBrief();
+  });
   resetBtn.addEventListener("click", () => {
     venue.value = "one_on_one";
     target.value = "family_friends";
@@ -1344,6 +1404,7 @@
   });
 
   copyTextBtn.addEventListener("click", () => {
+    if (!ensureDisclaimerAccepted()) return;
     const markdown = buildMarkdown("plain");
     if (!markdown) return;
     navigator.clipboard.writeText(markdown).then(() => {
@@ -1352,16 +1413,28 @@
     });
   });
 
-  downloadBriefBtn?.addEventListener("click", downloadCombinedMarkdown);
-  printBtn?.addEventListener("click", () => window.print());
+  downloadBriefBtn?.addEventListener("click", () => {
+    if (!ensureDisclaimerAccepted()) return;
+    downloadCombinedMarkdown();
+  });
+  printBtn?.addEventListener("click", () => {
+    if (!ensureDisclaimerAccepted()) return;
+    window.print();
+  });
 
-  fbSend?.addEventListener("click", sendFeedback);
+  fbSend?.addEventListener("click", () => {
+    if (!ensureDisclaimerAccepted()) return;
+    sendFeedback();
+  });
 
   // Keyboard shortcut: B build (skip when typing in inputs)
   document.addEventListener("keydown", (e) => {
     if (e.target && ["INPUT", "TEXTAREA", "SELECT"].includes(e.target.tagName))
       return;
-    if (e.key.toLowerCase() === "b") buildBrief();
+    if (e.key.toLowerCase() === "b") {
+      if (!ensureDisclaimerAccepted()) return;
+      buildBrief();
+    }
   });
 })();
 

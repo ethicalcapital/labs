@@ -19,6 +19,25 @@
     <link rel="stylesheet" href="./divestment.css" />
   </head>
   <body>
+    <div id="disclaimerOverlay" class="disclaimer-overlay" aria-hidden="true">
+      <div class="disclaimer-modal" role="dialog" aria-modal="true" aria-labelledby="disclaimerTitle">
+        <h2 id="disclaimerTitle">Before You Begin</h2>
+        <p>
+          Dryvestment briefs are educational prototypes from Invest Vegan LLC DBA Ethical Capital.
+          They do not consider individual circumstances and are never investment advice.
+        </p>
+        <label class="disclaimer-checkbox">
+          <input type="checkbox" id="disclaimerAccept" />
+          <span>
+            I understand this tool is informational only, may rely on simplified assumptions, and I must consult qualified professionals for investment decisions.
+          </span>
+        </label>
+        <button id="disclaimerContinue" class="btn btn-primary" disabled>
+          Enter Dryvestment
+        </button>
+      </div>
+    </div>
+
     <header class="labs-header">
       <nav class="labs-nav" aria-label="Primary">
         <a class="labs-nav__logo" href="/">

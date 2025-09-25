@@ -5,6 +5,68 @@ body {
   margin: 0;
 }
 
+.disclaimer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(13, 6, 31, 0.78);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  z-index: 1000;
+}
+
+.disclaimer-modal {
+  background: #ffffff;
+  border-radius: 20px;
+  max-width: 520px;
+  width: 100%;
+  padding: 2.4rem;
+  box-shadow: 0 30px 60px rgba(13, 6, 31, 0.18);
+  display: grid;
+  gap: 1.4rem;
+  text-align: left;
+}
+
+.disclaimer-modal h2 {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: 1.4rem;
+  color: var(--text-dark);
+}
+
+.disclaimer-modal p {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.65;
+}
+
+.disclaimer-checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+  color: var(--text-medium);
+}
+
+.disclaimer-checkbox input[type='checkbox'] {
+  margin-top: 0.2rem;
+}
+
+.disclaimer-overlay .btn[disabled] {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.disclaimer-locked {
+  overflow: hidden;
+}
+
 .builder-grid {
   display: grid;
   gap: 1.75rem;
