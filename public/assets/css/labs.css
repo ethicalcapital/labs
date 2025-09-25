@@ -184,8 +184,7 @@ p {
 .home-hero {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(220px, 360px) minmax(0, 1fr);
-  gap: 2rem;
+  gap: 1.5rem;
   color: var(--text-dark);
   background: var(--surface-white);
   border: 1px solid rgba(88, 28, 135, 0.14);
@@ -207,20 +206,6 @@ p {
   z-index: 1;
 }
 
-.home-hero__image {
-  border-radius: 18px;
-  border: 1px dashed rgba(88, 28, 135, 0.35);
-  background: rgba(88, 28, 135, 0.05);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-heading);
-  font-size: 0.95rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: rgba(88, 28, 135, 0.6);
-  min-height: 240px;
-}
 
 .home-hero__content {
   display: grid;
@@ -292,20 +277,6 @@ p {
   gap: 1.25rem;
 }
 
-.labs-card__media {
-  border-radius: 16px;
-  border: 1px dashed rgba(88, 28, 135, 0.35);
-  background: rgba(88, 28, 135, 0.05);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-heading);
-  font-size: 0.9rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: rgba(88, 28, 135, 0.6);
-  min-height: 200px;
-}
 
 .labs-card__content {
   display: grid;
@@ -347,8 +318,7 @@ p {
 .home-hero {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(220px, 360px) minmax(0, 1fr);
-  gap: 2rem;
+  gap: 1.5rem;
   color: var(--text-dark);
   background: var(--surface-white);
   border: 1px solid rgba(88, 28, 135, 0.14);
@@ -440,20 +410,6 @@ p {
   gap: 1.25rem;
 }
 
-.labs-card__media {
-  border-radius: 16px;
-  border: 1px dashed rgba(88, 28, 135, 0.35);
-  background: rgba(88, 28, 135, 0.05);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-heading);
-  font-size: 0.9rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: rgba(88, 28, 135, 0.6);
-  min-height: 200px;
-}
 
 .labs-card__content {
   display: grid;
@@ -498,10 +454,7 @@ p {
     padding: 2rem;
   }
 
-  .home-hero__image {
-    min-height: 180px;
-  }
-
+  
   .labs-card--feature {
     grid-template-columns: 1fr;
   }
@@ -841,10 +794,7 @@ p {
     grid-template-columns: 1fr;
   }
 
-  .home-hero__image {
-    min-height: 180px;
-  }
-
+  
   .labs-card--feature {
     grid-template-columns: 1fr;
   }
