@@ -85,7 +85,44 @@
         </div>
 
         <div class="labs-panel" id="simulator">
-          <div class="bg-white rounded-3xl">
+          <div
+            id="simulator-disclaimer"
+            class="simulator-gate"
+            role="group"
+            aria-labelledby="simulator-gate-title"
+          >
+            <p class="simulator-gate__eyebrow">Educational use only</p>
+            <h3 id="simulator-gate-title" class="simulator-gate__title">
+              Before you simulate, know what this tool is (and isn’t)
+            </h3>
+            <p>
+              Portfolio Time Travel illustrates hypothetical scenarios so you can
+              explore how savings, withdrawals, and allocation choices interact.
+              It does not account for your specific situation or offer
+              investment advice.
+            </p>
+            <ul class="simulator-gate__list">
+              <li>Assumptions and default inputs are for demonstration only.</li>
+              <li>No personal data is stored; calculations happen in your browser.</li>
+              <li>
+                Decisions about real portfolios should be made with qualified
+                professionals accountable for your capital.
+              </li>
+            </ul>
+            <button
+              id="simulator-disclaimer-accept"
+              type="button"
+              class="labs-button labs-button--solid simulator-gate__accept"
+            >
+              I understand this is educational only
+            </button>
+          </div>
+
+          <div
+            id="simulator-shell"
+            class="bg-white rounded-3xl hidden"
+            aria-hidden="true"
+          >
             <div id="root"></div>
           </div>
         </div>
@@ -121,6 +158,47 @@
         </p>
       </div>
     </footer>
+
+    <script>
+      (function () {
+        const storageKey = "labs-simulator-disclaimer-v1";
+        const gate = document.getElementById("simulator-disclaimer");
+        const shell = document.getElementById("simulator-shell");
+        const accept = document.getElementById("simulator-disclaimer-accept");
+
+        const showSimulator = () => {
+          if (gate) {
+            gate.classList.add("hidden");
+          }
+          if (shell) {
+            shell.classList.remove("hidden");
+            shell.removeAttribute("aria-hidden");
+          }
+        };
+
+        let acknowledged = false;
+        try {
+          acknowledged = localStorage.getItem(storageKey) === "true";
+        } catch (error) {
+          console.warn("Simulator disclaimer storage unavailable", error);
+        }
+
+        if (acknowledged) {
+          showSimulator();
+        }
+
+        if (accept) {
+          accept.addEventListener("click", () => {
+            try {
+              localStorage.setItem(storageKey, "true");
+            } catch (error) {
+              console.warn("Simulator disclaimer storage unavailable", error);
+            }
+            showSimulator();
+          });
+        }
+      })();
+    </script>
 
     <script src="./app.js?v=20250206" defer></script>
   </body>

@@ -1,3 +1,9 @@
+@property --radialprogress {
+  syntax: "<percentage>";
+  inherits: true;
+  initial-value: 0%;
+}
+
 :root {
   --ecic-purple: #581c87;
   --ecic-purple-light: #6b46c1;
@@ -173,6 +179,48 @@ p {
 
 .labs-panel--intro .labs-button {
   color: var(--text-dark);
+}
+
+.simulator-gate {
+  display: grid;
+  gap: 1rem;
+  padding: 2rem;
+  border: 1px solid rgba(88, 28, 135, 0.2);
+  border-radius: 16px;
+  background: rgba(88, 28, 135, 0.06);
+}
+
+.simulator-gate__eyebrow {
+  margin: 0;
+  font-size: 0.75rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--ecic-purple);
+}
+
+.simulator-gate__title {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.simulator-gate__list {
+  margin: 0;
+  padding-left: 1.25rem;
+  display: grid;
+  gap: 0.6rem;
+  color: var(--text-medium);
+}
+
+.simulator-gate__list li {
+  line-height: 1.55;
+}
+
+.simulator-gate__accept {
+  max-width: 320px;
 }
 
 .labs-eyebrow {
