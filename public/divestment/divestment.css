@@ -197,6 +197,41 @@ body {
   pointer-events: none;
 }
 
+.choice-btn--muted {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.choice-btn--muted i {
+  color: var(--text-medium);
+}
+
+.choice-btn--input {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: default;
+}
+
+.choice-btn--input label {
+  display: grid;
+  width: 100%;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-medium);
+}
+
+.choice-btn--input label span {
+  font-weight: 700;
+}
+
+.choice-btn--input input {
+  font-size: 0.95rem;
+  cursor: text;
+  pointer-events: auto;
+}
+
 .issue-suggestion {
   display: grid;
   gap: 0.4rem;

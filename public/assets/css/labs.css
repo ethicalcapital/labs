@@ -166,6 +166,37 @@ p {
   margin-top: 2rem;
 }
 
+.labs-callout {
+  margin: 1.5rem 0;
+  padding: 1rem 1.25rem;
+  border-radius: 16px;
+  border: 1px solid rgba(88, 28, 135, 0.18);
+  background: rgba(88, 28, 135, 0.06);
+  color: var(--text-dark);
+  display: grid;
+  gap: 0.35rem;
+}
+
+.labs-callout__title {
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--ecic-purple);
+  margin: 0;
+}
+
+.labs-callout__body {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.labs-callout__fineprint {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text-medium);
+}
+
 .labs-panel--intro {
   background: var(--surface-hero);
   color: #fff;
@@ -736,11 +767,55 @@ p {
   color: var(--text-medium);
 }
 
+.signup-panel__privacy a {
+  font-weight: 600;
+}
+
+.signup-panel__compliance {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--text-medium);
+  line-height: 1.55;
+}
+
+.signup-panel__compliance strong {
+  color: var(--text-dark);
+}
+
+.signup-panel__compliance a {
+  font-weight: 600;
+}
+
 .signup-panel__status {
   min-height: 1.2rem;
   font-size: 0.85rem;
   font-weight: 500;
   margin: 0;
+}
+
+.labs-policy {
+  display: grid;
+  gap: 1.75rem;
+}
+
+.labs-policy h2 {
+  margin-top: 0;
+}
+
+.labs-policy h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+  color: var(--text-dark);
+}
+
+.labs-policy ul {
+  margin: 0 0 1rem 1.25rem;
+  padding: 0;
+  color: var(--text-medium);
+}
+
+.labs-policy li {
+  margin-bottom: 0.5rem;
 }
 
 .labs-footer {

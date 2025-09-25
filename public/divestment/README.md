@@ -10,7 +10,7 @@ Overview
 --------
 
 - Dryvestment helps organizers build printable, role-aware briefs that frame divestment arguments through the lens of institutional mandates.
-- Every experience is deterministic and client-side: no data collection, no personalization, just transparent assumptions you can share and inspect.
+- Every experience is deterministic, so identical inputs yield identical briefs. Consult the Labs Privacy Policy for how optional submissions are handled.
 
 Workflow
 --------
@@ -55,8 +55,8 @@ Design Principles
 Technical Notes
 ---------------
 
-- Pure client-side implementation; calculations happen in-browser and can be audited.
-- No analytics, tracking, or data persistence beyond optional user exports.
+- Runs as a static web application; brief assembly happens in-browser and can be audited.
+- No background analytics. Optional exports, subscriptions, and feedback follow the Labs Privacy Policy.
 - Deterministic outputs mean a given input set always produces the same brief, simplifying review and versioning.
 
 Extending Dryvestment

@@ -169,7 +169,10 @@
   };
 
   const ISSUE_LABELS = {
-    palestine: "Palestine",
+    bds: "BDS",
+    weapons: "Weapons",
+    fossil_fuels: "Fossil fuels",
+    other: "Other",
   };
 
   const DEFAULT_THUMB = {
@@ -615,7 +618,7 @@
     }
     const payload = {
       consent: true,
-      issue: issueInput ? issueInput.value : "palestine",
+      issue: issueInput ? issueInput.value : "bds",
       issueSuggestion:
         issueSuggestionInput && issueSuggestionInput.value
           ? issueSuggestionInput.value.slice(0, 200)
@@ -711,7 +714,7 @@
   async function buildBrief() {
     const data = await loadData();
     const context = {
-      issue: issueInput ? issueInput.value : "palestine",
+      issue: issueInput ? issueInput.value : "bds",
       issueSuggestion: issueSuggestionInput
         ? issueSuggestionInput.value.trim()
         : "",
@@ -1522,7 +1525,7 @@
     buildBrief();
   });
   resetBtn.addEventListener("click", () => {
-    issueChoice?.set("palestine");
+    issueChoice?.set("bds");
     if (issueSuggestionInput) issueSuggestionInput.value = "";
     entityChoice?.set("individual");
     venueChoice?.set("one_on_one");

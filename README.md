@@ -1,6 +1,8 @@
 # Ethical Capital Labs
 
-Experiments for values-aligned finance education, deployed client-side on Cloudflare Pages. Each tool stays transparent, privacy-preserving, and clearly labeled as educational rather than advisory.
+Experiments for values-aligned finance education, published as static web applications on Cloudflare Pages.
+Each tool stays transparent about its assumptions and is clearly labeled as educational rather than
+advisory.
 
 ## Active experiments
 
@@ -48,7 +50,8 @@ Cloudflare Pages expects the build command `npm run build` and publishes the con
 
 ## Contributing
 
-1. Keep content deterministic and client-side; never add server dependencies or analytics without review.
+1. Keep content deterministic and document any new data capture. Do not introduce server dependencies or
+   analytics without compliance review.
 2. Update accompanying docs (`public/divestment/README.md`, `public/divestment/PRD.md`, etc.) when experiments change copy or behavior.
 3. Match Ethical Capital’s disclaimers and navigation so Labs feels seamless with the main site.
 4. Open a GitHub discussion for new experiment proposals or substantial architectural changes.

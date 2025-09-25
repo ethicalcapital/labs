@@ -117,6 +117,18 @@
               >Share feedback</a
             >
           </div>
+          <div class="labs-callout" role="note">
+            <p class="labs-callout__title">Educational Use Only</p>
+            <p class="labs-callout__body">
+              Dryvestment briefs provide institutional framing based on public research and Ethical Capital’s
+              screening policy. They are hypothetical illustrations meant to support constructive dialogue,
+              not personalized investment guidance or promises of outcomes.
+            </p>
+            <p class="labs-callout__fineprint">
+              Validate assumptions with your legal, compliance, and investment professionals before pursuing
+              any action.
+            </p>
+          </div>
         </div>
 
         <div class="builder-layout">
@@ -132,25 +144,52 @@
                   role="group"
                   aria-label="Issue focus"
                 >
-                  <input type="hidden" id="issue" value="palestine" />
+                  <input type="hidden" id="issue" value="bds" />
                   <button
                     type="button"
                     class="choice-btn is-active"
-                    data-choice="palestine"
+                    data-choice="bds"
                     aria-pressed="true"
                   >
-                    <i class="fa-solid fa-dove"></i><span>Palestine</span>
+                    <i class="fa-solid fa-dove"></i><span>BDS</span>
                   </button>
+                  <button
+                    type="button"
+                    class="choice-btn choice-btn--muted"
+                    data-choice="weapons"
+                    aria-pressed="false"
+                    aria-disabled="true"
+                    disabled
+                  >
+                    <i class="fa-solid fa-shield-halved"></i
+                    ><span>Weapons (coming soon)</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="choice-btn choice-btn--muted"
+                    data-choice="fossil_fuels"
+                    aria-pressed="false"
+                    aria-disabled="true"
+                    disabled
+                  >
+                    <i class="fa-solid fa-fire"></i
+                    ><span>Fossil fuels (coming soon)</span>
+                  </button>
+                  <div
+                    class="choice-btn choice-btn--input choice-btn--muted"
+                  >
+                    <i class="fa-solid fa-circle-plus"></i>
+                    <label for="issueSuggestion">
+                      <span>Other issue (tell us what to add)</span>
+                      <input
+                        type="text"
+                        id="issueSuggestion"
+                        placeholder="e.g., Climate, Surveillance tech"
+                        class="builder-input input input-bordered"
+                      />
+                    </label>
+                  </div>
                 </div>
-                <label class="issue-suggestion" for="issueSuggestion">
-                  <span>Suggest another issue (optional)</span>
-                  <input
-                    type="text"
-                    id="issueSuggestion"
-                    placeholder="e.g., Climate, Surveillance tech"
-                    class="builder-input input input-bordered"
-                  />
-                </label>
               </fieldset>
               <div class="builder-field builder-choice-field">
                 <span class="builder-field__label">Entity type</span>
@@ -520,29 +559,56 @@
                 <legend>Issue focus</legend>
                 <div
                   class="builder-choice-group"
-                  data-choice-group="issue"
+                  data-choice-group="issue-feedback"
                   role="group"
                   aria-label="Issue focus"
                 >
-                  <input type="hidden" id="issue" value="palestine" />
+                  <input type="hidden" id="issueFeedback" value="bds" />
                   <button
                     type="button"
                     class="choice-btn is-active"
-                    data-choice="palestine"
+                    data-choice="bds"
                     aria-pressed="true"
                   >
-                    <i class="fa-solid fa-dove"></i><span>Palestine</span>
+                    <i class="fa-solid fa-dove"></i><span>BDS</span>
                   </button>
+                  <button
+                    type="button"
+                    class="choice-btn choice-btn--muted"
+                    data-choice="weapons"
+                    aria-pressed="false"
+                    aria-disabled="true"
+                    disabled
+                  >
+                    <i class="fa-solid fa-shield-halved"></i
+                    ><span>Weapons (coming soon)</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="choice-btn choice-btn--muted"
+                    data-choice="fossil_fuels"
+                    aria-pressed="false"
+                    aria-disabled="true"
+                    disabled
+                  >
+                    <i class="fa-solid fa-fire"></i
+                    ><span>Fossil fuels (coming soon)</span>
+                  </button>
+                  <div
+                    class="choice-btn choice-btn--input choice-btn--muted"
+                  >
+                    <i class="fa-solid fa-circle-plus"></i>
+                    <label for="issueSuggestionFeedback">
+                      <span>Other issue (tell us what to add)</span>
+                      <input
+                        type="text"
+                        id="issueSuggestionFeedback"
+                        placeholder="e.g., Climate, Surveillance tech"
+                        class="builder-input input input-bordered"
+                      />
+                    </label>
+                  </div>
                 </div>
-                <label class="issue-suggestion" for="issueSuggestion">
-                  <span>Suggest another issue (optional)</span>
-                  <input
-                    type="text"
-                    id="issueSuggestion"
-                    placeholder="e.g., Climate, Surveillance tech"
-                    class="builder-input input input-bordered"
-                  />
-                </label>
               </fieldset>
 
               <div class="builder-feedback-grid">
@@ -704,8 +770,8 @@
             >Disclosures</a
           >
           ·
-          <a href="https://ethicic.com/content/legal/privacy-policy.html"
-            >Privacy Policy</a
+          <a href="/privacy.html"
+            >Labs Privacy Policy</a
           >
           ·
           <a href="https://ethicic.com/content/legal/terms-of-use.html"
@@ -716,17 +782,19 @@
         <div class="labs-footer__disclaimer-block">
           <p class="labs-footer__disclaimer">
             Ethical Capital Labs experiments are educational prototypes. They do
-            not account for your individual circumstances, do not gather
-            personal data, and do not constitute investment advice.
+            not account for your individual circumstances, are not investment
+            advice, and may reference optional submissions described in the Labs
+            Privacy Policy.
           </p>
           <ul class="labs-footer__disclaimer-list">
             <li>
-              Assumptions and default inputs are illustrative; adjust them
-              before relying on outputs.
+              Assumptions and default inputs are illustrative—adjust them before
+              relying on outputs.
             </li>
             <li>
-              Calculations run locally in your browser; we do not store personal
-              data.
+              Dryvestment processes inputs in your browser. If you share feedback,
+              subscribe, or download outputs, that information is handled as
+              outlined in the Labs Privacy Policy.
             </li>
             <li>
               Work with qualified professionals before acting on insights—past
