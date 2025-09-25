@@ -1,8 +1,12 @@
-Divestment Brief Builder — Product Requirements
+Dryvestment — Product Requirements
+
+Tagline
+
+- Dryvestment: Where values and valuations meet — translating activist conviction into institutional language and recasting moral imperatives as material risk.
 
 Goal
 
-- Put an identity‑aware, evidence‑backed, printable brief in activists’ hands quickly to support constructive, role‑aware dialogue and respectful disagreement.
+- Dryvestment puts an identity‑aware, evidence‑backed, printable brief in activists’ hands quickly to support constructive, role‑aware dialogue and respectful disagreement.
 
 Users
 

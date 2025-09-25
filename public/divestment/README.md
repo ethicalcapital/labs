@@ -1,8 +1,12 @@
-Divestment Brief Builder — Identity‑First
+Dryvestment — Identity‑First Brief Builder
+
+Tagline
+
+- Dryvestment: Where values and valuations meet — translating activist conviction into institutional language and recasting moral imperatives as material risk.
 
 Purpose
 
-- Build a concise, printable brief that translates activist goals to decision‑makers using an investor identity model — with language tuned for constructive, role‑aware dialogue. Client‑side only, educational.
+- Dryvestment builds a concise, printable brief that translates activist goals to decision‑makers using an investor identity model — with language tuned for constructive, role‑aware dialogue. Client‑side only, educational.
 
 Use
 
