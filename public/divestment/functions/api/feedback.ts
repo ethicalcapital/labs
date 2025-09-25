@@ -1,5 +1,6 @@
 export interface Env {
   FEEDBACK?: KVNamespace;
+  hooks?: KVNamespace;
 }
 
 export async function onRequestPost({
@@ -21,30 +22,42 @@ export async function onRequestPost({
     }
 
     // Whitelist fields to avoid accidental PII
+    const sanitize = (value: unknown, max = 400) => {
+      if (typeof value !== "string") return "";
+      return value.trim().slice(0, max);
+    };
+
+    const store = env.FEEDBACK || env.hooks;
+
     const safe = {
       ts: new Date().toISOString(),
+      issue: sanitize(body.issue, 80),
+      issueSuggestion: sanitize(body.issueSuggestion, 200),
       venue: String(body.venue || ""),
       target: String(body.target || ""),
       entityType: String(body.entityType || ""),
+      knowledge: sanitize(body.knowledge, 40),
       thumb: {
-        mission: String(body.thumb?.mission || ""),
-        competition: String(body.thumb?.competition || ""),
-        regulatory: String(body.thumb?.regulatory || ""),
+        mission: sanitize(body.thumb?.mission, 40),
+        competition: sanitize(body.thumb?.competition, 40),
+        regulatory: sanitize(body.thumb?.regulatory, 40),
+        preset: sanitize(body.thumb?.preset, 40),
       },
-      objective: String(body.objective || ""),
-      use_case: String(body.use_case || ""),
-      outcome: String(body.outcome || ""),
-      // Truncate notes; strip linebreaks to be safe
-      notes: String(body.notes || "").slice(0, 2000),
-      ua: request.headers.get("user-agent") || "",
-      ref: request.headers.get("referer") || "",
+      objective: sanitize(body.objective, 80),
+      use_case: sanitize(body.use_case, 80),
+      outcome: sanitize(body.outcome, 40),
+      // Truncate notes; strip leading/trailing whitespace
+      notes: sanitize(body.notes, 2000),
+      contentVersion: sanitize(body.content_version, 40),
+      ua: sanitize(request.headers.get("user-agent"), 200),
+      ref: sanitize(request.headers.get("referer"), 200),
       v: 1,
     };
 
     let stored = false;
-    if (env.FEEDBACK && typeof env.FEEDBACK.put === "function") {
+    if (store && typeof store.put === "function") {
       const id = `fb:${Date.now()}:${Math.random().toString(36).slice(2, 10)}`;
-      await env.FEEDBACK.put(id, JSON.stringify(safe));
+      await store.put(id, JSON.stringify(safe));
       stored = true;
     }
 
