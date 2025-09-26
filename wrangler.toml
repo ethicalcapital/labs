@@ -1,8 +1,27 @@
-name = "ethicalcapital-labs"
+name = "labs"
 compatibility_date = "2024-11-07"
 pages_build_output_dir = "dist"
 
+# KV Namespaces
 [[kv_namespaces]]
 binding = "hooks"
 id = "caf4e19f1388423fade84340c27a929c"
 preview_id = "caf4e19f1388423fade84340c27a929c"
+
+[[kv_namespaces]]
+binding = "UI_SESSIONS"
+id = "caf4e19f1388423fade84340c27a929c"  # Using same KV for now, can separate later
+preview_id = "caf4e19f1388423fade84340c27a929c"
+
+# Environment Variables
+[vars]
+HOOKS_BASE_URL = "https://hooks.ethicic.com"
+CONTENT_SYNC_URL = "https://hooks.ethicic.com"
+HOOK_TYPST_EXPORT_URL = "https://hook-typst-export.srvo.workers.dev"
+
+# Secrets (managed via Doppler → wrangler secret put):
+# - SYNC_TOKEN (hooks bearer token)
+# - CONTENT_SYNC_TOKEN
+# - WORKBENCH_API_TOKEN (when available)
+# - BUTTONDOWN_API_KEY
+# - LACRM_API_KEY

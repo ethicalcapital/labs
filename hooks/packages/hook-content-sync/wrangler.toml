@@ -1,0 +1,17 @@
+name = "hook-content-sync"
+main = "src/index.ts"
+compatibility_date = "2024-11-07"
+
+[[r2_buckets]]
+binding = "RAWLS_BUCKET"
+bucket_name = "rawls"
+preview_bucket_name = "rawls"
+
+[[routes]]
+pattern = "hooks.ethicic.com"
+custom_domain = true
+
+[vars]
+SERVICE_NAME = "hook-content-sync"
+ALLOWED_PROJECTS = "labs,site,docs"
+MAX_ENTRIES = "100"

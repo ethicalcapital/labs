@@ -1,0 +1,9 @@
+name = "dryvest"
+main = "app/dist/_worker.js"
+compatibility_date = "2024-11-12"
+
+[build]
+command = "npm run build"
+
+[observability.logs]
+enabled = true

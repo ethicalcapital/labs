@@ -1,0 +1,13 @@
+name = "hook-typst-export"
+main = "src/index.ts"
+compatibility_date = "2024-11-07"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+SERVICE_NAME = "hook-typst-export"
+
+[env.dev]
+vars = { SERVICE_NAME = "hook-typst-export" }
+
+[env.production]
+vars = { SERVICE_NAME = "hook-typst-export" }

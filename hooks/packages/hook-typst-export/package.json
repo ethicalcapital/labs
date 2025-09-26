@@ -1,0 +1,22 @@
+{
+  "name": "@ethicalcapital/hook-typst-export",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "lint": "eslint 'src/**/*.ts'",
+    "test": "echo 'no tests yet'"
+  },
+  "dependencies": {
+    "@ethicalcapital/hooks-shared": "file:../shared",
+    "marked": "^14.1.2",
+    "pdf-lib": "^1.17.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "wrangler": "^4.40.1"
+  }
+}
